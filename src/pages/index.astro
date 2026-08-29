@@ -58,7 +58,10 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
       <Grafik zajecia={zajecia} />
       <div class="zajecia-blok__stopka">
         <p>Pierwszy trening jest bezpłatny. Przyjdź w wygodnym ubraniu — resztę pokażemy na miejscu.</p>
-        <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
+        <div class="zajecia-blok__akcje">
+          <a href="/cennik/" class="przycisk przycisk--obrys">Cennik</a>
+          <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
+        </div>
       </div>
     </div>
   </section>
@@ -170,6 +173,7 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
     margin-top: 2.25rem;
   }
   .zajecia-blok__stopka p { margin: 0; color: var(--tekst-2); max-width: 46ch; }
+  .zajecia-blok__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 
   .wydarzenie__siatka {
     display: grid;

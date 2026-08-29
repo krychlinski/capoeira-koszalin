@@ -1,24 +1,30 @@
 ---
 tytul: "O nas"
-naglowek: "Jesteśmy koszalińską grupą capoeiry działającą w ramach Unicar Capoeira."
+naglowek: "Akademia Capoeira Koszalin działa w ramach grupy Unicar Capoeira."
 zdjecie: ""
 ---
 
-## Skąd się wzięliśmy
-
-Capoeira trafiła do Koszalina i została. Trenujemy regularnie, jeździmy na batizado i warsztaty,
-gramy na berimbau i śpiewamy po portugalsku — czasem lepiej, czasem gorzej.
-
-> DO UZUPEŁNIENIA: kilka zdań o historii grupy — od kiedy działacie, skąd wzięła się nazwa,
-> z jaką szkołą jesteście związani.
-
-## Co robimy na treningu
-
-Rozgrzewka, technika (kopnięcia, uniki, przemieszczanie się), akrobatyka na miarę możliwości,
-a na koniec **roda** — krąg, w którym gra się w parach przy muzyce. Uczymy też gry na
-instrumentach: berimbau, atabaque, pandeiro.
+Capoeira to jednocześnie sztuka walki, taniec, gra i muzyka. Na treningu uczymy technik, ataków,
+obrony, przejść i elementów akrobatycznych, ale też gry na instrumentach, śpiewu i podstaw języka
+portugalskiego. Do tego rozciąganie, kondycja, siła i skoczność.
 
 ## Dla kogo
 
-Dla dzieci, młodzieży i dorosłych. Nie ma górnej granicy wieku i nie ma wymogu sprawności na
-wejściu — capoeira jest na tyle elastyczna, że każdy robi ją na swoim poziomie.
+Dla wszystkich, od trzeciego roku życia w górę. Prowadzimy grupy dziecięce, grupę zaawansowaną,
+grupę młodzieży i dorosłych, a osobno akrobatykę i zajęcia mobilności.
+
+Nie trzeba być sprawnym, żeby zacząć. W capoeirze jest wiele elementów, do których nie potrzeba
+świetnej kondycji ani warunków — każdy ćwiczy na swoim poziomie, który z czasem staje się coraz
+wyższy.
+
+## Pierwszopiątkowa roda
+
+*Roda* to krąg, w którym toczy się gra capoeiry — jest w niej wszystko, do czego przygotowujemy
+się na treningach. Mamy tradycję pierwszopiątkowej rody: w pierwszy piątek miesiąca wszystkie
+grupy, które na co dzień trenują osobno, spotykają się razem, żeby grać.
+
+## Poza salą
+
+Jeździmy na warsztaty prowadzone przez gości z kraju i zagranicy — Mestres, Professores,
+Estagiários. Organizujemy obozy szkoleniowe we współpracy z mistrzami i grupami z całej Polski.
+Występujemy też podczas festynów, festiwali i uroczystości.

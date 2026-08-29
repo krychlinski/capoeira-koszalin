@@ -6,9 +6,13 @@ zdjecie: ""
 
 ### Chcesz przyjść na trening?
 
-Zadzwoń albo po prostu pojaw się na sali w godzinach zajęć swojej grupy. Pierwszy trening jest
-bezpłatny — zobaczysz, czy to coś dla Ciebie, zanim cokolwiek zdecydujesz.
+Zadzwoń — dobierzemy grupę i powiemy, kiedy i gdzie przyjść. Pierwszy trening zapoznawczy jest
+bezpłatny i do niczego nie zobowiązuje.
 
-### Prowadzisz szkołę lub przedszkole?
+Zapisać się można w dowolnym momencie. Nie trzeba czekać na początek roku ani na specjalną
+okazję.
 
-Robimy pokazy i warsztaty capoeiry dla grup. Napisz lub zadzwoń, ustalimy szczegóły.
+### Organizujesz festyn albo imprezę?
+
+Występujemy podczas festynów, pikników rodzinnych, festiwali i uroczystości. Zadzwoń, ustalimy
+szczegóły.
