@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Baza from '../../layouts/Baza.astro';
 import NaglowekStrony from '../../components/NaglowekStrony.astro';
 import KartaWpisu from '../../components/KartaWpisu.astro';
+import Facebook from '../../components/Facebook.astro';
 import { dataPl } from '../../lib/format';
 
 const wpisy = (await getCollection('aktualnosci'))
@@ -30,6 +31,12 @@ const wpisy = (await getCollection('aktualnosci'))
           ))}
         </div>
       )}
+    </div>
+  </section>
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      <Facebook />
     </div>
   </section>
 </Baza>

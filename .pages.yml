@@ -243,6 +243,19 @@ content:
         label: Wideo YouTube (strona główna)
         type: string
         description: Samo ID filmu, np. dQw4w9WgXcQ. Ma pierwszeństwo przed zdjęciem.
+      - name: komunikat
+        label: Komunikat na stronie
+        type: object
+        fields:
+          - name: tresc
+            label: Treść
+            type: text
+            description: 'Krótka informacja nad grafikiem — odwołane zajęcia, zmiana sali, ferie. Pogrubienie: **tekst**. Puste = brak komunikatu.'
+          - name: dataDo
+            label: Wyświetlaj do
+            type: date
+            options: { format: yyyy-MM-dd }
+            description: Po tym dniu komunikat zniknie sam. Puste = wisi, dopóki go nie skasujesz.
       - { name: telefon, label: Telefon, type: string }
       - { name: email, label: E-mail, type: string }
       - { name: adres, label: Adres, type: text }

@@ -10,5 +10,9 @@
   "adres": "",
   "facebook": "https://www.facebook.com/CapoeiraUnicarKoszalin/",
   "instagram": "https://www.instagram.com/akademiacapoeirakoszalin/",
-  "youtube": ""
+  "youtube": "",
+  "komunikat": {
+    "tresc": "Sezon startuje **1 września w SP9**. Od **15 września** trenujemy już w nowej Akademii.",
+    "dataDo": "2026-09-15"
+  }
 }

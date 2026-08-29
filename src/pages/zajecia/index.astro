@@ -3,6 +3,7 @@ import { getCollection, getEntry, render } from 'astro:content';
 import Baza from '../../layouts/Baza.astro';
 import NaglowekStrony from '../../components/NaglowekStrony.astro';
 import Grafik from '../../components/Grafik.astro';
+import Komunikat from '../../components/Komunikat.astro';
 import ustawienia from '../../data/ustawienia.json';
 
 const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
@@ -22,6 +23,7 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
+      <Komunikat />
       <Grafik zajecia={zajecia} />
       <div class="pod-grafikiem">
         <p>Nie wiesz, do której grupy pasujesz? Zadzwoń — dobierzemy ją razem.</p>

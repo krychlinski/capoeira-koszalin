@@ -1,0 +1,65 @@
+---
+import Baza from '../layouts/Baza.astro';
+import NaglowekStrony from '../components/NaglowekStrony.astro';
+import ustawienia from '../data/ustawienia.json';
+---
+
+<Baza tytul="Prywatność i ciasteczka" opis="Jakie dane zbiera ta strona. Krótko: prawie żadnych.">
+  <NaglowekStrony
+    nadtytul="Bez ściemy"
+    tytul="Prywatność"
+    opis="Ta strona nie zbiera o Tobie danych i nie ustawia własnych ciasteczek."
+  />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      <div class="proza">
+        <h2>Ciasteczka</h2>
+        <p>
+          Strona nie ustawia żadnych własnych ciasteczek. Nie mamy analityki, nie śledzimy Cię
+          i nie budujemy Twojego profilu. Dlatego nie wyskakuje tu żaden baner ze zgodami —
+          nie ma na co ich zbierać.
+        </p>
+
+        <h3>Jeden wyjątek: wtyczka Facebooka</h3>
+        <p>
+          W zakładce <a href="/aktualnosci/">Aktualności</a> możesz wyświetlić nasze wpisy
+          z Facebooka. Ta wtyczka pochodzi od Meta Platforms i po wczytaniu ustawia własne
+          ciasteczka oraz przekazuje Meta informację, że odwiedziłeś tę stronę.
+        </p>
+        <p>
+          Dlatego <strong>nie ładuje się sama</strong>. Zamiast niej widzisz nasz własny kafelek,
+          a wtyczka wczytuje się dopiero, gdy świadomie klikniesz przycisk. Jeśli nie klikniesz,
+          nic z serwerów Meta się nie pobiera i żadne ciasteczko nie powstaje.
+        </p>
+        <p>
+          Wolisz nie ładować wtyczki? Nasz profil obejrzysz bezpośrednio
+          {ustawienia.facebook && (
+            <> na <a href={ustawienia.facebook} target="_blank" rel="noopener noreferrer">Facebooku</a></>
+          )}.
+        </p>
+
+        <h3>Drugi wyjątek: kroje pisma</h3>
+        <p>
+          Strona pobiera kroje pisma z serwerów Google Fonts. Nie ustawiają one ciasteczek, ale
+          Google otrzymuje przy tym Twój adres IP. Da się tego uniknąć, umieszczając pliki
+          czcionek na naszym serwerze — planujemy to zrobić.
+        </p>
+
+        <h2>Serwer</h2>
+        <p>
+          Strona jest hostowana na Netlify. Jak każdy serwer, zapisuje on techniczne logi
+          dostępowe — adres IP, czas i adres odwiedzonej podstrony. Służą one wyłącznie
+          bezpieczeństwu i diagnostyce, nie łączymy ich z Twoją osobą.
+        </p>
+
+        <h2>Kontakt</h2>
+        <p>
+          Jeśli piszesz do nas albo dzwonisz, Twoje dane trafiają wyłącznie do nas i służą tylko
+          do odpowiedzi. Zapisy na zajęcia odbywają się na miejscu, na papierowej deklaracji —
+          nie zbieramy ich przez stronę.
+        </p>
+      </div>
+    </div>
+  </section>
+</Baza>
