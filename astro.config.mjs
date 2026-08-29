@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   // Docelowo capoeira.koszalin.pl — na razie domyślna domena hostingu.
-  site: 'https://capoeira-koszalin.pages.dev',
+  site: 'https://capoeira-koszalin.netlify.app',
   build: { format: 'directory' },
   integrations: [sitemap({ filter: (strona) => !strona.includes('/admin') })],
 });

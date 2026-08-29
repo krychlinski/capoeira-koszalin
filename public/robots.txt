@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://capoeira-koszalin.pages.dev/sitemap-index.xml
+Sitemap: https://capoeira-koszalin.netlify.app/sitemap-index.xml

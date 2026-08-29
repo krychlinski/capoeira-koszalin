@@ -9,8 +9,9 @@ WordPressa pod `capoeira.koszalin.pl`.
   ze zmiennymi w `src/styles/global.css`.
 - **Pages CMS** (app.pagescms.org) — panel dla nietechnicznego edytora, konfiguracja w `.pages.yml`.
   Zapis w panelu tworzy commit w repo, hosting przebudowuje stronę.
-- **Cloudflare Pages** — hosting statyczny, darmowy. Zero serwera, zero bazy, zero łatania;
-  to był główny powód odejścia od WordPressa.
+- **Netlify** — hosting statyczny, darmowy, konfiguracja w `netlify.toml`. Zero serwera,
+  zero bazy, zero łatania; to był główny powód odejścia od WordPressa.
+  Cloudflare Pages odpadło: blokuje zakładanie kont młodszych niż 7 dni.
 
 ## Zasady, które łatwo złamać
 
@@ -22,7 +23,8 @@ WordPressa pod `capoeira.koszalin.pl`.
   CMS zapisuje ścieżkę jako `/media/plik.jpg`, a `src/lib/media.ts` mapuje ją po nazwie pliku.
   Nie przenoś mediów do `public/`, bo strona zacznie serwować oryginały z aparatu.
 - Puste katalogi kolekcji trzymają `.gitkeep`. Bez nich git je gubi i CMS nie ma gdzie pisać.
-- Cloudflare Pages potrzebuje `.nvmrc` z wersją 22 — Astro 7 nie zbuduje się na starszym Node.
+- Wersję Node ustala `.nvmrc` i `NODE_VERSION` w `netlify.toml` — Astro 7 nie zbuduje się
+  na starszym niż 22.
 
 ## Model treści
 
@@ -39,6 +41,6 @@ WordPressa pod `capoeira.koszalin.pl`.
 ## Stan
 
 - Domena `capoeira.koszalin.pl` jest w całości pod kontrolą właściciela — przełączenie DNS na końcu.
-  Do tego czasu `site` w `astro.config.mjs` wskazuje na adres `.pages.dev`.
+  Do tego czasu `site` w `astro.config.mjs` wskazuje na adres `.netlify.app`.
 - Treść startowa zawiera znaczniki `DO UZUPEŁNIENIA` (godziny zajęć, sale, adresy, biogram).
   To placeholdery, nie fakty — nie traktuj ich jak prawdziwych danych.
