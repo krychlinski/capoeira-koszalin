@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
 
 Sitemap: https://capoeira-koszalin.pages.dev/sitemap-index.xml

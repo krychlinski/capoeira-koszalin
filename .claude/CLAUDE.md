@@ -6,10 +6,10 @@ WordPressa pod `capoeira.koszalin.pl`.
 ## Stos
 
 - **Astro 7**, statyczny build (`output: static`). Bez frameworka UI, bez Tailwinda — czysty CSS
-  z zmiennymi w `src/styles/global.css`.
-- **Sveltia CMS** w `public/admin/` — panel dla nietechnicznego edytora. Zapisuje commity do repo,
-  hosting przebudowuje stronę automatycznie.
-- Hosting statyczny (Cloudflare Pages / Netlify), darmowy. Zero serwera, zero bazy, zero łatania —
+  ze zmiennymi w `src/styles/global.css`.
+- **Pages CMS** (app.pagescms.org) — panel dla nietechnicznego edytora, konfiguracja w `.pages.yml`.
+  Zapis w panelu tworzy commit w repo, hosting przebudowuje stronę.
+- **Cloudflare Pages** — hosting statyczny, darmowy. Zero serwera, zero bazy, zero łatania;
   to był główny powód odejścia od WordPressa.
 
 ## Zasady, które łatwo złamać
@@ -17,11 +17,12 @@ WordPressa pod `capoeira.koszalin.pl`.
 - **Cały interfejs i nazwy pól są po polsku.** Kolekcje, pola frontmattera i klasy CSS też
   (`aktualnosci`, `zajecia`, `tytul`, `.nadtytul`). Nie mieszaj z angielskim.
 - **Schemat treści musi się zgadzać w dwóch miejscach naraz:** `src/content.config.ts` (Zod)
-  i `public/admin/config.yml` (Sveltia). Zmiana pola w jednym bez drugiego wywala build.
+  i `.pages.yml` (Pages CMS). Zmiana pola w jednym bez drugiego wywala build albo psuje panel.
 - **Zdjęcia leżą w `src/assets/media/`, nie w `public/`** — dzięki temu Astro je optymalizuje.
   CMS zapisuje ścieżkę jako `/media/plik.jpg`, a `src/lib/media.ts` mapuje ją po nazwie pliku.
   Nie przenoś mediów do `public/`, bo strona zacznie serwować oryginały z aparatu.
 - Puste katalogi kolekcji trzymają `.gitkeep`. Bez nich git je gubi i CMS nie ma gdzie pisać.
+- Cloudflare Pages potrzebuje `.nvmrc` z wersją 22 — Astro 7 nie zbuduje się na starszym Node.
 
 ## Model treści
 
@@ -38,5 +39,6 @@ WordPressa pod `capoeira.koszalin.pl`.
 ## Stan
 
 - Domena `capoeira.koszalin.pl` jest w całości pod kontrolą właściciela — przełączenie DNS na końcu.
+  Do tego czasu `site` w `astro.config.mjs` wskazuje na adres `.pages.dev`.
 - Treść startowa zawiera znaczniki `DO UZUPEŁNIENIA` (godziny zajęć, sale, adresy, biogram).
   To placeholdery, nie fakty — nie traktuj ich jak prawdziwych danych.

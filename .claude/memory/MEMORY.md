@@ -2,6 +2,4 @@
 
 ## Decyzje
 - [Dlaczego nie WordPress](decision_nie_wordpress.md) — powód migracji i odrzucone alternatywy
-
-## Do zrobienia
-- [Konfiguracja OAuth dla CMS](todo_oauth_cms.md) — panel nie zaloguje się bez własnego workera
+- [Panel to Pages CMS](decision_pages_cms.md) — Sveltia usunięta, bo wymagała własnego OAuth

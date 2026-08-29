@@ -1,0 +1,189 @@
+# Konfiguracja panelu Pages CMS (app.pagescms.org).
+# Pola muszą się zgadzać ze schematem Zod w src/content.config.ts — zmiana w jednym
+# miejscu bez drugiego wywali build.
+
+media:
+  input: src/assets/media
+  output: /media
+  extensions: [jpg, jpeg, png, webp, avif, gif]
+  rename: safe
+
+content:
+  - name: aktualnosci
+    label: Aktualności
+    type: collection
+    path: src/content/aktualnosci
+    format: yaml-frontmatter
+    filename: '{year}-{month}-{day}-{primary}.md'
+    view:
+      primary: tytul
+      sort: [data, tytul]
+      order: desc
+      fields: [tytul, data, opublikowany]
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - name: zajawka
+        label: Zajawka
+        type: text
+        description: Jedno–dwa zdania. To widać na liście wpisów i w podglądzie na Facebooku.
+      - { name: zdjecie, label: Zdjęcie główne, type: image }
+      - name: opublikowany
+        label: Opublikowany
+        type: boolean
+        default: true
+        description: Odznacz, żeby schować wpis bez usuwania go.
+      - { name: body, label: Treść, type: rich-text }
+
+  - name: wydarzenia
+    label: Wydarzenia
+    type: collection
+    path: src/content/wydarzenia
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      primary: tytul
+      sort: [dataOd, tytul]
+      order: desc
+      fields: [tytul, dataOd, miejsce]
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - { name: dataOd, label: Data od, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - name: dataDo
+        label: Data do
+        type: date
+        options: { format: yyyy-MM-dd }
+        description: Wypełnij tylko przy wydarzeniu wielodniowym.
+      - { name: miejsce, label: Miejsce, type: string }
+      - { name: zajawka, label: Zajawka, type: text }
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: body, label: Opis, type: rich-text }
+
+  - name: zajecia
+    label: Grafik zajęć
+    type: collection
+    path: src/content/zajecia
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      primary: grupa
+      sort: [kolejnosc, grupa]
+      order: asc
+      fields: [grupa, wiek, miejsce]
+    fields:
+      - name: grupa
+        label: Nazwa grupy
+        type: string
+        required: true
+        description: Np. „Dzieci” albo „Młodzież i dorośli”.
+      - { name: wiek, label: Wiek, type: string, description: 'Np. „7–12 lat”.' }
+      - name: terminy
+        label: Terminy
+        type: object
+        list: true
+        fields:
+          - name: dzien
+            label: Dzień
+            type: select
+            options:
+              values: [Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela]
+          - { name: od, label: Od, type: string, description: 'Format 18:00' }
+          - { name: do, label: Do, type: string }
+      - { name: miejsce, label: Miejsce, type: string, description: Nazwa sali lub szkoły. }
+      - { name: adres, label: Adres, type: string }
+      - name: kolejnosc
+        label: Kolejność
+        type: number
+        default: 1
+        description: Mniejsza liczba = wyżej na stronie.
+
+  - name: instruktorzy
+    label: Instruktorzy
+    type: collection
+    path: src/content/instruktorzy
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      primary: imie
+      sort: [kolejnosc, imie]
+      order: asc
+      fields: [imie, apelido, stopien]
+    fields:
+      - { name: imie, label: Imię i nazwisko, type: string, required: true }
+      - { name: apelido, label: Apelido, type: string, description: Capoeirowe przezwisko. }
+      - { name: stopien, label: Stopień / corda, type: string }
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: kolejnosc, label: Kolejność, type: number, default: 1 }
+      - { name: body, label: Biogram, type: rich-text }
+
+  - name: galeria
+    label: Galeria
+    type: collection
+    path: src/content/galeria
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      primary: tytul
+      sort: [data, tytul]
+      order: desc
+      fields: [tytul, data]
+    fields:
+      - { name: tytul, label: Tytuł albumu, type: string, required: true }
+      - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - name: okladka
+        label: Okładka
+        type: image
+        description: Zostaw puste, żeby użyć pierwszego zdjęcia z albumu.
+      - name: zdjecia
+        label: Zdjęcia
+        type: image
+        options:
+          multiple: true
+          unique: true
+
+  - name: strona-o-nas
+    label: Strona „O nas”
+    type: file
+    path: src/content/strony/o-nas.md
+    format: yaml-frontmatter
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - { name: naglowek, label: Nagłówek, type: text, description: Zdanie pod tytułem. }
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: body, label: Treść, type: rich-text }
+
+  - name: strona-kontakt
+    label: Strona „Kontakt”
+    type: file
+    path: src/content/strony/kontakt.md
+    format: yaml-frontmatter
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - { name: naglowek, label: Nagłówek, type: text }
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: body, label: Treść, type: rich-text }
+
+  - name: ustawienia
+    label: Ustawienia
+    type: file
+    path: src/data/ustawienia.json
+    format: json
+    fields:
+      - { name: nazwa, label: Nazwa akademii, type: string, required: true }
+      - { name: grupa, label: Nazwa grupy, type: string }
+      - name: opisSeo
+        label: Opis dla Google
+        type: text
+        description: Do 160 znaków — to widać w wynikach wyszukiwania.
+      - { name: hasloHero, label: Hasło na stronie głównej, type: text }
+      - { name: heroZdjecie, label: Zdjęcie tła (strona główna), type: image }
+      - name: heroWideoYoutube
+        label: Wideo YouTube (strona główna)
+        type: string
+        description: Samo ID filmu, np. dQw4w9WgXcQ. Ma pierwszeństwo przed zdjęciem.
+      - { name: telefon, label: Telefon, type: string }
+      - { name: email, label: E-mail, type: string }
+      - { name: adres, label: Adres, type: text }
+      - { name: facebook, label: Facebook, type: string, description: Pełny adres URL. }
+      - { name: instagram, label: Instagram, type: string }
+      - { name: youtube, label: YouTube, type: string }

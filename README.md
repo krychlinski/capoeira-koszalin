@@ -1,6 +1,6 @@
 # Capoeira Koszalin
 
-Strona Akademii Capoeira Koszalin. Astro + Sveltia CMS, hosting statyczny.
+Strona Akademii Capoeira Koszalin. Astro + Pages CMS, hosting na Cloudflare Pages.
 
 ## Uruchomienie lokalne
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Strona: <http://localhost:4321> · Panel: <http://localhost:4321/admin/>
+Strona: <http://localhost:4321>
 
 ## Komendy
 
@@ -25,13 +25,15 @@ Strona: <http://localhost:4321> · Panel: <http://localhost:4321/admin/>
 src/content/       treść edytowana przez CMS (markdown)
 src/data/          ustawienia.json — dane kontaktowe, hero, social
 src/assets/media/  zdjęcia (optymalizowane przy budowaniu)
-public/admin/      panel Sveltia CMS
+.pages.yml         konfiguracja panelu Pages CMS
 ```
 
 ## Edycja treści
 
-Panel pod adresem `/admin/`. Logowanie kontem GitHub — wymaga wcześniejszej konfiguracji
-klienta OAuth (patrz `.claude/memory/todo_oauth_cms.md`).
+Panel: <https://app.pagescms.org/krychlinski/capoeira-koszalin/main>
 
-Zapis w panelu tworzy commit w repozytorium, a hosting przebudowuje stronę automatycznie.
-Zmiana jest widoczna po około minucie.
+Logowanie kontem GitHub — redaktor musi być collaboratorem w tym repozytorium. Zapis w panelu
+tworzy commit, a Cloudflare Pages przebudowuje stronę automatycznie. Zmiana jest widoczna
+po około minucie.
+
+Pola panelu opisuje `.pages.yml`. Muszą się zgadzać ze schematem w `src/content.config.ts`.
