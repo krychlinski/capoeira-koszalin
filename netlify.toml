@@ -19,3 +19,9 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Podstrona instruktorów została scalona z "O nas" — nie zostawiamy po niej 404.
+[[redirects]]
+  from = "/instruktorzy/*"
+  to = "/o-nas/"
+  status = 301
