@@ -2,9 +2,10 @@
 # jedzie razem z repo.
 
 [build]
-  # Netlify odtwarza katalog .astro z cache'u między buildami, a razem z nim starą
-  # warstwę treści — usunięty wpis potrafi dalej generować swoją podstronę.
-  command = "rm -rf .astro && npm run build"
+  # Astro trzyma warstwę treści w .astro ORAZ node_modules/.astro, a Netlify
+  # buforuje node_modules między buildami. Bez skasowania obu usunięty wpis
+  # dalej generuje swoją podstronę — sprawdzone na produkcji.
+  command = "rm -rf .astro node_modules/.astro dist && npm run build"
   publish = "dist"
 
 [build.environment]
