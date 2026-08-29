@@ -1,0 +1,143 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+backend:
+  name: github
+  repo: krychlinski/capoeira-koszalin
+  branch: main
+  # base_url: https://<worker>.workers.dev  # TODO: URL klienta OAuth (Sveltia CMS Authenticator)
+
+publish_mode: simple
+media_folder: src/assets/media
+public_folder: /media
+
+collections:
+  - name: aktualnosci
+    label: Aktualności
+    label_singular: Wpis
+    folder: src/content/aktualnosci
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{tytul}} — {{data}}'
+    sortable_fields: [data, tytul]
+    fields:
+      - { label: Tytuł, name: tytul, widget: string }
+      - { label: Data, name: data, widget: datetime, date_format: 'DD.MM.YYYY', time_format: false, format: 'YYYY-MM-DD' }
+      - { label: Zajawka, name: zajawka, widget: text, required: false, hint: 'Jedno–dwa zdania widoczne na liście wpisów.' }
+      - { label: Zdjęcie główne, name: zdjecie, widget: image, required: false }
+      - { label: Opublikowany, name: opublikowany, widget: boolean, default: true }
+      - { label: Treść, name: body, widget: markdown }
+
+  - name: wydarzenia
+    label: Wydarzenia
+    label_singular: Wydarzenie
+    folder: src/content/wydarzenia
+    create: true
+    slug: '{{slug}}'
+    summary: '{{tytul}} — {{dataOd}}'
+    sortable_fields: [dataOd, tytul]
+    fields:
+      - { label: Tytuł, name: tytul, widget: string }
+      - { label: Data od, name: dataOd, widget: datetime, date_format: 'DD.MM.YYYY', time_format: false, format: 'YYYY-MM-DD' }
+      - { label: Data do, name: dataDo, widget: datetime, date_format: 'DD.MM.YYYY', time_format: false, format: 'YYYY-MM-DD', required: false, hint: 'Wypełnij tylko przy wydarzeniu wielodniowym.' }
+      - { label: Miejsce, name: miejsce, widget: string, required: false }
+      - { label: Zajawka, name: zajawka, widget: text, required: false }
+      - { label: Zdjęcie, name: zdjecie, widget: image, required: false }
+      - { label: Opis, name: body, widget: markdown }
+
+  - name: zajecia
+    label: Grafik zajęć
+    label_singular: Grupa
+    folder: src/content/zajecia
+    create: true
+    slug: '{{slug}}'
+    summary: '{{grupa}}'
+    sortable_fields: [kolejnosc, grupa]
+    fields:
+      - { label: Nazwa grupy, name: grupa, widget: string, hint: 'Np. „Dzieci” albo „Młodzież i dorośli”.' }
+      - { label: Wiek, name: wiek, widget: string, required: false, hint: 'Np. „7–12 lat”.' }
+      - label: Terminy
+        name: terminy
+        widget: list
+        label_singular: Termin
+        summary: '{{fields.dzien}} {{fields.od}}'
+        fields:
+          - { label: Dzień, name: dzien, widget: select, options: [Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela] }
+          - { label: Od, name: od, widget: string, hint: 'Format 18:00' }
+          - { label: Do, name: do, widget: string, required: false }
+      - { label: Miejsce, name: miejsce, widget: string, required: false, hint: 'Nazwa sali lub szkoły.' }
+      - { label: Adres, name: adres, widget: string, required: false }
+      - { label: Kolejność, name: kolejnosc, widget: number, default: 1, value_type: int, hint: 'Mniejsza liczba = wyżej na stronie.' }
+
+  - name: instruktorzy
+    label: Instruktorzy
+    label_singular: Instruktor
+    folder: src/content/instruktorzy
+    create: true
+    slug: '{{slug}}'
+    summary: '{{imie}}'
+    sortable_fields: [kolejnosc, imie]
+    fields:
+      - { label: Imię i nazwisko, name: imie, widget: string }
+      - { label: Apelido, name: apelido, widget: string, required: false, hint: 'Capoeirowe przezwisko.' }
+      - { label: Stopień / corda, name: stopien, widget: string, required: false }
+      - { label: Zdjęcie, name: zdjecie, widget: image, required: false }
+      - { label: Kolejność, name: kolejnosc, widget: number, default: 1, value_type: int }
+      - { label: Biogram, name: body, widget: markdown }
+
+  - name: galeria
+    label: Galeria
+    label_singular: Album
+    folder: src/content/galeria
+    create: true
+    slug: '{{slug}}'
+    summary: '{{tytul}} — {{data}}'
+    sortable_fields: [data, tytul]
+    fields:
+      - { label: Tytuł albumu, name: tytul, widget: string }
+      - { label: Data, name: data, widget: datetime, date_format: 'DD.MM.YYYY', time_format: false, format: 'YYYY-MM-DD' }
+      - { label: Okładka, name: okladka, widget: image, required: false, hint: 'Puste = pierwsze zdjęcie z albumu.' }
+      - label: Zdjęcia
+        name: zdjecia
+        widget: list
+        label_singular: Zdjęcie
+        field: { label: Zdjęcie, name: zdjecie, widget: image }
+
+  - name: strony
+    label: Strony
+    files:
+      - name: o-nas
+        label: O nas
+        file: src/content/strony/o-nas.md
+        fields:
+          - { label: Tytuł, name: tytul, widget: string }
+          - { label: Nagłówek, name: naglowek, widget: text, required: false, hint: 'Zdanie pod tytułem.' }
+          - { label: Zdjęcie, name: zdjecie, widget: image, required: false }
+          - { label: Treść, name: body, widget: markdown }
+      - name: kontakt
+        label: Kontakt
+        file: src/content/strony/kontakt.md
+        fields:
+          - { label: Tytuł, name: tytul, widget: string }
+          - { label: Nagłówek, name: naglowek, widget: text, required: false }
+          - { label: Zdjęcie, name: zdjecie, widget: image, required: false }
+          - { label: Treść, name: body, widget: markdown }
+
+  - name: ustawienia
+    label: Ustawienia
+    files:
+      - name: ogolne
+        label: Dane i strona główna
+        file: src/data/ustawienia.json
+        fields:
+          - { label: Nazwa akademii, name: nazwa, widget: string }
+          - { label: Nazwa grupy, name: grupa, widget: string, required: false }
+          - { label: Opis dla Google, name: opisSeo, widget: text, hint: 'Do 160 znaków — to widać w wynikach wyszukiwania.' }
+          - { label: Hasło na stronie głównej, name: hasloHero, widget: text }
+          - { label: Zdjęcie tła (strona główna), name: heroZdjecie, widget: image, required: false }
+          - { label: Wideo YouTube (strona główna), name: heroWideoYoutube, widget: string, required: false, hint: 'Samo ID filmu, np. dQw4w9WgXcQ. Ma pierwszeństwo przed zdjęciem.' }
+          - { label: Telefon, name: telefon, widget: string, required: false }
+          - { label: E-mail, name: email, widget: string, required: false }
+          - { label: Adres, name: adres, widget: text, required: false }
+          - { label: Facebook, name: facebook, widget: string, required: false, hint: 'Pełny URL.' }
+          - { label: Instagram, name: instagram, widget: string, required: false }
+          - { label: YouTube, name: youtube, widget: string, required: false }

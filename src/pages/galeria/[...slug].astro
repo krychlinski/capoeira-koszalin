@@ -1,0 +1,160 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Baza from '../../layouts/Baza.astro';
+import { obraz } from '../../lib/media';
+import { dataPl } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const albumy = await getCollection('galeria');
+  return albumy.map((album) => ({ params: { slug: album.id }, props: { album } }));
+}
+
+const { album } = Astro.props;
+const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== undefined);
+---
+
+<Baza tytul={album.data.tytul} opis={`Zdjęcia: ${album.data.tytul}`}>
+  <header class="naglowek">
+    <div class="kontener">
+      <a href="/galeria/" class="powrot">← Galeria</a>
+      <p class="meta">{dataPl(album.data.data)} · {zdjecia.length}&nbsp;zdjęć</p>
+      <h1>{album.data.tytul}</h1>
+    </div>
+  </header>
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      <div class="siatka">
+        {zdjecia.map((foto, i) => (
+          <button class="kafel" data-indeks={i} aria-label={`Powiększ zdjęcie ${i + 1}`}>
+            <Image src={foto} alt="" widths={[400, 800]} sizes="(max-width: 700px) 50vw, 280px" loading="lazy" />
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <dialog class="lightbox" data-lightbox>
+    <button class="lightbox__zamknij" data-zamknij aria-label="Zamknij">×</button>
+    <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-wstecz aria-label="Poprzednie">‹</button>
+    <img class="lightbox__foto" data-foto alt="" />
+    <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-dalej aria-label="Następne">›</button>
+  </dialog>
+
+  <script type="application/json" id="pelne-zdjecia" set:html={JSON.stringify(zdjecia.map((f) => f.src))} />
+</Baza>
+
+<style>
+  .naglowek {
+    padding-top: clamp(8rem, 14vw, 11rem);
+    padding-bottom: 2rem;
+    background: radial-gradient(120% 80% at 15% 0%, rgba(224, 138, 43, 0.13), transparent 60%), var(--tlo);
+  }
+  .powrot {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--tekst-3);
+    text-decoration: none;
+    margin-bottom: 1.75rem;
+  }
+  .powrot:hover { color: var(--akcent); }
+  .meta {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--akcent);
+    margin-bottom: 0.9rem;
+  }
+
+  .siatka {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--linia);
+    border: 1px solid var(--linia);
+  }
+  .kafel {
+    padding: 0;
+    border: 0;
+    background: var(--tlo-3);
+    cursor: zoom-in;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+  .kafel :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(0.4);
+    transition: transform 0.4s ease, filter 0.3s ease;
+  }
+  .kafel:hover :global(img) { transform: scale(1.06); filter: grayscale(0); }
+
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+  }
+  .lightbox::backdrop { background: rgba(6, 6, 7, 0.94); }
+  .lightbox[open] { display: flex; align-items: center; justify-content: center; }
+  .lightbox__foto { max-width: 92vw; max-height: 88vh; object-fit: contain; }
+
+  .lightbox__zamknij,
+  .lightbox__nawigacja {
+    position: fixed;
+    background: none;
+    border: 0;
+    color: var(--tekst-2);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+  .lightbox__zamknij:hover,
+  .lightbox__nawigacja:hover { color: var(--akcent); }
+  .lightbox__zamknij { top: 1rem; right: 1.5rem; font-size: 2.75rem; }
+  .lightbox__nawigacja { top: 50%; transform: translateY(-50%); font-size: 4rem; padding: 0 1.25rem; }
+  .lightbox__nawigacja--wstecz { left: 0; }
+  .lightbox__nawigacja--dalej { right: 0; }
+</style>
+
+<script>
+  const dane = document.getElementById('pelne-zdjecia');
+  const zdjecia: string[] = dane ? JSON.parse(dane.textContent || '[]') : [];
+  const lightbox = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const foto = document.querySelector<HTMLImageElement>('[data-foto]');
+  let aktualny = 0;
+
+  const pokaz = (i: number) => {
+    if (!foto || zdjecia.length === 0) return;
+    aktualny = (i + zdjecia.length) % zdjecia.length;
+    foto.src = zdjecia[aktualny];
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((kafel) => {
+    kafel.addEventListener('click', () => {
+      pokaz(Number(kafel.dataset.indeks));
+      lightbox?.showModal();
+    });
+  });
+
+  document.querySelector('[data-zamknij]')?.addEventListener('click', () => lightbox?.close());
+  document.querySelector('[data-wstecz]')?.addEventListener('click', () => pokaz(aktualny - 1));
+  document.querySelector('[data-dalej]')?.addEventListener('click', () => pokaz(aktualny + 1));
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) lightbox.close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox?.open) return;
+    if (e.key === 'ArrowLeft') pokaz(aktualny - 1);
+    if (e.key === 'ArrowRight') pokaz(aktualny + 1);
+  });
+</script>

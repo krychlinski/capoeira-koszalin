@@ -1,0 +1,151 @@
+---
+import { Image } from 'astro:assets';
+import ustawienia from '../data/ustawienia.json';
+import { obraz } from '../lib/media';
+
+const tlo = obraz(ustawienia.heroZdjecie);
+const wideo = ustawienia.heroWideoYoutube?.trim();
+---
+
+<section class="hero">
+  <div class="hero__tlo">
+    {wideo ? (
+      <iframe
+        class="hero__wideo"
+        src={`https://www.youtube.com/embed/${wideo}?autoplay=1&mute=1&loop=1&playlist=${wideo}&controls=0&showinfo=0&modestbranding=1&playsinline=1&rel=0`}
+        title="Capoeira"
+        allow="autoplay; encrypted-media"
+        loading="lazy"
+        tabindex="-1"
+      />
+    ) : tlo ? (
+      <Image src={tlo} alt="" widths={[900, 1400, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+    ) : null}
+  </div>
+
+  <div class="hero__zaslona"></div>
+
+  <div class="kontener hero__tresc">
+    <p class="hero__grupa">{ustawienia.grupa}</p>
+    <h1 class="hero__tytul">
+      <span>Akademia</span>
+      <span class="hero__tytul--akcent">Capoeira</span>
+      <span class="hero__miasto">Koszalin</span>
+    </h1>
+    <p class="hero__haslo">{ustawienia.hasloHero}</p>
+    <div class="hero__akcje">
+      <a href="/zajecia/" class="przycisk">Przyjdź na trening</a>
+      <a href="/o-nas/" class="przycisk przycisk--obrys">Czym jest capoeira</a>
+    </div>
+  </div>
+
+  <a class="hero__strzalka" href="#dalej" aria-label="Przewiń w dół"><span></span></a>
+</section>
+<span id="dalej"></span>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: clamp(4rem, 10vh, 8rem);
+    padding-top: 8rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero__tlo {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(160deg, #1a1512, #0b0b0c 60%);
+  }
+  .hero__tlo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.45) contrast(1.08);
+  }
+  /* Wideo z YouTube nie ma object-fit — skalujemy je ponad krawędzie, żeby wypełniło kadr. */
+  .hero__wideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 56.25vw;
+    min-height: 100%;
+    min-width: 177.77vh;
+    transform: translate(-50%, -50%);
+    border: 0;
+    pointer-events: none;
+    filter: grayscale(0.4) contrast(1.05);
+  }
+
+  .hero__zaslona {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to top, rgba(11, 11, 12, 0.97) 8%, rgba(11, 11, 12, 0.55) 45%, rgba(11, 11, 12, 0.75) 100%),
+      radial-gradient(90% 60% at 20% 90%, rgba(224, 138, 43, 0.18), transparent 70%);
+  }
+
+  .hero__tresc { position: relative; }
+
+  .hero__grupa {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--akcent);
+    margin: 0 0 1.25rem;
+  }
+
+  .hero__tytul {
+    display: grid;
+    font-size: clamp(3rem, 11vw, 8.5rem);
+    line-height: 0.86;
+    margin: 0 0 1.75rem;
+  }
+  .hero__tytul span { display: block; }
+  .hero__tytul--akcent { color: var(--akcent); }
+  .hero__miasto {
+    font-size: clamp(0.9rem, 2.2vw, 1.6rem);
+    font-weight: 400;
+    letter-spacing: 0.52em;
+    color: var(--tekst-2);
+    margin-top: 1.1rem;
+  }
+
+  .hero__haslo {
+    max-width: 46ch;
+    font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
+    color: var(--tekst-2);
+    margin-bottom: 2.25rem;
+  }
+
+  .hero__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+
+  .hero__strzalka {
+    position: absolute;
+    bottom: 1.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 3rem;
+    background: var(--linia);
+    overflow: hidden;
+  }
+  .hero__strzalka span {
+    position: absolute;
+    inset: 0;
+    background: var(--akcent);
+    animation: spadaj 2.2s ease-in-out infinite;
+  }
+  @keyframes spadaj {
+    0% { transform: translateY(-100%); }
+    60%, 100% { transform: translateY(100%); }
+  }
+  @media (max-width: 700px) { .hero__strzalka { display: none; } }
+</style>

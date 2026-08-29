@@ -1,0 +1,247 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Baza from '../layouts/Baza.astro';
+import Hero from '../components/Hero.astro';
+import Grafik from '../components/Grafik.astro';
+import KartaWpisu from '../components/KartaWpisu.astro';
+import ustawienia from '../data/ustawienia.json';
+import { obraz } from '../lib/media';
+import { dataPl, zakresDat } from '../lib/format';
+
+const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
+
+const teraz = new Date();
+const nadchodzace = (await getCollection('wydarzenia'))
+  .filter((w) => (w.data.dataDo ?? w.data.dataOd) >= teraz)
+  .sort((a, b) => a.data.dataOd.getTime() - b.data.dataOd.getTime());
+const najblizsze = nadchodzace[0];
+const fotoWydarzenia = obraz(najblizsze?.data.zdjecie);
+
+const aktualnosci = (await getCollection('aktualnosci'))
+  .filter((a) => a.data.opublikowany)
+  .sort((a, b) => b.data.data.getTime() - a.data.data.getTime())
+  .slice(0, 3);
+
+const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
+const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
+---
+
+<Baza>
+  <Hero />
+
+  <section class="sekcja intro">
+    <div class="kontener intro__siatka">
+      <div>
+        <p class="nadtytul">Czym jest capoeira</p>
+        <h2>Brazylijska sztuka,<br />która nie pyta o wiek</h2>
+      </div>
+      <div class="intro__tekst">
+        <p>
+          Capoeira to jednocześnie sztuka walki, taniec, gra i muzyka. Powstała w Brazylii wśród
+          zniewolonych mieszkańców Afryki, którzy ukryli trening walki pod postacią tańca. Dziś to
+          przede wszystkim sposób na ruch, rytm i ludzi.
+        </p>
+        <p>
+          Na treningu uczysz się akrobatyki, kopnięć i uników, ale też gry na berimbau i śpiewu po
+          portugalsku. Nie musisz być sprawny, młody ani muzykalny — wystarczy, że przyjdziesz.
+        </p>
+        <a href="/o-nas/" class="przycisk przycisk--obrys">Poznaj naszą grupę</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sekcja sekcja--ciasna zajecia-blok">
+    <div class="kontener">
+      <p class="nadtytul">Grafik</p>
+      <h2>Kiedy trenujemy</h2>
+      <Grafik zajecia={zajecia} />
+      <div class="zajecia-blok__stopka">
+        <p>Pierwszy trening jest bezpłatny. Przyjdź w wygodnym ubraniu — resztę pokażemy na miejscu.</p>
+        <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
+      </div>
+    </div>
+  </section>
+
+  {najblizsze && (
+    <section class="sekcja wydarzenie">
+      <div class="kontener wydarzenie__siatka">
+        <div class="wydarzenie__foto">
+          {fotoWydarzenia ? (
+            <Image src={fotoWydarzenia} alt="" widths={[600, 1000]} sizes="(max-width: 900px) 100vw, 520px" loading="lazy" />
+          ) : (
+            <div class="wydarzenie__zastepnik" aria-hidden="true"></div>
+          )}
+        </div>
+        <div class="wydarzenie__tresc">
+          <p class="nadtytul">Najbliższe wydarzenie</p>
+          <h2>{najblizsze.data.tytul}</h2>
+          <p class="wydarzenie__data">
+            {zakresDat(najblizsze.data.dataOd, najblizsze.data.dataDo)}
+            {najblizsze.data.miejsce && <span> · {najblizsze.data.miejsce}</span>}
+          </p>
+          {najblizsze.data.zajawka && <p class="wydarzenie__zajawka">{najblizsze.data.zajawka}</p>}
+          <a href={`/wydarzenia/${najblizsze.id}/`} class="przycisk">Szczegóły</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {aktualnosci.length > 0 && (
+    <section class="sekcja sekcja--ciasna">
+      <div class="kontener">
+        <div class="naglowek-listy">
+          <div>
+            <p class="nadtytul">Z życia grupy</p>
+            <h2>Aktualności</h2>
+          </div>
+          <a href="/aktualnosci/" class="przycisk przycisk--obrys">Wszystkie wpisy</a>
+        </div>
+        <div class="siatka-kart">
+          {aktualnosci.map((a) => (
+            <KartaWpisu
+              href={`/aktualnosci/${a.id}/`}
+              tytul={a.data.tytul}
+              meta={dataPl(a.data.data)}
+              zajawka={a.data.zajawka}
+              zdjecie={a.data.zdjecie}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {podglad.length > 0 && (
+    <section class="sekcja sekcja--ciasna">
+      <div class="kontener">
+        <div class="naglowek-listy">
+          <div>
+            <p class="nadtytul">Roda w obiektywie</p>
+            <h2>Galeria</h2>
+          </div>
+          <a href="/galeria/" class="przycisk przycisk--obrys">Zobacz albumy</a>
+        </div>
+      </div>
+      <div class="pasek">
+        {podglad.map((sciezka) => {
+          const foto = obraz(sciezka);
+          return foto ? (
+            <Image src={foto} alt="" widths={[400, 800]} sizes="320px" loading="lazy" class="pasek__foto" />
+          ) : null;
+        })}
+      </div>
+    </section>
+  )}
+
+  <section class="cta">
+    <div class="kontener cta__wnetrze">
+      <h2>Pierwszy trening<br /><span>nic nie kosztuje</span></h2>
+      <div class="cta__akcje">
+        <a href="/zajecia/" class="przycisk">Sprawdź grafik</a>
+        {ustawienia.telefon && (
+          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {ustawienia.telefon}
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .intro__siatka {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  @media (max-width: 860px) { .intro__siatka { grid-template-columns: 1fr; } }
+  .intro__tekst { color: var(--tekst-2); font-size: 1.0625rem; }
+  .intro__tekst .przycisk { margin-top: 0.75rem; }
+
+  .zajecia-blok { background: var(--tlo-2); border-block: 1px solid var(--linia); }
+  .zajecia-blok__stopka {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+  .zajecia-blok__stopka p { margin: 0; color: var(--tekst-2); max-width: 46ch; }
+
+  .wydarzenie__siatka {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .wydarzenie__siatka { grid-template-columns: 1fr; } }
+  .wydarzenie__foto { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--linia); }
+  .wydarzenie__foto :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .wydarzenie__zastepnik {
+    width: 100%; height: 100%;
+    background: radial-gradient(70% 70% at 40% 30%, rgba(224, 138, 43, 0.18), transparent 70%), var(--tlo-3);
+  }
+  .wydarzenie__data {
+    font-family: var(--font-display);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    color: var(--akcent);
+  }
+  .wydarzenie__zajawka { color: var(--tekst-2); max-width: 50ch; }
+
+  .naglowek-listy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .naglowek-listy h2 { margin: 0; }
+
+  .siatka-kart {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .pasek {
+    display: flex;
+    gap: 1px;
+    overflow-x: auto;
+    padding-top: 2rem;
+    scrollbar-width: none;
+  }
+  .pasek::-webkit-scrollbar { display: none; }
+  .pasek :global(.pasek__foto) {
+    flex: none;
+    width: 320px;
+    height: 240px;
+    object-fit: cover;
+    filter: grayscale(0.4);
+    transition: filter 0.3s ease;
+  }
+  .pasek :global(.pasek__foto:hover) { filter: grayscale(0); }
+
+  .cta {
+    padding-block: clamp(4rem, 10vw, 7rem);
+    background:
+      radial-gradient(80% 120% at 80% 20%, rgba(224, 138, 43, 0.16), transparent 65%),
+      var(--tlo-2);
+    border-top: 1px solid var(--linia);
+  }
+  .cta__wnetrze {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .cta h2 { margin: 0; }
+  .cta h2 span { color: var(--akcent); }
+  .cta__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+</style>

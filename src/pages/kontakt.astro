@@ -1,0 +1,103 @@
+---
+import { getEntry, render } from 'astro:content';
+import Baza from '../layouts/Baza.astro';
+import NaglowekStrony from '../components/NaglowekStrony.astro';
+import ustawienia from '../data/ustawienia.json';
+
+const strona = await getEntry('strony', 'kontakt');
+const Tresc = strona ? (await render(strona)).Content : null;
+
+const telHref = ustawienia.telefon ? `tel:+48${ustawienia.telefon.replace(/\s/g, '')}` : null;
+const social = [
+  { href: ustawienia.facebook, tekst: 'Facebook' },
+  { href: ustawienia.instagram, tekst: 'Instagram' },
+  { href: ustawienia.youtube, tekst: 'YouTube' },
+].filter((s) => s.href);
+---
+
+<Baza tytul="Kontakt" opis="Zadzwoń albo napisz — odpowiemy i powiemy, kiedy przyjść na pierwszy trening.">
+  <NaglowekStrony
+    nadtytul="Odezwij się"
+    tytul="Kontakt"
+    opis="Najszybciej złapiesz nas telefonicznie. Możesz też po prostu przyjść na trening — nie trzeba się zapowiadać."
+  />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener siatka">
+      <div class="dane">
+        {telHref && (
+          <div class="pozycja">
+            <p class="pozycja__etykieta">Telefon</p>
+            <a href={telHref} class="pozycja__wartosc pozycja__wartosc--duza">{ustawienia.telefon}</a>
+          </div>
+        )}
+
+        {ustawienia.email && (
+          <div class="pozycja">
+            <p class="pozycja__etykieta">E-mail</p>
+            <a href={`mailto:${ustawienia.email}`} class="pozycja__wartosc">{ustawienia.email}</a>
+          </div>
+        )}
+
+        {ustawienia.adres && (
+          <div class="pozycja">
+            <p class="pozycja__etykieta">Gdzie trenujemy</p>
+            <p class="pozycja__wartosc">{ustawienia.adres}</p>
+          </div>
+        )}
+
+        {social.length > 0 && (
+          <div class="pozycja">
+            <p class="pozycja__etykieta">Social media</p>
+            <div class="social">
+              {social.map((s) => (
+                <a href={s.href} class="pozycja__wartosc" target="_blank" rel="noopener noreferrer">{s.tekst}</a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <a href="/zajecia/" class="przycisk">Zobacz grafik zajęć</a>
+      </div>
+
+      <div class="tresc">
+        {Tresc && <div class="proza"><Tresc /></div>}
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .siatka {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 800px) { .siatka { grid-template-columns: 1fr; } }
+
+  .pozycja { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--linia); }
+  .pozycja__etykieta {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--tekst-3);
+    margin: 0 0 0.5rem;
+  }
+  .pozycja__wartosc {
+    font-size: 1.125rem;
+    color: var(--tekst);
+    text-decoration: none;
+    margin: 0;
+    display: block;
+  }
+  a.pozycja__wartosc:hover { color: var(--akcent); }
+  .pozycja__wartosc--duza {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    letter-spacing: 0.02em;
+  }
+  .social { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .social .pozycja__wartosc { display: inline-block; }
+</style>

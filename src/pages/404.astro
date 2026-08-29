@@ -1,0 +1,23 @@
+---
+import Baza from '../layouts/Baza.astro';
+---
+
+<Baza tytul="Nie ma takiej strony">
+  <section class="sekcja blad">
+    <div class="kontener">
+      <p class="nadtytul">Błąd 404</p>
+      <h1>Ta strona<br />uciekła z rody</h1>
+      <p class="blad__opis">Nie znaleźliśmy tego, czego szukasz. Wróć na stronę główną albo sprawdź grafik zajęć.</p>
+      <div class="blad__akcje">
+        <a href="/" class="przycisk">Strona główna</a>
+        <a href="/zajecia/" class="przycisk przycisk--obrys">Grafik zajęć</a>
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .blad { padding-top: clamp(9rem, 18vw, 14rem); min-height: 70svh; }
+  .blad__opis { color: var(--tekst-2); max-width: 46ch; }
+  .blad__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2rem; }
+</style>

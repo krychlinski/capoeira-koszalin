@@ -1,0 +1,148 @@
+---
+import ustawienia from '../data/ustawienia.json';
+
+const { pathname } = Astro.url;
+const linki = [
+  { href: '/zajecia/', tekst: 'Zajęcia' },
+  { href: '/instruktorzy/', tekst: 'Instruktorzy' },
+  { href: '/wydarzenia/', tekst: 'Wydarzenia' },
+  { href: '/aktualnosci/', tekst: 'Aktualności' },
+  { href: '/galeria/', tekst: 'Galeria' },
+  { href: '/o-nas/', tekst: 'O nas' },
+];
+const aktywny = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
+---
+
+<header class="nawigacja" data-nawigacja>
+  <div class="nawigacja__wnetrze kontener">
+    <a class="marka" href="/">
+      <span class="marka__nazwa">Capoeira</span>
+      <span class="marka__miasto">Koszalin</span>
+    </a>
+
+    <button class="hamburger" aria-label="Menu" aria-expanded="false" data-hamburger>
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="menu" data-menu>
+      {linki.map((l) => (
+        <a href={l.href} class:list={['menu__link', { 'menu__link--aktywny': aktywny(l.href) }]}>
+          {l.tekst}
+        </a>
+      ))}
+      <a href="/kontakt/" class="przycisk przycisk--maly">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nawigacja {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .nawigacja[data-przyklejona] {
+    background: rgba(11, 11, 12, 0.88);
+    backdrop-filter: blur(14px);
+    border-bottom-color: var(--linia);
+  }
+  .nawigacja__wnetrze {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    min-height: 76px;
+  }
+
+  .marka {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    text-decoration: none;
+    line-height: 1;
+    display: grid;
+  }
+  .marka__nazwa { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
+  .marka__miasto {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.42em;
+    color: var(--akcent);
+  }
+
+  .menu { display: flex; align-items: center; gap: 1.75rem; }
+  .menu__link {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tekst-2);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .menu__link:hover { color: var(--tekst); }
+  .menu__link--aktywny { color: var(--akcent); }
+
+  .przycisk--maly { padding: 0.6rem 1.25rem; font-size: 0.8125rem; }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--tekst);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .hamburger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .hamburger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 900px) {
+    .hamburger { display: flex; }
+    .menu {
+      position: fixed;
+      inset: 76px 0 auto;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      background: rgba(11, 11, 12, 0.97);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--linia);
+      padding: 1rem var(--gutter) 2rem;
+      display: none;
+    }
+    .menu[data-otwarte] { display: flex; }
+    .menu__link { font-size: 1.5rem; padding: 0.7rem 0; letter-spacing: 0.06em; }
+    .przycisk--maly { margin-top: 1rem; }
+  }
+</style>
+
+<script>
+  const naglowek = document.querySelector('[data-nawigacja]');
+  const menu = document.querySelector('[data-menu]');
+  const hamburger = document.querySelector('[data-hamburger]');
+
+  const przyklej = () => {
+    if (window.scrollY > 24) naglowek?.setAttribute('data-przyklejona', '');
+    else naglowek?.removeAttribute('data-przyklejona');
+  };
+  przyklej();
+  window.addEventListener('scroll', przyklej, { passive: true });
+
+  hamburger?.addEventListener('click', () => {
+    const otwarte = menu?.hasAttribute('data-otwarte');
+    if (otwarte) menu?.removeAttribute('data-otwarte');
+    else menu?.setAttribute('data-otwarte', '');
+    hamburger.setAttribute('aria-expanded', String(!otwarte));
+  });
+</script>

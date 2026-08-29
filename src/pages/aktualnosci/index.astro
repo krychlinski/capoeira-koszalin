@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import Baza from '../../layouts/Baza.astro';
+import NaglowekStrony from '../../components/NaglowekStrony.astro';
+import KartaWpisu from '../../components/KartaWpisu.astro';
+import { dataPl } from '../../lib/format';
+
+const wpisy = (await getCollection('aktualnosci'))
+  .filter((a) => a.data.opublikowany)
+  .sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
+---
+
+<Baza tytul="Aktualności" opis="Co się dzieje w Akademii Capoeira Koszalin.">
+  <NaglowekStrony nadtytul="Z życia grupy" tytul="Aktualności" />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      {wpisy.length === 0 ? (
+        <p class="pusto">Nie ma jeszcze żadnych wpisów.</p>
+      ) : (
+        <div class="siatka-kart">
+          {wpisy.map((a) => (
+            <KartaWpisu
+              href={`/aktualnosci/${a.id}/`}
+              tytul={a.data.tytul}
+              meta={dataPl(a.data.data)}
+              zajawka={a.data.zajawka}
+              zdjecie={a.data.zdjecie}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .siatka-kart { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .pusto { color: var(--tekst-3); }
+</style>

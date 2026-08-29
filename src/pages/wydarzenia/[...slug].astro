@@ -1,0 +1,85 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Baza from '../../layouts/Baza.astro';
+import { obraz } from '../../lib/media';
+import { zakresDat, iso } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const wpisy = await getCollection('wydarzenia');
+  return wpisy.map((wpis) => ({ params: { slug: wpis.id }, props: { wpis } }));
+}
+
+const { wpis } = Astro.props;
+const { Content } = await render(wpis);
+const foto = obraz(wpis.data.zdjecie);
+const minione = (wpis.data.dataDo ?? wpis.data.dataOd) < new Date();
+---
+
+<Baza tytul={wpis.data.tytul} opis={wpis.data.zajawka}>
+  <article class="wpis">
+    <header class="wpis__naglowek">
+      <div class="kontener">
+        <a href="/wydarzenia/" class="wpis__powrot">← Wydarzenia</a>
+        <p class="wpis__data">
+          <time datetime={iso(wpis.data.dataOd)}>{zakresDat(wpis.data.dataOd, wpis.data.dataDo)}</time>
+          {minione && <span class="wpis__znacznik">Za nami</span>}
+        </p>
+        <h1>{wpis.data.tytul}</h1>
+        {wpis.data.miejsce && <p class="wpis__miejsce">{wpis.data.miejsce}</p>}
+        {wpis.data.zajawka && <p class="wpis__zajawka">{wpis.data.zajawka}</p>}
+      </div>
+    </header>
+
+    {foto && (
+      <div class="kontener">
+        <Image src={foto} alt="" widths={[800, 1200, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" class="wpis__foto" />
+      </div>
+    )}
+
+    <div class="kontener wpis__tresc">
+      <div class="proza"><Content /></div>
+    </div>
+  </article>
+</Baza>
+
+<style>
+  .wpis__naglowek {
+    padding-top: clamp(8rem, 14vw, 11rem);
+    padding-bottom: 2.5rem;
+    background: radial-gradient(120% 80% at 15% 0%, rgba(224, 138, 43, 0.13), transparent 60%), var(--tlo);
+  }
+  .wpis__powrot {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--tekst-3);
+    text-decoration: none;
+    margin-bottom: 1.75rem;
+  }
+  .wpis__powrot:hover { color: var(--akcent); }
+  .wpis__data {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--akcent);
+    margin-bottom: 0.9rem;
+  }
+  .wpis__znacznik {
+    border: 1px solid var(--linia);
+    color: var(--tekst-3);
+    padding: 0.2rem 0.6rem;
+    letter-spacing: 0.12em;
+  }
+  .wpis__naglowek h1 { font-size: clamp(2.25rem, 6vw, 4.25rem); max-width: 20ch; }
+  .wpis__miejsce { color: var(--tekst-2); margin-bottom: 0.5rem; }
+  .wpis__zajawka { max-width: 58ch; color: var(--tekst-2); font-size: 1.1875rem; margin: 0; }
+  :global(.wpis__foto) { width: 100%; max-height: 32rem; object-fit: cover; border: 1px solid var(--linia); }
+  .wpis__tresc { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
+</style>

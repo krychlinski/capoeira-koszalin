@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+import Nawigacja from '../components/Nawigacja.astro';
+import Stopka from '../components/Stopka.astro';
+import ustawienia from '../data/ustawienia.json';
+
+interface Props {
+  tytul?: string;
+  opis?: string;
+  obrazOg?: string;
+}
+
+const { tytul, opis = ustawienia.opisSeo, obrazOg } = Astro.props;
+const pelnyTytul = tytul ? `${tytul} — ${ustawienia.nazwa}` : ustawienia.nazwa;
+const kanoniczny = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pelnyTytul}</title>
+    <meta name="description" content={opis} />
+    <link rel="canonical" href={kanoniczny} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0b0b0c" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={ustawienia.nazwa} />
+    <meta property="og:title" content={pelnyTytul} />
+    <meta property="og:description" content={opis} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:url" content={kanoniczny} />
+    {obrazOg && <meta property="og:image" content={new URL(obrazOg, Astro.site)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Nawigacja />
+    <main>
+      <slot />
+    </main>
+    <Stopka />
+  </body>
+</html>

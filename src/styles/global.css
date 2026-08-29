@@ -1,0 +1,153 @@
+:root {
+  --tlo: #0b0b0c;
+  --tlo-2: #131315;
+  --tlo-3: #1b1b1e;
+  --linia: #2a2a2e;
+  --tekst: #f2efe9;
+  --tekst-2: #a8a49b;
+  --tekst-3: #6f6c65;
+  --akcent: #e08a2b;
+  --akcent-jasny: #f2a648;
+  --akcent-ciemny: #8a4f12;
+
+  --font-display: 'Oswald', 'Helvetica Neue', Impact, sans-serif;
+  --font-tekst: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --szerokosc: 1180px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: var(--font-tekst);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Ziarno — jedna warstwa szumu na całej stronie, nadaje analogowy klimat. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 0.5em;
+}
+
+h1 { font-size: clamp(2.75rem, 8vw, 6rem); }
+h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+
+p { margin: 0 0 1.25em; }
+p:last-child { margin-bottom: 0; }
+
+a { color: inherit; text-decoration-color: var(--akcent-ciemny); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--akcent); }
+
+img { max-width: 100%; height: auto; display: block; }
+
+.kontener {
+  width: 100%;
+  max-width: var(--szerokosc);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sekcja { padding-block: clamp(4rem, 10vw, 8rem); }
+.sekcja--ciasna { padding-block: clamp(3rem, 7vw, 5rem); }
+
+/* Nadtytuł: mała, rozstrzelona etykieta nad nagłówkiem sekcji. */
+.nadtytul {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--akcent);
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.nadtytul::before {
+  content: '';
+  width: 2.25rem;
+  height: 1px;
+  background: var(--akcent);
+  flex: none;
+}
+
+.przycisk {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.95rem 1.9rem;
+  border: 1px solid var(--akcent);
+  background: var(--akcent);
+  color: #17110a;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.przycisk:hover { background: var(--akcent-jasny); transform: translateY(-2px); }
+
+.przycisk--obrys {
+  background: transparent;
+  color: var(--tekst);
+  border-color: var(--linia);
+}
+.przycisk--obrys:hover { background: transparent; border-color: var(--akcent); color: var(--akcent); }
+
+.przycisk--obrys:hover, .przycisk:hover { text-decoration: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Treść renderowana z Markdown (wpisy, wydarzenia, strony statyczne). */
+.proza {
+  max-width: 68ch;
+  color: var(--tekst-2);
+  font-size: 1.0625rem;
+}
+.proza h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); margin-top: 2.5em; color: var(--tekst); }
+.proza h3 { margin-top: 2em; color: var(--tekst); }
+.proza a { color: var(--akcent); }
+.proza img { margin-block: 2rem; border: 1px solid var(--linia); }
+.proza blockquote {
+  margin: 2rem 0;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--akcent);
+  font-size: 1.1875rem;
+  color: var(--tekst);
+  font-style: italic;
+}
+.proza ul, .proza ol { padding-left: 1.25rem; margin-bottom: 1.25em; }
+.proza li { margin-bottom: 0.4em; }
+.proza hr { border: 0; border-top: 1px solid var(--linia); margin-block: 2.5rem; }

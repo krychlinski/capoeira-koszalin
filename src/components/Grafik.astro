@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  zajecia: CollectionEntry<'zajecia'>[];
+}
+const { zajecia } = Astro.props;
+---
+
+{zajecia.length === 0 ? (
+  <p class="grafik__pusto">Grafik zajęć pojawi się tutaj po dodaniu grup w panelu.</p>
+) : (
+  <div class="grafik">
+    {zajecia.map((z) => (
+      <article class="grupa">
+        <header class="grupa__naglowek">
+          <h3 class="grupa__nazwa">{z.data.grupa}</h3>
+          {z.data.wiek && <p class="grupa__wiek">{z.data.wiek}</p>}
+        </header>
+
+        <ul class="terminy">
+          {z.data.terminy.map((t) => (
+            <li class="termin">
+              <span class="termin__dzien">{t.dzien}</span>
+              <span class="termin__godzina">{t.od}{t.do ? `–${t.do}` : ''}</span>
+            </li>
+          ))}
+        </ul>
+
+        {(z.data.miejsce || z.data.adres) && (
+          <p class="grupa__miejsce">
+            {z.data.miejsce}
+            {z.data.adres && <span class="grupa__adres">{z.data.adres}</span>}
+          </p>
+        )}
+      </article>
+    ))}
+  </div>
+)}
+
+<style>
+  .grafik {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--linia);
+    border: 1px solid var(--linia);
+  }
+  .grupa { background: var(--tlo-2); padding: 1.75rem; display: flex; flex-direction: column; }
+
+  .grupa__naglowek { margin-bottom: 1.25rem; }
+  .grupa__nazwa { font-size: 1.25rem; margin: 0; }
+  .grupa__wiek {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--akcent);
+    margin: 0.4rem 0 0;
+  }
+
+  .terminy { list-style: none; margin: 0 0 1.25rem; padding: 0; }
+  .termin {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--linia);
+  }
+  .termin:last-child { border-bottom: 0; }
+  .termin__dzien {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tekst-2);
+  }
+  .termin__godzina {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--tekst);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .grupa__miejsce {
+    margin: auto 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--linia);
+    font-size: 0.875rem;
+    color: var(--tekst-2);
+  }
+  .grupa__adres { display: block; color: var(--tekst-3); }
+
+  .grafik__pusto { color: var(--tekst-3); }
+</style>

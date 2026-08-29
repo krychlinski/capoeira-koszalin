@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import Baza from '../../layouts/Baza.astro';
+import NaglowekStrony from '../../components/NaglowekStrony.astro';
+import KartaWpisu from '../../components/KartaWpisu.astro';
+import { zakresDat } from '../../lib/format';
+
+const teraz = new Date();
+const wszystkie = (await getCollection('wydarzenia'));
+const nadchodzace = wszystkie
+  .filter((w) => (w.data.dataDo ?? w.data.dataOd) >= teraz)
+  .sort((a, b) => a.data.dataOd.getTime() - b.data.dataOd.getTime());
+const minione = wszystkie
+  .filter((w) => (w.data.dataDo ?? w.data.dataOd) < teraz)
+  .sort((a, b) => b.data.dataOd.getTime() - a.data.dataOd.getTime());
+
+const meta = (w: (typeof wszystkie)[number]) =>
+  [zakresDat(w.data.dataOd, w.data.dataDo), w.data.miejsce].filter(Boolean).join(' · ');
+---
+
+<Baza tytul="Wydarzenia" opis="Batizado, warsztaty i wyjazdy Akademii Capoeira Koszalin.">
+  <NaglowekStrony
+    nadtytul="Kalendarz"
+    tytul="Wydarzenia"
+    opis="Batizado, warsztaty z mistrzami, rody i wyjazdy. Wszystko, co dzieje się poza zwykłym treningiem."
+  />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      <h2 class="tytul-listy">Nadchodzące</h2>
+      {nadchodzace.length === 0 ? (
+        <p class="pusto">Nie ma zaplanowanych wydarzeń. Zajrzyj tu za jakiś czas.</p>
+      ) : (
+        <div class="siatka-kart">
+          {nadchodzace.map((w) => (
+            <KartaWpisu href={`/wydarzenia/${w.id}/`} tytul={w.data.tytul} meta={meta(w)} zajawka={w.data.zajawka} zdjecie={w.data.zdjecie} />
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  {minione.length > 0 && (
+    <section class="sekcja sekcja--ciasna minione">
+      <div class="kontener">
+        <h2 class="tytul-listy">Za nami</h2>
+        <div class="siatka-kart">
+          {minione.map((w) => (
+            <KartaWpisu href={`/wydarzenia/${w.id}/`} tytul={w.data.tytul} meta={meta(w)} zajawka={w.data.zajawka} zdjecie={w.data.zdjecie} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Baza>
+
+<style>
+  .tytul-listy { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 2rem; color: var(--tekst-2); }
+  .siatka-kart { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .minione { background: var(--tlo-2); border-top: 1px solid var(--linia); }
+  .pusto { color: var(--tekst-3); }
+</style>
