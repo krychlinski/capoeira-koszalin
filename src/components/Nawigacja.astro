@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
 import ustawienia from '../data/ustawienia.json';
 
 const { pathname } = Astro.url;
@@ -17,8 +19,11 @@ const aktywny = (href: string) => pathname === href || (href !== '/' && pathname
 <header class="nawigacja" data-nawigacja>
   <div class="nawigacja__wnetrze kontener">
     <a class="marka" href="/">
-      <span class="marka__nazwa">Capoeira</span>
-      <span class="marka__miasto">Koszalin</span>
+      <Image src={logo} alt="" class="marka__znak" widths={[44, 88]} sizes="44px" loading="eager" />
+      <span class="marka__tekst">
+        <span class="marka__nazwa">Capoeira</span>
+        <span class="marka__miasto">Koszalin</span>
+      </span>
     </a>
 
     <button class="hamburger" aria-label="Menu" aria-expanded="false" data-hamburger>
@@ -62,8 +67,16 @@ const aktywny = (href: string) => pathname === href || (href !== '/' && pathname
     text-transform: uppercase;
     text-decoration: none;
     line-height: 1;
-    display: grid;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
   }
+  .marka :global(.marka__znak) {
+    width: 38px;
+    height: auto;
+    flex: none;
+  }
+  .marka__tekst { display: grid; }
   .marka__nazwa { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
   .marka__miasto {
     font-size: 0.6875rem;

@@ -186,7 +186,7 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
   .wydarzenie__foto :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .wydarzenie__zastepnik {
     width: 100%; height: 100%;
-    background: radial-gradient(70% 70% at 40% 30%, rgba(224, 138, 43, 0.18), transparent 70%), var(--tlo-3);
+    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--akcent-rgb), 0.18), transparent 70%), var(--tlo-3);
   }
   .wydarzenie__data {
     font-family: var(--font-display);
@@ -234,7 +234,7 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
   .cta {
     padding-block: clamp(4rem, 10vw, 7rem);
     background:
-      radial-gradient(80% 120% at 80% 20%, rgba(224, 138, 43, 0.16), transparent 65%),
+      radial-gradient(80% 120% at 80% 20%, rgba(var(--akcent-rgb), 0.16), transparent 65%),
       var(--tlo-2);
     border-top: 1px solid var(--linia);
   }

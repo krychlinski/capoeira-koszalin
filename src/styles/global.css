@@ -6,9 +6,16 @@
   --tekst: #f2efe9;
   --tekst-2: #a8a49b;
   --tekst-3: #6f6c65;
-  --akcent: #e08a2b;
-  --akcent-jasny: #f2a648;
-  --akcent-ciemny: #8a4f12;
+  /* Zieleń z logo to #045c2d. Na czerni ma kontrast 2.4:1 — za mało na tekst,
+     więc akcentem jest jej rozjaśnienie w tym samym odcieniu (148°, 9.4:1).
+     Sama marka zostaje do wypełnień i obramowań. */
+  --akcent: #33cc7a;
+  --akcent-jasny: #4ad98c;
+  --akcent-ciemny: #045c2d;
+  /* Przygaszony akcent do ozdobnych numerów i podpisów: widoczny (4.9:1),
+     ale ustępujący nagłówkom. Zieleń marki jest na to za ciemna — 2.4:1. */
+  --akcent-scisz: #229155;
+  --akcent-rgb: 51, 204, 122;
 
   --font-display: 'Oswald', 'Helvetica Neue', Impact, sans-serif;
   --font-tekst: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -110,7 +117,7 @@ img { max-width: 100%; height: auto; display: block; }
   padding: 0.95rem 1.9rem;
   border: 1px solid var(--akcent);
   background: var(--akcent);
-  color: #17110a;
+  color: #06130a;
   text-decoration: none;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }

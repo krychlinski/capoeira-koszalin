@@ -61,7 +61,7 @@ const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTi
   .album:hover .album__foto :global(img) { transform: scale(1.05); filter: grayscale(0); }
   .album__zastepnik {
     width: 100%; height: 100%;
-    background: radial-gradient(70% 70% at 40% 30%, rgba(224, 138, 43, 0.16), transparent 70%), var(--tlo-3);
+    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--akcent-rgb), 0.16), transparent 70%), var(--tlo-3);
   }
   .album__opis { padding-top: 1rem; }
   .album__tytul { font-size: 1.25rem; margin: 0 0 0.35rem; }

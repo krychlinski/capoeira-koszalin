@@ -21,7 +21,7 @@ const { nadtytul, tytul, opis } = Astro.props;
     padding-bottom: clamp(2.5rem, 5vw, 4rem);
     border-bottom: 1px solid var(--linia);
     background:
-      radial-gradient(120% 80% at 15% 0%, rgba(224, 138, 43, 0.13), transparent 60%),
+      radial-gradient(120% 80% at 15% 0%, rgba(var(--akcent-rgb), 0.13), transparent 60%),
       var(--tlo);
   }
   .naglowek__opis {

@@ -19,6 +19,8 @@ Stan na 2026-08-29 (po wgraniu materiałów źródłowych).
   FAQ (14 pytań), regulamin (20 paragrafów), oferta, telefon i Instagram.
 - Menu: Zajęcia · Cennik · FAQ · Wydarzenia · Aktualności · Galeria · O nas + przycisk Kontakt.
   Instruktorzy scaleni ze stroną „O nas", regulamin w stopce.
+- **Identyfikacja przeniesiona ze starej strony:** zieleń zamiast bursztynu, oryginalne logo
+  (pandeiro w kształcie „C") w nagłówku i faviconie.
 
 ## Do zrobienia
 
@@ -55,3 +57,28 @@ Nie ma ich w materiałach źródłowych — nie wymyślaj ich:
 - Plik `Pierwsze zajęcia.odt` też jest pusty — sam tytuł.
 
 Materiały źródłowe leżą w `MATERIAŁY/` i są w `.gitignore` — nie trafiają do publicznego repo.
+
+
+## Paleta — dlaczego nie surowa zieleń z logo
+
+Zieleń logo to **#045C2D** (odczytana z pikseli pliku; wartość #275A32 widoczna w DOM starej
+strony jest zafałszowana przezroczystością). Na tle #0b0b0c ma kontrast **2,4:1** — poniżej progu
+czytelności. Stara strona używa jej na białym tle i tam działa.
+
+Dlatego paleta ma trzy poziomy, wszystkie w odcieniu 148°:
+
+| Zmienna | Wartość | Kontrast | Rola |
+|---|---|---|---|
+| `--akcent` | `#33CC7A` | 9,4:1 | napisy, przyciski, aktywne linki |
+| `--akcent-scisz` | `#229155` | 4,9:1 | ozdobne numery, „Axé!" — widoczne, ale nie konkurują |
+| `--akcent-ciemny` | `#045C2D` | 2,4:1 | wyłącznie obramowania i podkreślenia |
+
+**Nie używaj `--akcent-ciemny` do tekstu.** Dokładnie ten błąd wyszedł przy numerach 01/02/03 na
+stronie zajęć — zgasły do niewidoczności. Od tego jest `--akcent-scisz`.
+
+Kolor akcentu ma też postać `--akcent-rgb` do `rgba()` w gradientach, żeby zmiana odcienia była
+w jednym miejscu, a nie w dziewięciu plikach.
+
+Logo jest przemalowywane do koloru akcentu — w oryginalnej ciemnej zieleni byłoby na czarnym tle
+prawie niewidoczne. Źródło: `MATERIAŁY/` nie zawiera logo, oryginał pochodzi z
+`capoeira.koszalin.pl/wp-content/uploads/2021/04/Logo_Akademia_Capoeira_Koszalin_002.png` (770×804).
