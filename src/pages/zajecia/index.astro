@@ -1,14 +1,19 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import Baza from '../../layouts/Baza.astro';
 import NaglowekStrony from '../../components/NaglowekStrony.astro';
 import Grafik from '../../components/Grafik.astro';
 import ustawienia from '../../data/ustawienia.json';
 
 const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
+const oferta = await getEntry('strony', 'oferta');
+const Oferta = oferta ? (await render(oferta)).Content : null;
 ---
 
-<Baza tytul="Zajęcia" opis="Grafik treningów capoeiry w Koszalinie — grupy dziecięce, młodzieżowe i dorosłe.">
+<Baza
+  tytul="Zajęcia"
+  opis="Grafik treningów capoeiry w Koszalinie — grupy od 3 lat, młodzież, dorośli, akrobatyka i mobility."
+>
   <NaglowekStrony
     nadtytul="Grafik"
     tytul="Zajęcia"
@@ -18,8 +23,29 @@ const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
       <Grafik zajecia={zajecia} />
+      <div class="pod-grafikiem">
+        <p>Nie wiesz, do której grupy pasujesz? Zadzwoń — dobierzemy ją razem.</p>
+        <div class="pod-grafikiem__akcje">
+          <a href="/cennik/" class="przycisk przycisk--obrys">Zobacz cennik</a>
+          {ustawienia.telefon && (
+            <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk">
+              {ustawienia.telefon}
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   </section>
+
+  {Oferta && (
+    <section class="sekcja sekcja--ciasna oferta">
+      <div class="kontener">
+        <p class="nadtytul">Co robimy</p>
+        <h2>Oferta</h2>
+        <div class="proza proza--oferta"><Oferta /></div>
+      </div>
+    </section>
+  )}
 
   <section class="sekcja sekcja--ciasna pierwszy-raz">
     <div class="kontener">
@@ -29,12 +55,12 @@ const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc
         <div class="punkt">
           <span class="punkt__numer">01</span>
           <h3>Wygodne ubranie</h3>
-          <p>Dres albo legginsy i koszulka. Strój grupy kupisz dopiero, gdy zostaniesz na dłużej.</p>
+          <p>Luźny strój sportowy bez guzików, zamków i wystających elementów. Do tego butelka wody.</p>
         </div>
         <div class="punkt">
           <span class="punkt__numer">02</span>
           <h3>Bose stopy</h3>
-          <p>Capoeirę trenuje się boso. Weź wodę i coś do przewiązania włosów.</p>
+          <p>Capoeirę trenuje się boso. Weź coś do przewiązania włosów, jeśli masz długie.</p>
         </div>
         <div class="punkt">
           <span class="punkt__numer">03</span>
@@ -42,17 +68,32 @@ const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc
           <p>Nie musisz umieć akrobatyki ani znać portugalskiego. Wszystko pokazujemy od podstaw.</p>
         </div>
       </div>
-      {ustawienia.telefon && (
-        <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk">
-          Zadzwoń: {ustawienia.telefon}
-        </a>
-      )}
+      <a href="/faq/" class="przycisk przycisk--obrys">Więcej częstych pytań</a>
     </div>
   </section>
 </Baza>
 
 <style>
-  .pierwszy-raz { background: var(--tlo-2); border-top: 1px solid var(--linia); }
+  .pod-grafikiem {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+  .pod-grafikiem p { margin: 0; color: var(--tekst-2); max-width: 42ch; }
+  .pod-grafikiem__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+
+  .oferta { background: var(--tlo-2); border-block: 1px solid var(--linia); }
+  .proza--oferta { max-width: 74ch; margin-top: 2rem; }
+  .proza--oferta :global(h3) {
+    font-size: 1.125rem;
+    margin-top: 2.25rem;
+    color: var(--akcent);
+    letter-spacing: 0.04em;
+  }
+
   .punkty {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

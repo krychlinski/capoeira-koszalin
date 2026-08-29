@@ -1,0 +1,36 @@
+---
+import { getEntry, render } from 'astro:content';
+import Baza from '../layouts/Baza.astro';
+import NaglowekStrony from '../components/NaglowekStrony.astro';
+
+const strona = await getEntry('strony', 'regulamin');
+const Tresc = strona ? (await render(strona)).Content : null;
+---
+
+<Baza tytul="Regulamin" opis="Regulamin uczestnictwa w treningach Akademii Capoeira Koszalin.">
+  <NaglowekStrony nadtytul="Formalności" tytul="Regulamin" opis={strona?.data.naglowek} />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      {Tresc ? <div class="proza proza--regulamin"><Tresc /></div> : <p class="pusto">Brak treści.</p>}
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .proza--regulamin :global(h2) {
+    font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--linia);
+  }
+  .proza--regulamin :global(h3) {
+    font-size: 0.875rem;
+    letter-spacing: 0.18em;
+    color: var(--akcent);
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .proza--regulamin { font-size: 1rem; }
+  .pusto { color: var(--tekst-3); }
+</style>

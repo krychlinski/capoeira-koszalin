@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import Baza from '../layouts/Baza.astro';
+import NaglowekStrony from '../components/NaglowekStrony.astro';
+import ustawienia from '../data/ustawienia.json';
+
+const wszystkie = (await getCollection('cennik')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
+const miesieczne = wszystkie.filter((p) => p.data.kategoria === 'miesieczne');
+const dodatkowe = wszystkie.filter((p) => p.data.kategoria === 'dodatkowe');
+---
+
+<Baza tytul="Cennik" opis="Karnety i opłaty w Akademii Capoeira Koszalin. Pierwszy trening jest bezpłatny.">
+  <NaglowekStrony
+    nadtytul="Opłaty"
+    tytul="Cennik"
+    opis="Pierwszy trening zapoznawczy jest bezpłatny i do niczego nie zobowiązuje."
+  />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      <h2 class="tytul-grupy">Karnety miesięczne</h2>
+      <div class="pozycje">
+        {miesieczne.map((p) => (
+          <div class="pozycja">
+            <div class="pozycja__opis">
+              <h3 class="pozycja__nazwa">{p.data.nazwa}</h3>
+              {p.data.opis && <p class="pozycja__szczegol">{p.data.opis}</p>}
+            </div>
+            <p class="pozycja__cena">{p.data.cena}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="uwaga">
+        Wszystkie opłaty miesięczne są płatne z góry, do 10. dnia miesiąca.
+      </p>
+
+      <h2 class="tytul-grupy tytul-grupy--drugi">Opłaty dodatkowe</h2>
+      <div class="pozycje">
+        {dodatkowe.map((p) => (
+          <div class="pozycja">
+            <div class="pozycja__opis">
+              <h3 class="pozycja__nazwa">{p.data.nazwa}</h3>
+              {p.data.opis && <p class="pozycja__szczegol">{p.data.opis}</p>}
+            </div>
+            <p class="pozycja__cena">{p.data.cena}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sekcja sekcja--ciasna zacheta">
+    <div class="kontener zacheta__wnetrze">
+      <div>
+        <p class="nadtytul">Zanim zapłacisz</p>
+        <h2>Przyjdź najpierw<br /><span>na darmowy trening</span></h2>
+      </div>
+      <div class="zacheta__akcje">
+        <a href="/zajecia/" class="przycisk">Sprawdź grafik</a>
+        {ustawienia.telefon && (
+          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {ustawienia.telefon}
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .tytul-grupy { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 1.75rem; color: var(--tekst-2); }
+  .tytul-grupy--drugi { margin-top: 4rem; }
+
+  .pozycje { border-top: 1px solid var(--linia); }
+  .pozycja {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--linia);
+  }
+  .pozycja__opis { flex: 1; }
+  .pozycja__nazwa { font-size: 1.125rem; margin: 0 0 0.25rem; }
+  .pozycja__szczegol { color: var(--tekst-3); font-size: 0.9375rem; margin: 0; }
+  .pozycja__cena {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 3vw, 1.875rem);
+    font-weight: 600;
+    color: var(--akcent);
+    white-space: nowrap;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .uwaga {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border-left: 2px solid var(--akcent);
+    background: var(--tlo-2);
+    color: var(--tekst-2);
+    font-size: 0.9375rem;
+  }
+
+  .zacheta__wnetrze {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .zacheta__wnetrze h2 { margin: 0; }
+  .zacheta__wnetrze h2 span { color: var(--akcent); }
+  .zacheta__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+</style>

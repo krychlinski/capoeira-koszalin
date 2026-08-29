@@ -76,7 +76,7 @@ content:
         type: string
         required: true
         description: Np. „Dzieci” albo „Młodzież i dorośli”.
-      - { name: wiek, label: Wiek, type: string, description: 'Np. „7–12 lat”.' }
+      - { name: podtytul, label: Podtytuł, type: string, description: 'Wiek lub czas trwania, np. „od 14 lat · 90 minut”.' }
       - name: terminy
         label: Terminy
         type: object
@@ -156,6 +156,68 @@ content:
     label: Strona „Kontakt”
     type: file
     path: src/content/strony/kontakt.md
+    format: yaml-frontmatter
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - { name: naglowek, label: Nagłówek, type: text }
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: body, label: Treść, type: rich-text }
+
+  - name: cennik
+    label: Cennik
+    type: collection
+    path: src/content/cennik
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      primary: nazwa
+      sort: [kolejnosc, nazwa]
+      order: asc
+      fields: [nazwa, cena, kategoria]
+    fields:
+      - { name: nazwa, label: Nazwa, type: string, required: true }
+      - { name: cena, label: Cena, type: string, required: true, description: 'Np. „200 zł” albo „od 150 zł”.' }
+      - { name: opis, label: Opis, type: text }
+      - name: kategoria
+        label: Kategoria
+        type: select
+        options:
+          values:
+            - { name: miesieczne, label: Karnet miesięczny }
+            - { name: dodatkowe, label: Opłata dodatkowa }
+      - { name: kolejnosc, label: Kolejność, type: number, default: 1 }
+
+  - name: faq
+    label: Częste pytania
+    type: collection
+    path: src/content/faq
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      primary: pytanie
+      sort: [kolejnosc, pytanie]
+      order: asc
+      fields: [pytanie, kolejnosc]
+    fields:
+      - { name: pytanie, label: Pytanie, type: string, required: true }
+      - { name: kolejnosc, label: Kolejność, type: number, default: 1 }
+      - { name: body, label: Odpowiedź, type: rich-text }
+
+  - name: strona-oferta
+    label: Strona „Oferta”
+    type: file
+    path: src/content/strony/oferta.md
+    format: yaml-frontmatter
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - { name: naglowek, label: Nagłówek, type: text }
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: body, label: Treść, type: rich-text }
+
+  - name: strona-regulamin
+    label: Strona „Regulamin”
+    type: file
+    path: src/content/strony/regulamin.md
     format: yaml-frontmatter
     fields:
       - { name: tytul, label: Tytuł, type: string, required: true }

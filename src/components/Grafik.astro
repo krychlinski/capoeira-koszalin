@@ -15,7 +15,7 @@ const { zajecia } = Astro.props;
       <article class="grupa">
         <header class="grupa__naglowek">
           <h3 class="grupa__nazwa">{z.data.grupa}</h3>
-          {z.data.wiek && <p class="grupa__wiek">{z.data.wiek}</p>}
+          {z.data.podtytul && <p class="grupa__podtytul">{z.data.podtytul}</p>}
         </header>
 
         <ul class="terminy">
@@ -50,7 +50,7 @@ const { zajecia } = Astro.props;
 
   .grupa__naglowek { margin-bottom: 1.25rem; }
   .grupa__nazwa { font-size: 1.25rem; margin: 0; }
-  .grupa__wiek {
+  .grupa__podtytul {
     font-family: var(--font-display);
     font-size: 0.75rem;
     letter-spacing: 0.2em;

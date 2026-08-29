@@ -39,7 +39,7 @@ const zajecia = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/zajecia' }),
   schema: z.object({
     grupa: z.string(),
-    wiek: z.string().optional(),
+    podtytul: z.string().optional(),
     miejsce: z.string().optional(),
     adres: z.string().optional(),
     terminy: z
@@ -74,4 +74,23 @@ const strony = defineCollection({
   }),
 });
 
-export const collections = { aktualnosci, wydarzenia, instruktorzy, zajecia, galeria, strony };
+const cennik = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/cennik' }),
+  schema: z.object({
+    nazwa: z.string(),
+    cena: z.string(),
+    opis: z.string().optional(),
+    kategoria: z.enum(['miesieczne', 'dodatkowe']).default('miesieczne'),
+    kolejnosc: z.number().default(0),
+  }),
+});
+
+const faq = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/faq' }),
+  schema: z.object({
+    pytanie: z.string(),
+    kolejnosc: z.number().default(0),
+  }),
+});
+
+export const collections = { aktualnosci, wydarzenia, instruktorzy, zajecia, galeria, strony, cennik, faq };

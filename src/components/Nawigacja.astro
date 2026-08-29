@@ -4,7 +4,8 @@ import ustawienia from '../data/ustawienia.json';
 const { pathname } = Astro.url;
 const linki = [
   { href: '/zajecia/', tekst: 'Zajęcia' },
-  { href: '/instruktorzy/', tekst: 'Instruktorzy' },
+  { href: '/cennik/', tekst: 'Cennik' },
+  { href: '/faq/', tekst: 'FAQ' },
   { href: '/wydarzenia/', tekst: 'Wydarzenia' },
   { href: '/aktualnosci/', tekst: 'Aktualności' },
   { href: '/galeria/', tekst: 'Galeria' },
@@ -71,7 +72,7 @@ const aktywny = (href: string) => pathname === href || (href !== '/' && pathname
     color: var(--akcent);
   }
 
-  .menu { display: flex; align-items: center; gap: 1.75rem; }
+  .menu { display: flex; align-items: center; gap: 1.35rem; }
   .menu__link {
     font-family: var(--font-display);
     font-size: 0.8125rem;

@@ -1,0 +1,92 @@
+---
+import { getCollection, render } from 'astro:content';
+import Baza from '../layouts/Baza.astro';
+import NaglowekStrony from '../components/NaglowekStrony.astro';
+
+const pytania = (await getCollection('faq')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
+const zOdpowiedziami = await Promise.all(
+  pytania.map(async (p) => ({ wpis: p, Odpowiedz: (await render(p)).Content }))
+);
+---
+
+<Baza
+  tytul="Częste pytania"
+  opis="Co zabrać na trening, czy trzeba być sprawnym, od jakiego wieku, jak się zapisać — odpowiedzi na najczęstsze pytania."
+>
+  <NaglowekStrony
+    nadtytul="Zanim przyjdziesz"
+    tytul="Częste pytania"
+    opis="Jeśli czegoś tu brakuje, zadzwoń — chętnie odpowiemy."
+  />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      <div class="lista">
+        {zOdpowiedziami.map(({ wpis, Odpowiedz }, i) => (
+          <details class="pytanie" open={i === 0}>
+            <summary class="pytanie__naglowek">
+              <span class="pytanie__numer">{String(i + 1).padStart(2, '0')}</span>
+              <span class="pytanie__tresc">{wpis.data.pytanie}</span>
+              <span class="pytanie__znak" aria-hidden="true"></span>
+            </summary>
+            <div class="pytanie__odpowiedz proza"><Odpowiedz /></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .lista { border-top: 1px solid var(--linia); }
+  .pytanie { border-bottom: 1px solid var(--linia); }
+
+  .pytanie__naglowek {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.35rem 0;
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.2s ease;
+  }
+  .pytanie__naglowek::-webkit-details-marker { display: none; }
+  .pytanie__naglowek:hover { color: var(--akcent); }
+
+  .pytanie__numer {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.1em;
+    color: var(--akcent-ciemny);
+    flex: none;
+  }
+  .pytanie__tresc {
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .pytanie__znak {
+    flex: none;
+    position: relative;
+    width: 14px;
+    height: 14px;
+  }
+  .pytanie__znak::before,
+  .pytanie__znak::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1.5px;
+    background: var(--akcent);
+    transition: transform 0.25s ease;
+  }
+  .pytanie__znak::after { transform: rotate(90deg); }
+  .pytanie[open] .pytanie__znak::after { transform: rotate(0deg); }
+
+  .pytanie__odpowiedz { padding: 0 0 1.6rem calc(0.8125rem + 1.25rem); max-width: 70ch; }
+  @media (max-width: 600px) { .pytanie__odpowiedz { padding-left: 0; } }
+</style>

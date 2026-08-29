@@ -1,14 +1,17 @@
 ---
 grupa: "Młodzież i dorośli"
-wiek: "od 13 lat"
-miejsce: "DO UZUPEŁNIENIA — nazwa sali"
-adres: "DO UZUPEŁNIENIA — ulica, Koszalin"
+podtytul: "od 14 lat · 90 minut"
+miejsce: ""
+adres: ""
 terminy:
-  - dzien: "Poniedziałek"
-    od: "18:15"
-    do: "19:45"
+  - dzien: "Wtorek"
+    od: "20:00"
+    do: "21:30"
   - dzien: "Środa"
-    od: "18:15"
-    do: "19:45"
-kolejnosc: 2
+    od: "18:30"
+    do: "20:00"
+  - dzien: "Piątek"
+    od: "20:00"
+    do: "21:30"
+kolejnosc: 4
 ---
