@@ -1,30 +1,32 @@
 ---
 tytul: "O nas"
-naglowek: "Akademia Capoeira Koszalin działa w ramach grupy Unicar Capoeira."
+naglowek: "Jesteśmy częścią międzynarodowej grupy União Internacional de Capoeira Regional — UNICAR."
 zdjecie: ""
 ---
 
-Capoeira to jednocześnie sztuka walki, taniec, gra i muzyka. Na treningu uczymy technik, ataków,
-obrony, przejść i elementów akrobatycznych, ale też gry na instrumentach, śpiewu i podstaw języka
-portugalskiego. Do tego rozciąganie, kondycja, siła i skoczność.
+UNICAR powstała w 2003 roku. Naszymi bezpośrednimi mentorami są **Mestre Sem Memória**
+oraz **Mestre Secão**.
 
-## Dla kogo
+## Nasza historia
 
-Dla wszystkich, od trzeciego roku życia w górę. Prowadzimy grupy dziecięce, grupę zaawansowaną,
-grupę młodzieży i dorosłych, a osobno akrobatykę i zajęcia mobilności.
+Na terenie Koszalina działamy **od 2004 roku**, a od 2006 współpracujemy z Koszalińskim
+Towarzystwem Krzewienia Kultury Fizycznej (KTKKF).
 
-Nie trzeba być sprawnym, żeby zacząć. W capoeirze jest wiele elementów, do których nie potrzeba
-świetnej kondycji ani warunków — każdy ćwiczy na swoim poziomie, który z czasem staje się coraz
-wyższy.
+W 2019 roku udało nam się stworzyć **Akademię Capoeira Koszalin** — miejsce, w którym można
+było poczuć atmosferę Brazylii. Organizowaliśmy tam treningi, imprezy, warsztaty, nawet
+nocowanie: było gdzie, sama sala miała ponad 300 metrów kwadratowych.
 
-## Pierwszopiątkowa roda
+Po pięciu latach, ze względu na warunki techniczne, musieliśmy zmienić salę na mniejszą —
+ugościło nas studio treningu personalnego Gymbro. W 2026 roku trafiliśmy na **ulicę
+Szymanowskiego** i tu mieści się obecna siedziba Akademii.
 
-*Roda* to krąg, w którym toczy się gra capoeiry — jest w niej wszystko, do czego przygotowujemy
-się na treningach. Mamy tradycję pierwszopiątkowej rody: w pierwszy piątek miesiąca wszystkie
-grupy, które na co dzień trenują osobno, spotykają się razem, żeby grać.
+## Co robimy
 
-## Poza salą
+Prowadzimy zajęcia capoeiry dla dzieci, młodzieży i dorosłych. Nasi najmłodsi adepci mają
+trzy lata, a górnej granicy wieku nie przewidujemy — bywały u nas osoby po siedemdziesiątce
+i dobrze się bawiły.
 
-Jeździmy na warsztaty prowadzone przez gości z kraju i zagranicy — Mestres, Professores,
-Estagiários. Organizujemy obozy szkoleniowe we współpracy z mistrzami i grupami z całej Polski.
-Występujemy też podczas festynów, festiwali i uroczystości.
+Co roku organizujemy warsztaty oraz egzaminy dla podopiecznych i zapraszamy gości z Polski
+i zagranicy: Mestres, Professores, Estagiários. Bierzemy udział w pokazach, imprezach,
+festynach i zawodach. Pracujemy również z dziećmi w koszalińskich przedszkolach i szkołach.
+Co roku nasi podopieczni wyjeżdżają na warsztaty i obozy szkoleniowe.

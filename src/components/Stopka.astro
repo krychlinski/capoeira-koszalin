@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import logoPelne from '../assets/logo-pelne.png';
 import ustawienia from '../data/ustawienia.json';
 
 const rok = new Date().getFullYear();
@@ -13,7 +15,7 @@ const telHref = ustawienia.telefon ? `tel:+48${ustawienia.telefon.replace(/\s/g,
 <footer class="stopka">
   <div class="kontener stopka__wnetrze">
     <div class="stopka__marka">
-      <p class="stopka__nazwa">{ustawienia.nazwa}</p>
+      <Image src={logoPelne} alt={ustawienia.nazwa} widths={[260, 520]} sizes="240px" loading="lazy" class="stopka__logo" />
       {ustawienia.grupa && <p class="stopka__grupa">{ustawienia.grupa}</p>}
     </div>
 
@@ -67,13 +69,11 @@ const telHref = ustawienia.telefon ? `tel:+48${ustawienia.telefon.replace(/\s/g,
     .stopka__marka { grid-column: 1 / -1; }
   }
 
-  .stopka__nazwa {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    line-height: 1.05;
-    margin: 0 0 0.35rem;
-    max-width: 12ch;
+  .stopka :global(.stopka__logo) {
+    width: 240px;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 0.85rem;
   }
   .stopka__grupa {
     font-family: var(--font-display);

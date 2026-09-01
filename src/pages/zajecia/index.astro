@@ -53,21 +53,28 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
     <div class="kontener">
       <p class="nadtytul">Przychodzisz pierwszy raz</p>
       <h2>Co zabrać</h2>
+      <p class="wstep">Pierwszy trening jest zawsze darmowy i do niczego nie zobowiązuje.</p>
       <div class="punkty">
         <div class="punkt">
           <span class="punkt__numer">01</span>
-          <h3>Wygodne ubranie</h3>
-          <p>Luźny strój sportowy bez guzików, zamków i wystających elementów. Do tego butelka wody.</p>
+          <h3>Wygodny strój</h3>
+          <p>
+            Luźny i komfortowy, nieutrudniający ruchów — bawełniana koszulka, dresy albo legginsy.
+            Bez wystających, twardych elementów: cekinów, zamków, guzików.
+          </p>
         </div>
         <div class="punkt">
           <span class="punkt__numer">02</span>
-          <h3>Bose stopy</h3>
-          <p>Capoeirę trenuje się boso. Weź coś do przewiązania włosów, jeśli masz długie.</p>
+          <h3>Butelka wody</h3>
+          <p>Ćwiczymy na boso, więc butów nie potrzebujesz. Woda i strój w zupełności wystarczą.</p>
         </div>
         <div class="punkt">
           <span class="punkt__numer">03</span>
-          <h3>Zero doświadczenia</h3>
-          <p>Nie musisz umieć akrobatyki ani znać portugalskiego. Wszystko pokazujemy od podstaw.</p>
+          <h3>Telefon do nas</h3>
+          <p>
+            Zanim przyjdziesz, możesz się z nami skontaktować — podamy szczegóły i pomożemy
+            dobrać grupę.
+          </p>
         </div>
       </div>
       <a href="/faq/" class="przycisk przycisk--obrys">Więcej częstych pytań</a>
@@ -102,6 +109,7 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
     gap: 2rem;
     margin-block: 2.5rem;
   }
+  .wstep { color: var(--tekst-2); max-width: 52ch; margin-top: -0.5rem; }
   .punkt h3 { margin-bottom: 0.5rem; }
   .punkt p { color: var(--tekst-2); font-size: 0.9375rem; margin: 0; }
   .punkt__numer {
