@@ -17,29 +17,12 @@ import ustawienia from '../data/ustawienia.json';
         <h2>Ciasteczka</h2>
         <p>
           Strona nie ustawia żadnych własnych ciasteczek. Nie mamy analityki, nie śledzimy Cię
-          i nie budujemy Twojego profilu. Dlatego nie wyskakuje tu żaden baner ze zgodami —
-          nie ma na co ich zbierać.
+          i nie budujemy Twojego profilu. Nie osadzamy tu też wtyczek Facebooka ani Instagrama —
+          odnośniki do naszych profili to zwykłe linki, które nic nie wczytują, dopóki w nie nie
+          klikniesz. Dlatego nie wyskakuje tu żaden baner ze zgodami: nie ma na co ich zbierać.
         </p>
 
-        <h3>Jeden wyjątek: wtyczka Facebooka</h3>
-        <p>
-          W zakładce <a href="/aktualnosci/">Aktualności</a> możesz wyświetlić nasze wpisy
-          z Facebooka. Ta wtyczka pochodzi od Meta Platforms i po wczytaniu ustawia własne
-          ciasteczka oraz przekazuje Meta informację, że odwiedziłeś tę stronę.
-        </p>
-        <p>
-          Dlatego <strong>nie ładuje się sama</strong>. Zamiast niej widzisz nasz własny kafelek,
-          a wtyczka wczytuje się dopiero, gdy świadomie klikniesz przycisk. Jeśli nie klikniesz,
-          nic z serwerów Meta się nie pobiera i żadne ciasteczko nie powstaje.
-        </p>
-        <p>
-          Wolisz nie ładować wtyczki? Nasz profil obejrzysz bezpośrednio
-          {ustawienia.facebook && (
-            <> na <a href={ustawienia.facebook} target="_blank" rel="noopener noreferrer">Facebooku</a></>
-          )}.
-        </p>
-
-        <h3>Drugi wyjątek: kroje pisma</h3>
+        <h3>Jedyny wyjątek: kroje pisma</h3>
         <p>
           Strona pobiera kroje pisma z serwerów Google Fonts. Nie ustawiają one ciasteczek, ale
           Google otrzymuje przy tym Twój adres IP. Da się tego uniknąć, umieszczając pliki

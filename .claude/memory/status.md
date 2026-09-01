@@ -26,6 +26,8 @@ Stan na 2026-08-29 (po wgraniu materiałów źródłowych).
 
 ## Do zrobienia
 
+0. **Odblokować automat z Facebooka** — Michał musi dodać Kacpra do fanpage'a.
+   Szczegóły: [[todo-facebook-api]]. Kod gotowy, nie wymaga już nic ode mnie.
 1. **Podpiąć repo w Netlify** — tylko właściciel, wymaga autoryzacji aplikacji GitHubowej.
    Ustawień nie trzeba wpisywać, są w `netlify.toml`.
    Cloudflare Pages odpadło: nie pozwala założyć konta młodszego niż 7 dni (stan 2026-08-29).
@@ -101,23 +103,22 @@ prawie niewidoczne. Źródło: `MATERIAŁY/` nie zawiera logo, oryginał pochodz
 `capoeira.koszalin.pl/wp-content/uploads/2021/04/Logo_Akademia_Capoeira_Koszalin_002.png` (770×804).
 
 
-## Facebook
+## Facebook — wtyczka Mety USUNIĘTA
 
-Wtyczka Meta jest wpięta na `/aktualnosci/` **za zasłoną**: dopóki nikt nie kliknie, nie ładuje
-się ani jeden skrypt czy iframe Meta, więc strona nie potrzebuje baneru zgody na ciasteczka.
+Wtyczka Page Plugin była wpięta za zasłoną, ale **została wyrzucona na wyraźną prośbę
+właściciela**. Nie przywracaj jej. Powody, wszystkie sprawdzone empirycznie:
 
-Ograniczenia wtyczki, sprawdzone empirycznie — nie zgadywane:
-- **Nie ma trybu ciemnego.** `colorscheme=dark` jest ignorowany. Wnętrze jest cross-origin,
-  więc nie da się go ostylować. Obeszliśmy to ciemną ramką wokół; inwersja filtrem odpada,
-  bo wywróciłaby zdjęcia w negatyw.
-- Właściciel zgłaszał zapętlone przewijanie. Prawdopodobna przyczyna: `scrolling="no"`
-  i za niski kadr — poprawione na 900 px z odblokowanym przewijaniem.
-- Meta wygasza social plugins (data 10.02.2026 w dokumentacji, „graceful degradation to
-  invisible elements"). Feed może kiedyś zniknąć — zasłona zostanie i nadal będzie sensowna.
+- **Nie ma trybu ciemnego.** `colorscheme=dark` jest ignorowany, wnętrze jest cross-origin,
+  więc nie da się go ostylować. Inwersja filtrem odpada — wywróciłaby zdjęcia w negatyw.
+- **Renderuje najwyżej 5 postów**, nawet w kadrze 3000 px. Przewijanie odbija się od końca
+  tej krótkiej listy i sprawia wrażenie zapętlenia. Nie da się tego naprawić konfiguracją.
+- Meta wygasza social plugins (data 10.02.2026 w dokumentacji).
 
-Automatyczny import postów do Aktualności **odrzucony**: Graph API wymaga App Review Mety dla
-`pages_read_engagement`, do tego cyklicznego builda, a zaciągałby surowy tekst z emoji.
-Aktualności piszemy ręcznie, rzadko.
+W zamian powstała **własna wtyczka** czytająca Graph API — patrz [[todo-facebook-api]].
+
+**Skutek uboczny, który trzeba pilnować:** strona nie ładuje teraz absolutnie niczego z serwerów
+Mety. Strona `/prywatnosc/` opisuje ten stan wprost. Gdyby ktoś kiedyś osadził wtyczkę FB, IG
+albo YouTube, **trzeba równocześnie poprawić tamten tekst**, bo inaczej strona zacznie kłamać.
 
 Strona `/prywatnosc/` opisuje stan faktyczny: brak własnych ciasteczek, wtyczka tylko po
 kliknięciu, oraz **Google Fonts** — nie ustawiają ciasteczek, ale Google dostaje IP odwiedzającego.
