@@ -32,19 +32,15 @@ Mety. Awaria Facebooka nigdy nie wywala builda.
 - Token użytkownika Kacpra działa i jest długożyciowy (60 dni). Meta wydaje takie od razu,
   więc **krok „Extend Access Token" w debuggerze nie istnieje** — nie szukaj go.
 
-## BLOKADA
+## BLOKADA — ZDJĘTA 2026-09-02
 
-`me/accounts` zwraca pustą tablicę. Okno zgody mówi wprost: **„Nie masz żadnych zasobów typu
-Strony"**. Konto Kacpra (`Kacper Mafiozo Rychliński`) **nie ma żadnej roli na fanpage'u
-Akademii**. To nie usterka — Meta wymaga formalnej roli przypisanej w ustawieniach strony.
+Przez pewien czas `me/accounts` zwracało pustą tablicę, bo konto Kacpra nie miało roli na
+fanpage'u — Meta wymaga formalnej roli przypisanej w ustawieniach strony, samo bycie
+instruktorem nie wystarcza. Michał nadał uprawnienia i token strony został wygenerowany.
 
-**Odblokowanie:** Michał (prowadzący) dodaje Kacpra na stronie w
-`Ustawienia → Dostęp do strony → Osoby z dostępem do Facebooka`. Wystarczy częściowa kontrola
-z uprawnieniem do treści. Potem Kacper powtarza `Generate Access Token` w Explorerze i Akademia
-pojawi się na liście.
-
-Plan B: Michał zostaje dodany w `App roles` jako Tester/Developer i generuje token u siebie.
-Gorszy — token wisi wtedy na jego koncie i umrze, gdy straci rolę.
+`FB_TOKEN` jest w Netlify jako **zmienna oznaczona jako sekret** — nie da się jej odczytać
+w panelu. Gdyby kiedyś przestała działać, trzeba wygenerować token od nowa w Graph API
+Explorerze, a nie szukać starego.
 
 ## Gdy token już będzie
 

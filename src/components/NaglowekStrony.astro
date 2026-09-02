@@ -25,9 +25,13 @@ const { nadtytul, tytul, opis } = Astro.props;
       var(--tlo);
   }
   .naglowek__opis {
-    max-width: 58ch;
+    /* 58ch łamało krótkie wprowadzenia o kilkadziesiąt pikseli, zostawiając
+       pustą połowę kontenera. 68 znaków mieści się w czytelnym zakresie 45-75,
+       a dłuższe teksty i tak zawijają się na sensownej szerokości. */
+    max-width: 68ch;
     color: var(--tekst-2);
     font-size: 1.125rem;
     margin: 0;
+    text-wrap: pretty;
   }
 </style>
