@@ -1,18 +1,26 @@
 ---
+import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import logo from '../assets/logo-pelne.png';
 import ustawienia from '../data/ustawienia.json';
 
 const { pathname } = Astro.url;
+
+// Puste działy chowamy z menu i wracają same, gdy ktoś doda pierwszy wpis
+// w panelu. Dzięki temu nikt nie musi pamiętać o odkryciu ich z powrotem.
+const maGalerie = (await getCollection('galeria')).length > 0;
+const maWydarzenia = (await getCollection('wydarzenia')).length > 0;
+
 const linki = [
-  { href: '/zajecia/', tekst: 'Zajęcia' },
-  { href: '/cennik/', tekst: 'Cennik' },
-  { href: '/faq/', tekst: 'FAQ' },
-  { href: '/wydarzenia/', tekst: 'Wydarzenia' },
-  { href: '/aktualnosci/', tekst: 'Aktualności' },
-  { href: '/galeria/', tekst: 'Galeria' },
-  { href: '/o-nas/', tekst: 'O nas' },
-];
+  { href: '/zajecia/', tekst: 'Zajęcia', widoczny: true },
+  { href: '/cennik/', tekst: 'Cennik', widoczny: true },
+  { href: '/faq/', tekst: 'FAQ', widoczny: true },
+  { href: '/wydarzenia/', tekst: 'Wydarzenia', widoczny: maWydarzenia },
+  { href: '/aktualnosci/', tekst: 'Aktualności', widoczny: true },
+  { href: '/galeria/', tekst: 'Galeria', widoczny: maGalerie },
+  { href: '/o-nas/', tekst: 'O nas', widoczny: true },
+  { href: '/kontakt/', tekst: 'Kontakt', widoczny: true },
+].filter((l) => l.widoczny);
 const aktywny = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
 ---
 
@@ -39,7 +47,6 @@ const aktywny = (href: string) => pathname === href || (href !== '/' && pathname
           {l.tekst}
         </a>
       ))}
-      <a href="/kontakt/" class="przycisk przycisk--maly">Kontakt</a>
     </nav>
   </div>
 </header>
@@ -89,7 +96,6 @@ const aktywny = (href: string) => pathname === href || (href !== '/' && pathname
   .menu__link:hover { color: var(--tekst); }
   .menu__link--aktywny { color: var(--akcent); }
 
-  .przycisk--maly { padding: 0.6rem 1.25rem; font-size: 0.8125rem; }
 
   .hamburger {
     display: none;
@@ -127,7 +133,6 @@ const aktywny = (href: string) => pathname === href || (href !== '/' && pathname
     }
     .menu[data-otwarte] { display: flex; }
     .menu__link { font-size: 1.5rem; padding: 0.7rem 0; letter-spacing: 0.06em; }
-    .przycisk--maly { margin-top: 1rem; }
   }
 </style>
 

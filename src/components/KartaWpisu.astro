@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { obraz } from '../lib/media';
+import { ileZdjec } from '../lib/format';
 
 interface Props {
   href: string;
@@ -8,19 +9,26 @@ interface Props {
   meta?: string;
   zajawka?: string;
   zdjecie?: string;
+  /** Zdjęcie leżące już w public/ — omija optymalizator, bo pobiera je integracja. */
+  zdjecieUrl?: string;
+  /** Ile zdjęć ma wpis — pokazujemy licznik na kaflu przy albumie. */
+  liczbaZdjec?: number;
 }
-const { href, tytul, meta, zajawka, zdjecie } = Astro.props;
+const { href, tytul, meta, zajawka, zdjecie, zdjecieUrl, liczbaZdjec = 0 } = Astro.props;
 const foto = obraz(zdjecie);
 ---
 
 <a class="karta" href={href}>
-  <div class="karta__foto">
-    {foto ? (
-      <Image src={foto} alt="" widths={[400, 800]} sizes="(max-width: 700px) 100vw, 380px" loading="lazy" />
-    ) : (
-      <div class="karta__zastepnik" aria-hidden="true"></div>
-    )}
-  </div>
+  {(foto || zdjecieUrl) && (
+    <div class="karta__foto">
+      {foto ? (
+        <Image src={foto} alt="" widths={[400, 800]} sizes="(max-width: 700px) 100vw, 380px" loading="lazy" />
+      ) : (
+        <img src={zdjecieUrl} alt="" loading="lazy" decoding="async" />
+      )}
+      {liczbaZdjec > 1 && <span class="karta__licznik">{ileZdjec(liczbaZdjec)}</span>}
+    </div>
+  )}
   <div class="karta__tresc">
     {meta && <p class="karta__meta">{meta}</p>}
     <h3 class="karta__tytul">{tytul}</h3>
@@ -40,7 +48,19 @@ const foto = obraz(zdjecie);
   }
   .karta:hover { border-color: var(--akcent-ciemny); transform: translateY(-4px); }
 
-  .karta__foto { aspect-ratio: 3 / 2; overflow: hidden; background: var(--tlo-3); }
+  .karta__foto { aspect-ratio: 3 / 2; overflow: hidden; background: var(--tlo-3); position: relative; }
+  .karta__licznik {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    background: rgba(11, 11, 12, 0.82);
+    color: var(--tekst);
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+  }
   .karta__foto :global(img) {
     width: 100%;
     height: 100%;

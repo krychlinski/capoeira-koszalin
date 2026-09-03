@@ -56,7 +56,12 @@ body::after {
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   font-weight: 700;
-  line-height: 0.95;
+  /* Zmierzone w Oswaldzie: ogonek Ę schodzi 0.26 em pod linię pisma, a wersalik
+     ma 0.81 em wysokości — dwa wiersze potrzebują więc 1.07 em, żeby się nie
+     zetknąć. Przy 1.2 zostawało 0.13 em i wizualnie się sklejało. 1.35 daje
+     0.28 em realnego prześwitu.
+     Hero ma własną, ciaśniejszą wartość: tekst jest tam stały i bez ogonków. */
+  line-height: 1.35;
   letter-spacing: -0.01em;
   text-transform: uppercase;
   margin: 0 0 0.5em;

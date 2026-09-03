@@ -1,11 +1,31 @@
 ---
 name: todo-facebook-api
-description: Automatyczne pobieranie postów z FB — kod gotowy, zablokowane brakiem roli na stronie
+description: Automatyczne pobieranie postów z Facebooka — DZIAŁA na produkcji od 2026-09-02
 metadata:
   type: project
 ---
 
-Stan na 2026-09-01. **Kod jest napisany i przetestowany. Brakuje wyłącznie tokenu.**
+**URUCHOMIONE 2026-09-02.** Na produkcji zaciąga się 10 postów z ostatnich 31 dni.
+
+## Pułapka, która kosztowała jeden deploy
+
+Do Netlify trafił najpierw **token użytkownika zamiast tokenu strony**. Meta odrzuca go
+komunikatem `code 190, subcode 2069032` („token dostępu użytkownika nie jest obsługiwany").
+Łatwo o to, bo po `Generate Access Token` w polu Access Token widnieje właśnie token
+użytkownika i kusi, żeby go skopiować.
+
+**Token strony bierze się z listy `User or Page` w Explorerze** — wybierasz tam
+„Akademia Capoeira Koszalin", a pole tokenu przeładowuje się na właściwy. Alternatywnie
+z odpowiedzi `me/accounts`, z bloku o tej nazwie.
+
+Przy odtwarzaniu tokenu w przyszłości: to jest ten krok, na którym się potknięto.
+
+## Potwierdzone przy okazji
+
+- Zmienne oznaczone w Netlify jako **sekret docierają do builda** — `import.meta.env.FB_TOKEN`
+  je odczytuje.
+- **Odporność na awarię zadziałała w boju:** przy złym tokenie build zakończył się sukcesem,
+  15 stron, strona żyła. Zniknęła tylko sekcja z postami, a powód wylądował w logu.
 
 ## Co jest zrobione
 

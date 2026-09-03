@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 import Baza from '../../layouts/Baza.astro';
 import NaglowekStrony from '../../components/NaglowekStrony.astro';
 import { obraz } from '../../lib/media';
-import { dataPl } from '../../lib/format';
+import { dataPl, ileZdjec } from '../../lib/format';
 
 const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
 ---
@@ -32,7 +32,7 @@ const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTi
                 <div class="album__opis">
                   <h2 class="album__tytul">{album.data.tytul}</h2>
                   <p class="album__meta">
-                    {dataPl(album.data.data)} · {album.data.zdjecia.length}&nbsp;zdjęć
+                    {dataPl(album.data.data)} · <span set:html={ileZdjec(album.data.zdjecia.length).replace(" ", "&nbsp;")} />
                   </p>
                 </div>
               </a>

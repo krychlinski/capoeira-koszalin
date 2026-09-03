@@ -26,8 +26,6 @@ Stan na 2026-08-29 (po wgraniu materiałów źródłowych).
 
 ## Do zrobienia
 
-0. **Odblokować automat z Facebooka** — Michał musi dodać Kacpra do fanpage'a.
-   Szczegóły: [[todo-facebook-api]]. Kod gotowy, nie wymaga już nic ode mnie.
 1. **Podpiąć repo w Netlify** — tylko właściciel, wymaga autoryzacji aplikacji GitHubowej.
    Ustawień nie trzeba wpisywać, są w `netlify.toml`.
    Cloudflare Pages odpadło: nie pozwala założyć konta młodszego niż 7 dni (stan 2026-08-29).
@@ -151,3 +149,35 @@ Czysty sygnet, bez liter, pochodzi z osobnego pliku ze starej strony:
 
 Oba pliki są przemalowywane skryptem: ciemna zieleń → `#72BE44`, jasna → `#A8A49B` w lockupie
 (inaczej drobne „AKADEMIA/KOSZALIN" przebijają duże „CAPOEIRA", bo krem jest jaśniejszy od zieleni).
+
+
+## Siatki: nie rysuj linii tłem kontenera
+
+Wzorzec, który **dwukrotnie** wprowadził błąd: siatka z `gap: 1px` i tłem na kontenerze,
+przez które prześwitują linie. Wygląda elegancko, ale działa tylko przy pełnej siatce —
+gdy liczba elementów nie dzieli się przez liczbę kolumn, puste komórki ostatniego rzędu
+pokazują szary prostokąt. Liczba kolumn zmienia się z szerokością ekranu, więc nie da się
+tego zagwarantować doborem liczby elementów.
+
+**Zawsze rysuj linie obramowaniami elementów:** kontener dostaje `border-top` i `border-left`,
+każdy element `border-right` i `border-bottom`. Efekt identyczny, puste komórki nic nie pokazują.
+
+Poprawione w: grafiku zajęć (`Grafik.astro`), galerii albumów (`galeria/[...slug].astro`),
+galerii pod postem z Facebooka (`aktualnosci/fb/[id].astro`).
+
+Wyjątek: `.pasek` na stronie głównej używa `gap: 1px`, ale to kontener elastyczny bez tła —
+nie ma pustych komórek ani czego prześwitywać. Zostawić.
+
+
+## build:czysty ubija warstwę treści działającego serwera
+
+`npm run build:czysty` kasuje `.astro` i `node_modules/.astro`. Jeśli w tle działa
+`npm run dev`, serwer traci warstwę treści i **od tej chwili pokazuje puste kolekcje** —
+zero pytań w FAQ, pusty cennik, brak grup w grafiku. Strona jest w porządku, zepsuty jest
+tylko podgląd.
+
+**Po każdym `build:czysty` restartuj serwer deweloperski.** Zdarzyło się to trzy razy
+i za każdym razem wyglądało jak regresja w kodzie, co kosztowało czas na diagnozę.
+
+Sprawdzian, czy to ten przypadek: porównaj liczbę elementów w `dist/` z tym, co oddaje
+`localhost`. Jeśli w `dist/` jest komplet, a na serwerze pustka — to on, nie kod.

@@ -1,0 +1,3 @@
+# Cloudflare Pages i Netlify czytają ten plik z katalogu wynikowego.
+# Podstrona instruktorów została scalona z "O nas".
+/instruktorzy/*  /o-nas/  301

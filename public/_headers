@@ -1,0 +1,10 @@
+# Nagłówki dla Cloudflare Pages i Netlify — odpowiednik sekcji [[headers]]
+# z netlify.toml, żeby przeprowadzka nie wymagała przepisywania konfiguracji.
+
+# Zasoby z hashem w nazwie nigdy nie zmieniają treści pod tym samym adresem.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

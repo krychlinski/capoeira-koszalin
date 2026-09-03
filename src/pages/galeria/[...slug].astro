@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Baza from '../../layouts/Baza.astro';
 import { obraz } from '../../lib/media';
-import { dataPl } from '../../lib/format';
+import { dataPl, ileZdjec } from '../../lib/format';
 
 export async function getStaticPaths() {
   const albumy = await getCollection('galeria');
@@ -18,7 +18,7 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
   <header class="naglowek">
     <div class="kontener">
       <a href="/galeria/" class="powrot">← Galeria</a>
-      <p class="meta">{dataPl(album.data.data)} · {zdjecia.length}&nbsp;zdjęć</p>
+      <p class="meta">{dataPl(album.data.data)} · <span set:html={ileZdjec(zdjecia.length).replace(" ", "&nbsp;")} /></p>
       <h1>{album.data.tytul}</h1>
     </div>
   </header>
@@ -35,7 +35,7 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
     </div>
   </section>
 
-  <dialog class="lightbox" data-lightbox>
+  <dialog class="lightbox" data-lightbox tabindex="-1">
     <button class="lightbox__zamknij" data-zamknij aria-label="Zamknij">×</button>
     <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-wstecz aria-label="Poprzednie">‹</button>
     <img class="lightbox__foto" data-foto alt="" />
@@ -71,16 +71,18 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
     margin-bottom: 0.9rem;
   }
 
+  /* Ta sama zasada co w grafiku zajęć: linie na kaflach, nie na tle kontenera. */
   .siatka {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1px;
-    background: var(--linia);
-    border: 1px solid var(--linia);
+    border-top: 1px solid var(--linia);
+    border-left: 1px solid var(--linia);
   }
   .kafel {
     padding: 0;
     border: 0;
+    border-right: 1px solid var(--linia);
+    border-bottom: 1px solid var(--linia);
     background: var(--tlo-3);
     cursor: zoom-in;
     aspect-ratio: 1;
@@ -94,14 +96,21 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
   .kafel:hover :global(img) { transform: scale(1.06); filter: grayscale(0); }
 
   .lightbox {
-    border: 0;
-    padding: 0;
-    background: transparent;
-    max-width: 100vw;
-    max-height: 100vh;
+    position: fixed;
+    inset: 0;
     width: 100%;
     height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
+  /* Zaznaczenie trafia na samo okno, nie na krzyżyk — inaczej po otwarciu
+     przeglądarka rysuje wokół niego swoją niebieską obwódkę. */
+  .lightbox:focus { outline: none; }
+  .lightbox button:focus-visible { outline: 2px solid var(--akcent); outline-offset: 4px; }
   .lightbox::backdrop { background: rgba(6, 6, 7, 0.94); }
   .lightbox[open] { display: flex; align-items: center; justify-content: center; }
   .lightbox__foto { max-width: 92vw; max-height: 88vh; object-fit: contain; }
@@ -141,6 +150,9 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
     kafel.addEventListener('click', () => {
       pokaz(Number(kafel.dataset.indeks));
       lightbox?.showModal();
+      // Bez tego przeglądarka zaznacza pierwszy przycisk i rysuje wokół niego
+      // swoją obwódkę. Atrybut autofocus na <dialog> nie jest respektowany wszędzie.
+      lightbox?.focus();
     });
   });
 

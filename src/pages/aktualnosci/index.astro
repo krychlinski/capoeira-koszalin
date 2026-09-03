@@ -1,14 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import Baza from '../../layouts/Baza.astro';
 import NaglowekStrony from '../../components/NaglowekStrony.astro';
 import KartaWpisu from '../../components/KartaWpisu.astro';
-import PostyFb from '../../components/PostyFb.astro';
+import { wszystkieAktualnosci } from '../../lib/aktualnosci';
 import { dataPl } from '../../lib/format';
+import ustawienia from '../../data/ustawienia.json';
 
-const wpisy = (await getCollection('aktualnosci'))
-  .filter((a) => a.data.opublikowany)
-  .sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
+const wpisy = await wszystkieAktualnosci();
 ---
 
 <Baza tytul="Aktualności" opis="Co się dzieje w Akademii Capoeira Koszalin.">
@@ -17,32 +15,33 @@ const wpisy = (await getCollection('aktualnosci'))
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
       {wpisy.length === 0 ? (
-        <p class="pusto">Nie ma jeszcze żadnych wpisów.</p>
+        <p class="pusto">
+          Nie ma jeszcze żadnych wpisów.
+          {ustawienia.facebook && (
+            <> Zajrzyj na <a href={ustawienia.facebook} target="_blank" rel="noopener noreferrer">nasz Facebook</a>.</>
+          )}
+        </p>
       ) : (
         <div class="siatka-kart">
-          {wpisy.map((a) => (
+          {wpisy.map((x) => (
             <KartaWpisu
-              href={`/aktualnosci/${a.id}/`}
-              tytul={a.data.tytul}
-              meta={dataPl(a.data.data)}
-              zajawka={a.data.zajawka}
-              zdjecie={a.data.zdjecie}
+              href={x.href}
+              tytul={x.tytul}
+              meta={dataPl(x.data)} · Facebook` : dataPl(w.data)}
+              zajawka={x.zajawka}
+              zdjecie={x.zdjecie}
+              zdjecieUrl={x.zdjecia[0]}
+              liczbaZdjec={x.zdjecia.length}
             />
           ))}
         </div>
       )}
     </div>
   </section>
-
-  <section class="sekcja sekcja--ciasna posty-fb">
-    <div class="kontener">
-      <PostyFb />
-    </div>
-  </section>
-
 </Baza>
 
 <style>
   .siatka-kart { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
   .pusto { color: var(--tekst-3); }
+  .pusto a { color: var(--akcent); }
 </style>

@@ -1,0 +1,30 @@
+name: Odśwież stronę
+
+# Buduje stronę dwa razy dziennie, żeby zaciągnąć nowe posty z Facebooka.
+# Bez tego aktualności odświeżają się tylko przy zapisie w CMS-ie albo commicie.
+#
+# Godziny są w UTC. 04:00 i 16:00 UTC to 6:00 i 18:00 czasu polskiego latem,
+# a 5:00 i 17:00 zimą — GitHub nie obsługuje stref czasowych, więc przy zmianie
+# czasu godzina przesuwa się o jedną. Przy odświeżaniu aktualności to bez znaczenia.
+#
+# GitHub zastrzega, że zaplanowane zadania bywają opóźnione przy dużym obciążeniu.
+# Wyłącza je też w repozytoriach bez aktywności przez 60 dni — wtedy wystarczy
+# uruchomić ręcznie przyciskiem "Run workflow".
+
+on:
+  schedule:
+    - cron: '0 4,16 * * *'
+  workflow_dispatch:
+
+jobs:
+  odswiez:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wywołaj deploy hook
+        run: |
+          if [ -z "${{ secrets.CF_DEPLOY_HOOK }}" ]; then
+            echo "Brak sekretu CF_DEPLOY_HOOK — nic nie robię."
+            echo "Ustaw go w Settings -> Secrets and variables -> Actions."
+            exit 0
+          fi
+          curl -fsS -X POST -o /dev/null -w 'HTTP %{http_code}\n' "${{ secrets.CF_DEPLOY_HOOK }}"

@@ -26,6 +26,11 @@ pnpm-debug.log*
 # materiały źródłowe — nie publikujemy
 MATERIAŁY/
 
-# token do Facebooka — nigdy nie trafia do repo
+# token do Facebooka — nigdy nie trafia do repo.
+# Wzorzec obejmuje też pliki robocze edytorów (.env.swp), które zawierają
+# tę samą zawartość i przy commicie wyciekłyby razem z tokenem.
 .env
-.env.local
+.env.*
+
+# zdjęcia pobierane z Facebooka przy budowaniu
+public/media/fb/

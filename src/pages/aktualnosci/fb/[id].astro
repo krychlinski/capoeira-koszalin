@@ -1,0 +1,197 @@
+---
+import { existsSync } from 'node:fs';
+import Baza from '../../../layouts/Baza.astro';
+import { pobierzPosty } from '../../../lib/facebook';
+import { dataPl, iso } from '../../../lib/format';
+
+export async function getStaticPaths() {
+  const posty = await pobierzPosty();
+  return posty.map((p) => ({ params: { id: p.id }, props: { post: p } }));
+}
+
+const { post } = Astro.props;
+const zdjecia = Array.from({ length: post.liczbaZdjec }, (_, i) => `/media/fb/${post.id}-${i}.jpg`).filter(
+  (sciezka) => existsSync(`public${sciezka}`)
+);
+const akapity = post.tresc.split('\n').map((l) => l.trim()).filter(Boolean);
+---
+
+<Baza tytul={akapity[0]?.slice(0, 60)} opis={akapity.slice(1).join(' ').slice(0, 160) || akapity[0]}>
+  <article>
+    <header class="naglowek">
+      <div class="kontener">
+        <a href="/aktualnosci/" class="powrot">← Aktualności</a>
+        <time class="data" datetime={iso(post.data)}>{dataPl(post.data)}</time>
+        <h1>{akapity[0]}</h1>
+      </div>
+    </header>
+
+    <div class="kontener tresc">
+      <div class="proza">
+        {akapity.slice(1).map((a) => <p>{a}</p>)}
+      </div>
+
+      {zdjecia.length > 0 && (
+        <div class="galeria">
+          {zdjecia.map((src, i) => (
+            <button class="kafel" data-indeks={i} aria-label={`Powiększ zdjęcie ${i + 1} z ${zdjecia.length}`}>
+              <img src={src} alt="" loading="lazy" decoding="async" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <p class="zrodlo">
+        Wpis pochodzi z naszego Facebooka.
+        <a href={post.odnosnik} target="_blank" rel="noopener noreferrer">Zobacz oryginał</a>
+      </p>
+    </div>
+  </article>
+
+  {zdjecia.length > 0 && (
+    <dialog class="lightbox" data-lightbox tabindex="-1">
+      <button class="lightbox__zamknij" data-zamknij aria-label="Zamknij">×</button>
+      <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-wstecz aria-label="Poprzednie">‹</button>
+      <img class="lightbox__foto" data-foto alt="" />
+      <span class="lightbox__licznik" data-licznik></span>
+      <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-dalej aria-label="Następne">›</button>
+    </dialog>
+    <script type="application/json" id="zdjecia-postu" set:html={JSON.stringify(zdjecia)} />
+  )}
+</Baza>
+
+<style>
+  .naglowek {
+    padding-top: clamp(8rem, 14vw, 11rem);
+    padding-bottom: 2.5rem;
+    background: radial-gradient(120% 80% at 15% 0%, rgba(var(--akcent-rgb), 0.13), transparent 60%), var(--tlo);
+  }
+  .powrot {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--tekst-3);
+    text-decoration: none;
+    margin-bottom: 1.75rem;
+  }
+  .powrot:hover { color: var(--akcent); }
+  .data {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--akcent);
+    margin-bottom: 0.9rem;
+  }
+  .naglowek h1 { font-size: clamp(1.75rem, 4.5vw, 3.25rem); max-width: 24ch; }
+
+  .tresc { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
+
+  /* Linie rysują obramowania kafli, nie tło kontenera prześwitujące przez odstępy —
+     inaczej puste komórki ostatniego rzędu zostawiają szary prostokąt. */
+  .galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    border-top: 1px solid var(--linia);
+    border-left: 1px solid var(--linia);
+    margin-top: 2.5rem;
+  }
+  .kafel {
+    padding: 0;
+    border: 0;
+    border-right: 1px solid var(--linia);
+    border-bottom: 1px solid var(--linia);
+    background: var(--tlo-3);
+    cursor: zoom-in;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+  .kafel img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(0.35);
+    transition: transform 0.4s ease, filter 0.3s ease;
+  }
+  .kafel:hover img { transform: scale(1.06); filter: grayscale(0); }
+
+  .zrodlo {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--linia);
+    color: var(--tekst-3);
+    font-size: 0.9375rem;
+  }
+  .zrodlo a { color: var(--akcent); margin-left: 0.4rem; }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  /* Zaznaczenie trafia na samo okno, nie na krzyżyk — inaczej po otwarciu
+     przeglądarka rysuje wokół niego swoją niebieską obwódkę. */
+  .lightbox:focus { outline: none; }
+  .lightbox button:focus-visible { outline: 2px solid var(--akcent); outline-offset: 4px; }
+  .lightbox::backdrop { background: rgba(6, 6, 7, 0.94); }
+  .lightbox[open] { display: flex; align-items: center; justify-content: center; }
+  .lightbox__foto { max-width: 92vw; max-height: 86vh; object-fit: contain; }
+  .lightbox__zamknij, .lightbox__nawigacja {
+    position: fixed; background: none; border: 0; color: var(--tekst-2);
+    cursor: pointer; line-height: 1; transition: color 0.2s ease;
+  }
+  .lightbox__zamknij:hover, .lightbox__nawigacja:hover { color: var(--akcent); }
+  .lightbox__zamknij { top: 1rem; right: 1.5rem; font-size: 2.75rem; }
+  .lightbox__nawigacja { top: 50%; transform: translateY(-50%); font-size: 4rem; padding: 0 1.25rem; }
+  .lightbox__nawigacja--wstecz { left: 0; }
+  .lightbox__nawigacja--dalej { right: 0; }
+  .lightbox__licznik {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-display); font-size: 0.8125rem; letter-spacing: 0.2em;
+    color: var(--tekst-2);
+  }
+</style>
+
+<script>
+  const dane = document.getElementById('zdjecia-postu');
+  const zdjecia: string[] = dane ? JSON.parse(dane.textContent || '[]') : [];
+  const lightbox = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const foto = document.querySelector<HTMLImageElement>('[data-foto]');
+  const licznik = document.querySelector<HTMLElement>('[data-licznik]');
+  let aktualny = 0;
+
+  const pokaz = (i: number) => {
+    if (!foto || !zdjecia.length) return;
+    aktualny = (i + zdjecia.length) % zdjecia.length;
+    foto.src = zdjecia[aktualny];
+    if (licznik) licznik.textContent = `${aktualny + 1} / ${zdjecia.length}`;
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((kafel) => {
+    kafel.addEventListener('click', () => {
+      pokaz(Number(kafel.dataset.indeks));
+      lightbox?.showModal();
+      // Bez tego przeglądarka zaznacza pierwszy przycisk i rysuje wokół niego
+      // swoją obwódkę. Atrybut autofocus na <dialog> nie jest respektowany wszędzie.
+      lightbox?.focus();
+    });
+  });
+
+  document.querySelector('[data-zamknij]')?.addEventListener('click', () => lightbox?.close());
+  document.querySelector('[data-wstecz]')?.addEventListener('click', () => pokaz(aktualny - 1));
+  document.querySelector('[data-dalej]')?.addEventListener('click', () => pokaz(aktualny + 1));
+  lightbox?.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.close(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox?.open) return;
+    if (e.key === 'ArrowLeft') pokaz(aktualny - 1);
+    if (e.key === 'ArrowRight') pokaz(aktualny + 1);
+  });
+</script>

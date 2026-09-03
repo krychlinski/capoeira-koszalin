@@ -3,8 +3,8 @@
 ## Gdzie jesteśmy
 - [Status wdrożenia](status.md) — co zrobione, co następne, znane drobiazgi
 
-## Do zrobienia
-- [Automat z Facebooka](todo_facebook_api.md) — kod gotowy, czeka na rolę Kacpra na fanpage'u
+## Działające mechanizmy
+- [Automat z Facebooka](todo_facebook_api.md) — zaciąga posty z ostatnich 31 dni, działa od 2026-09-02
 
 ## Decyzje
 - [Dlaczego nie WordPress](decision_nie_wordpress.md) — powód migracji i odrzucone alternatywy
