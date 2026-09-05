@@ -1,0 +1,50 @@
+name: Zbuduj i wdróż
+
+# Jedno miejsce, w którym powstaje strona. Uruchamia się przy zmianie w gałęzi
+# main, co trzy godziny po nowe posty z Facebooka oraz ręcznie przyciskiem.
+#
+# Dlaczego tutaj, a nie w Cloudflare: projekt Pages został założony z linii
+# poleceń, a takiego nie da się już połączyć z repozytorium — Cloudflare buduje
+# tylko projekty połączone z gitem od samego początku. Budowanie u GitHuba
+# załatwia przy okazji harmonogram, więc nie potrzebujemy deploy hooka.
+#
+# Godziny w UTC, GitHub nie obsługuje stref czasowych. Przy odświeżaniu
+# aktualności liczy się odstęp, nie pora. GitHub wyłącza harmonogram
+# w repozytoriach bez zmian przez 60 dni — wtedy wystarczy jedno uruchomienie
+# ręczne przyciskiem "Run workflow".
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+# Dwa wdrożenia naraz mogłyby postawić na produkcji starszą wersję.
+concurrency:
+  group: wdrozenie
+  cancel-in-progress: false
+
+jobs:
+  wdroz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Zbuduj stronę
+        run: npm run build:czysty
+        env:
+          FB_TOKEN: ${{ secrets.FB_TOKEN }}
+
+      - name: Wdróż na Cloudflare Pages
+        run: npx wrangler pages deploy dist --project-name=capoeira-koszalin --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 58f78072cb67c0aa3663aeb0818b111b

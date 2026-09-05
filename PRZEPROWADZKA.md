@@ -7,95 +7,122 @@ odświeżanie co trzy godziny (244 buildy) zajmuje jakieś 500 minut z 3000.
 
 Wszystkie pliki konfiguracyjne są już w repozytorium. Poniżej tylko to, co trzeba wyklikać.
 
-## 1. Utworzenie projektu
+## 1. Projekt — Pages, nie Worker
 
-Konto Cloudflare musi mieć co najmniej 7 dni — świeże odbija się komunikatem
-„Your user account must be at least 7 days old". Dotyczy to zakładania **nowego konta**
-(Account), a nie projektu w koncie już istniejącym.
+Cloudflare wycofało Pages w kwietniu 2025 i w panelu nie ma już jak takiego projektu założyć.
+Worker ze statycznymi zasobami, którym zaczynaliśmy, **nie przyjmuje domeny z obcego DNS-u**,
+a nasza strefa jest prowadzona w 42.pl. Dlatego projekt Pages powstał z linii poleceń:
 
-**Idziemy przez Workers, nie przez Pages.** Cloudflare wycofało Pages w kwietniu 2025;
-istniejące projekty działają dalej, ale nowe zakłada się jako Worker ze statycznymi zasobami.
-Wszystko, czego potrzebujemy, tam jest: `_headers`, `_redirects` i deploy hooki (te ostatnie
-od kwietnia 2026).
+```
+npx wrangler login
+npx wrangler pages project create capoeira-koszalin --production-branch main
+```
 
-1. `dash.cloudflare.com` → **Workers & Pages** → **Create** → **Import a repository**
-2. Wybierz repozytorium `capoeira-koszalin`
+Skutek uboczny, o którym trzeba pamiętać: **projektu założonego tak nie da się połączyć
+z repozytorium.** Cloudflare buduje wyłącznie projekty połączone z gitem od samego początku.
+Dlatego budujemy u GitHuba — patrz niżej.
 
-| Pole | Wartość |
+## 2. Budowanie i wdrażanie
+
+Wszystko robi `.github/workflows/wdroz.yml`: przy zmianie w `main`, co trzy godziny po nowe
+posty z Facebooka i ręcznie przyciskiem **Run workflow**. Deploy hook nie jest potrzebny,
+bo harmonogram i budowanie są w jednym miejscu.
+
+W **Settings → Secrets and variables → Actions** repozytorium muszą być dwa sekrety:
+
+| Sekret | Skąd |
 |---|---|
-| Project name | `capoeira-koszalin` |
-| Build command | `npm run build:czysty` |
-| Deploy command | `npx wrangler deploy` |
+| `FB_TOKEN` | token strony na Facebooku, ten sam co w lokalnym `.env` |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare → My Profile → API Tokens → Create Token, uprawnienie **Cloudflare Pages: Edit** |
 
-Odznacz **Builds for non-production branches** — pracujemy tylko na `main`, a zaznaczone
-budowałoby każdą inną gałąź.
+Identyfikator konta jest wpisany wprost w pliku — nie jest sekretem.
 
-Reszty nie wpisuje się w formularzu, bo jest w `wrangler.jsonc` w repozytorium: nazwa,
-katalog z plikami (`dist`), adresy z ukośnikiem na końcu i własna strona 404. Wersję Node
-ustala `.nvmrc`.
-
-**Bez `wrangler.jsonc` w repozytorium build się wywali** — `wrangler deploy` nie ma wtedy
-skąd wziąć konfiguracji. Plik musi być wypchnięty na GitHuba przed pierwszym budowaniem.
+Osiem uruchomień na dobę to 244 miesięcznie. Minuty GitHub Actions w repozytorium publicznym
+są darmowe, a limit budowania po stronie Cloudflare przy wdrażaniu gotowych plików nas nie
+dotyczy — Cloudflare tu nic nie buduje, tylko przyjmuje wynik.
 
 **Dlaczego `build:czysty`, a nie `npm run build`:** cache warstwy treści Astro potrafi
 przetrwać między buildami i generować podstrony dla wpisów, które już usunięto. Skrypt
 kasuje `.astro`, `node_modules/.astro` i `dist` przed budowaniem.
 
-## 2. Zmienna z tokenem
+## 3. Zmienna z tokenem w Cloudflare
 
-**Settings → Environment variables → Production**:
+Niepotrzebna. Strona powstaje u GitHuba i tam siedzi `FB_TOKEN`. Cloudflare dostaje gotowe
+pliki i nie odpytuje Facebooka.
 
-| Zmienna | Wartość |
-|---|---|
-| `FB_TOKEN` | token ze strony na Facebooku |
+## 4. Adresy kanoniczne — ZROBIONE
 
-Zaznacz **Encrypt**. Kod przyjmuje zarówno token użytkownika, jak i strony — sam
-rozstrzyga, którym się posłużyć.
+`site` w `astro.config.mjs` i adres mapy witryny w `public/robots.txt` wskazują
+`https://www.capoeira.koszalin.pl`. Przy każdej zmianie adresu trzeba poprawić **oba** —
+stąd biorą się adresy kanoniczne i cała mapa witryny.
 
-Opcjonalnie: `FB_DNI` (domyślnie 31), `FB_API_VERSION` (domyślnie v26.0).
+## 5. Domena — UWAGA, nie da się tak, jak zakładaliśmy
 
-## 3. Odświeżanie co trzy godziny
+Sprawdzone 2026-09-05. `capoeira.koszalin.pl` **nie jest zwykłą poddomeną, którą wystarczy
+wskazać CNAME-em.** To osobna, delegowana strefa DNS: `koszalin.pl` należy do MAN Koszalin
+i NASK, a nasza nazwa jest z niej delegowana na serwery `fns1.42.pl` i `fns2.42.pl`.
+W tej strefie `capoeira.koszalin.pl` jest **wierzchołkiem**, a wierzchołkowi nie wolno nadać
+rekordu CNAME — panel 42.pl mówi to wprost.
 
-1. Cloudflare → projekt → **Settings → Builds → Deploy Hooks**
-   - nazwa: `harmonogram`, gałąź: `main`
-   - skopiuj wygenerowany adres
-2. GitHub → repozytorium → **Settings → Secrets and variables → Actions → New repository secret**
-   - nazwa: `CF_DEPLOY_HOOK`, wartość: adres z punktu 1
+Dwie ściany, obie potwierdzone w dokumentacji Cloudflare:
 
-Harmonogram jest w `.github/workflows/odswiez.yml` i działa od razu po dodaniu sekretu.
-Bez sekretu kończy się bez błędu i nic nie robi. Można go też uruchomić ręcznie
-przyciskiem **Run workflow**.
+- **Worker z własną domeną wymaga, żeby strefa była w Cloudflare.** Naszej nie da się tam
+  wnieść: pojedyncza poddomena jako osobna strefa to funkcja z planu Enterprise, a całej
+  `koszalin.pl` nie prowadzimy.
+- **Cloudflare Pages przyjmuje domenę z obcego DNS-u, ale wyłącznie poddomenę**, nie
+  wierzchołek strefy.
 
-**Adres hooka jest jak hasło** — kto go ma, może uruchamiać buildy. Trzymaj go wyłącznie
-w sekretach GitHuba.
+### Wyjście A — poprosić operatora `koszalin.pl` o zmianę delegacji
 
-## 4. Po pierwszym udanym buildzie
+Zamiast delegacji na 42.pl operator wstawia u siebie zwykły rekord:
 
-Podmień adres w dwóch miejscach i wypchnij:
+```
+capoeira  IN  CNAME  capoeira-koszalin.pages.dev.
+```
 
-- `site` w `astro.config.mjs`
-- adres sitemapy w `public/robots.txt`
+Wtedy nasza nazwa przestaje być wierzchołkiem osobnej strefy i staje się zwykłym rekordem
+w `koszalin.pl`, a Pages przyjmie ją bez zastrzeżeń. Adres zostaje dokładnie taki, jaki
+chcemy, i znika serwer z drogi.
 
-## 5. Domena
+Koszt: tracimy własny panel DNS dla tej nazwy — każda przyszła zmiana idzie przez operatora.
+Wymaga też **przesiadki z Workera na projekt Pages**, bo Worker tej drogi nie obsługuje.
 
-`capoeira.koszalin.pl` to subdomena, więc nie trzeba przenosić całej strefy DNS:
+### Wyjście B — strona pod `www`, wierzchołek na przekierowaniu
 
-1. u dostawcy DNS dodaj **CNAME** wskazujący na `capoeira-koszalin.kacper-rychlinski.workers.dev`
-2. w Cloudflare → projekt → **Settings → Domains & Routes → Add** potwierdź domenę
+Zostaje delegacja i panel 42.pl. W nim:
 
-**Oba kroki są obowiązkowe** — sam CNAME bez potwierdzenia w panelu daje błąd 522.
-Certyfikat SSL wystawia się automatycznie, o ile rekordy CAA na `koszalin.pl` nie blokują
-Cloudflare — warto to sprawdzić przed przełączeniem.
+1. rekord CNAME `www` → `capoeira-koszalin.pages.dev.` (zamiast obecnego wskazania na
+   `capoeira.koszalin.pl.`)
+2. w Cloudflare Pages → **Custom domains** dodaj `www.capoeira.koszalin.pl`
+3. wierzchołek zostaje przekierowaniem stałym na `https://www.capoeira.koszalin.pl` —
+   albo z sekcji „Ramki i przekierowania WWW" w panelu 42.pl (najpierw sprawdź u nich,
+   czy ich przekierowanie obsługuje HTTPS), albo z VPS-a OVH, który i tak działa.
 
-3. W repozytorium zmień adres w **dwóch** miejscach na `https://capoeira.koszalin.pl`:
-   `astro.config.mjs` → `site` oraz `public/robots.txt` → wiersz `Sitemap:`.
-   Stąd biorą się adresy kanoniczne i cała mapa witryny. Zostawione po staremu każą
-   wyszukiwarkom uznawać za właściwy adres, którego już nie ma.
-4. Rozważ `"workers_dev": false` w `wrangler.jsonc` — inaczej ta sama strona zostaje
-   dostępna także pod adresem `.workers.dev`, czyli ta sama treść pod dwoma adresami.
+Koszt: adresem kanonicznym zostaje `www.capoeira.koszalin.pl`.
 
-## 6. Wygaszenie Netlify
+### Certyfikat — CAA
 
-Dopiero gdy Cloudflare działa i domena wskazuje na niego. Pliki `_redirects` i `_headers`
-czyta i jeden, i drugi hosting, więc przez czas przejściowy obie wersje zachowują się tak samo.
-`netlify.toml` można wtedy usunąć.
+`capoeira.koszalin.pl` nie ma własnych rekordów CAA, więc dziedziczy je po `koszalin.pl`.
+Dozwolone są tam: `letsencrypt.org`, `sectigo.com`, `digicert.com`, `certum.pl`,
+`comodoca.com`, `harica.gr`. **Nie ma `pki.goog`**, czyli domyślnego wystawcy Cloudflare.
+Let's Encrypt jest na liście i Cloudflare z niego skorzysta, ale jeśli certyfikat nie
+wystawi się w ciągu kilkunastu minut, to jest pierwsze miejsce do sprawdzenia — trzeba
+wtedy poprosić operatora o dopisanie `0 issue "pki.goog"`.
+
+Po przełączeniu, niezależnie od wyjścia, zmień adres w **dwóch** miejscach:
+`astro.config.mjs` → `site` oraz `public/robots.txt` → wiersz `Sitemap:`. Stąd biorą się
+adresy kanoniczne i mapa witryny. Rozważ też `"workers_dev": false` (albo wyłączenie
+adresu `pages.dev`), żeby ta sama treść nie wisiała pod dwoma adresami.
+
+## 6. Sprzątanie po przeprowadzce
+
+Zostało do zrobienia:
+
+1. **Netlify** — wyłączyć budowanie po commicie albo usunąć projekt. Inaczej przy każdym
+   wypchnięciu zmian buduje tę samą stronę i zjada kredyty bez powodu. Potem można skasować
+   `netlify.toml`.
+2. **Worker `capoeira-koszalin`** — porzucony, nie przyjmie domeny. Kasuje się poleceniem
+   `npx wrangler delete --name capoeira-koszalin`. Uwaga: nazywa się tak samo jak projekt
+   Pages, więc łatwo pomylić je w panelu.
+3. **WordPress na VPS-ie** — katalog `/var/www/html/capoeira/data/wordpress` nie jest już
+   przez nic używany. Serwis Apache'a obsługuje wyłącznie przekierowanie gołego adresu.

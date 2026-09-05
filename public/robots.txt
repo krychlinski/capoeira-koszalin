@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://capoeira-koszalin.kacper-rychlinski.workers.dev/sitemap-index.xml
+Sitemap: https://www.capoeira.koszalin.pl/sitemap-index.xml
