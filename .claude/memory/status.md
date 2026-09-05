@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-Stan na 2026-08-29 (po wgraniu materiałów źródłowych).
+Stan na 2026-09-05.
 
 ## Zrobione
 
@@ -24,7 +24,35 @@ Stan na 2026-08-29 (po wgraniu materiałów źródłowych).
 - **Historia grupy i kadra** na `/o-nas/` — z dokumentu klubu. Biogramy Piolho i Mafioso puste,
   mają je napisać sami; nie wymyślać za nich.
 
+## Zrobione — wrzesień
+
+- **Aktualności z Facebooka** działają: własna wtyczka, zdjęcia pobierane przed budowaniem,
+  podstrona każdego wpisu z galerią. Wypunktowania rozpoznawane — [[project-formatowanie-fb]].
+- **Polska typografia** na całej stronie: sierotki i cudzysłowy dolno-górne, warstwa pośrednia
+  w `src/middleware.ts`, więc działa też na podglądzie.
+- **Znaki przynależności** na „O nas": pieczęć UNICAR i logo TKKF przy odpowiednich akapitach —
+  [[reference-znaki-svg]].
+- **Strona „Pierwszy trening"** jako pierwsza zakładka w menu. Cała treść w panelu
+  (`strony/pierwszy-trening.md` + wpis `strona-pierwszy-trening` w `.pages.yml`), w kodzie
+  zostały tylko trzy przyciski nawigacyjne.
+- FAQ startuje ze wszystkimi pytaniami zwiniętymi — plus przy każdym wierszu wystarcza za
+  podpowiedź, że się rozwijają.
+- Sekcje strony głównej **na przemian ciemne i jasne**, numerowane przez przeglądarkę
+  (`section:not(.hero):nth-of-type()`), więc ukrycie wydarzeń albo galerii nie rozbija rytmu.
+- Blok „Pierwszy trening nic nie kosztuje" przeniesiony **nad** grafik.
+- Regulamin: naprawione **osiem zdań rozerwanych** pustym wierszem przy eksporcie z ODT,
+  w tym rozcięte słowo „organizacyjno-finansowych".
+- Daty w „O nas" poprawione przez właściciela: capoeira w Koszalinie od **2005**, obecna grupa
+  od **2006**, współpraca z TKKF od **2008** (wcześniej było błędne 2004).
+- **Favicon zostaje znak Akademii.** Pieczęć UNICAR była wypróbowana i odrzucona: ma napis po
+  obwodzie i przy 16 px jest nieczytelną żółtą kropką. Nie wracać do tego.
+
 ## Do zrobienia
+
+0. **PRZEPROWADZKA NA CLOUDFLARE — najpilniejsze.** Blokada 7 dni wieku konta już minęła.
+   Po niej: ustawić sekret `CF_DEPLOY_HOOK` i dodać Michała do projektu w Cloudflare, żeby mógł
+   sam kliknąć przebudowanie przy pilnej potrzebie (panelu CMS nie dostaje —
+   [[decision-tryb-pracy]]). Harmonogram odświeżania: [[project-formatowanie-fb]].
 
 1. **Podpiąć repo w Netlify** — tylko właściciel, wymaga autoryzacji aplikacji GitHubowej.
    Ustawień nie trzeba wpisywać, są w `netlify.toml`.
@@ -181,3 +209,8 @@ i za każdym razem wyglądało jak regresja w kodzie, co kosztowało czas na dia
 
 Sprawdzian, czy to ten przypadek: porównaj liczbę elementów w `dist/` z tym, co oddaje
 `localhost`. Jeśli w `dist/` jest komplet, a na serwerze pustka — to on, nie kod.
+
+**To samo w drugą stronę:** po dodaniu nowego pliku treści albo zmianie schematu w
+`content.config.ts` serwer uparcie pokazuje stan sprzed zmiany. Sam restart NIE wystarcza —
+trzeba skasować `.astro` i `node_modules/.astro`, dopiero potem wystartować od nowa.
+Zdarzyło się przy dodawaniu strony „Pierwszy trening": build dawał komplet, `localhost` pustkę.
