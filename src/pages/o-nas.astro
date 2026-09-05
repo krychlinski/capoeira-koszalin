@@ -42,14 +42,12 @@ const instruktorzy = await Promise.all(
 
         <div class="lista">
           {instruktorzy.map(({ wpis, foto: portret, Biogram }) => (
-            <article class="osoba">
-              <div class="osoba__foto">
-                {portret ? (
+            <article class={portret ? 'osoba' : 'osoba osoba--bez-zdjecia'}>
+              {portret && (
+                <div class="osoba__foto">
                   <Image src={portret} alt={wpis.data.imie} widths={[400, 800]} sizes="(max-width: 800px) 100vw, 300px" loading="lazy" />
-                ) : (
-                  <div class="osoba__zastepnik" aria-hidden="true"></div>
-                )}
-              </div>
+                </div>
+              )}
               <div class="osoba__tresc">
                 {wpis.data.apelido && <p class="osoba__apelido">{wpis.data.apelido}</p>}
                 <h3 class="osoba__imie">{wpis.data.imie}</h3>
@@ -84,13 +82,12 @@ const instruktorzy = await Promise.all(
     align-items: start;
   }
   @media (max-width: 800px) { .osoba { grid-template-columns: 1fr; } }
+  /* Bez portretu nie zostaje pusta ramka ani odstęp po niej — tekst zajmuje
+     całą szerokość. Kolumna wraca sama, gdy zdjęcie się pojawi. */
+  .osoba--bez-zdjecia { grid-template-columns: 1fr; }
 
   .osoba__foto { aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid var(--linia); }
   .osoba__foto :global(img) { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.5) contrast(1.05); }
-  .osoba__zastepnik {
-    width: 100%; height: 100%;
-    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--akcent-rgb), 0.16), transparent 70%), var(--tlo-3);
-  }
 
   .osoba__apelido {
     font-family: var(--font-display);
