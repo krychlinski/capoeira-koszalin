@@ -14,10 +14,10 @@ budowanie. To nie usterka — pytanie „czemu nie widać nowego wpisu" ma zwykl
 
 ## Jak często odświeżamy (ustalone 2026-09-05)
 
-`.github/workflows/odswiez.yml` woła deploy hook **co trzy godziny**, `cron: 0 */3 * * *`
-UTC — osiem razy na dobę, 243 buildy miesięcznie. Limit Cloudflare to 500 **na miesiąc**,
-nie na tydzień; zostaje 257 na nasze własne zmiany. Co dwie godziny byłoby 365 i zapas
-spadłby do 135 — za ciasno.
+`.github/workflows/wdroz.yml` buduje i wdraża **co trzy godziny**, `cron: 0 */3 * * *` UTC.
+Deploy hooka nie ma — harmonogram i budowanie są w jednym miejscu, patrz [[reference-hosting]].
+Minuty GitHub Actions w repozytorium publicznym są darmowe, a Cloudflare nic nie buduje, więc
+częstotliwość nie zjada żadnego limitu. Można ją podnieść, jeśli trzy godziny okażą się za dużo.
 
 **Przycisk „odśwież" na stronie został odrzucony.** Adres deploy hooka jest jak hasło; w kodzie
 strony byłby widoczny dla każdego, a hash hasła obok niczego nie chroni — wystarczy pominąć

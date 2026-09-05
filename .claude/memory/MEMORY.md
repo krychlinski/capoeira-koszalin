@@ -12,6 +12,7 @@
 - [Limit buildów Netlify](decision_netlify_limit.md) — 20 buildów/miesiąc; przenieść hosting zanim Michał dostanie panel
 
 ## Wzorce w kodzie
+- [Hosting po przeprowadzce](reference_hosting.md) — Pages + GitHub Actions, dlaczego `www`, pułapki z certyfikatami
 - [Znaki i SVG](reference_znaki_svg.md) — przycinanie viewBox, klasa `.znak` przy akapicie
 - [Formatowanie treści z FB](project_formatowanie_fb.md) — kiedy pobiera posty, wypunktowania, polskie cudzysłowy
 

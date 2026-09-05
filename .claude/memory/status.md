@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-Stan na 2026-09-05.
+Stan na 2026-09-05, po przeprowadzce hostingu.
 
 ## Zrobione
 
@@ -47,14 +47,26 @@ Stan na 2026-09-05.
 - **Favicon zostaje znak Akademii.** Pieczęć UNICAR była wypróbowana i odrzucona: ma napis po
   obwodzie i przy 16 px jest nieczytelną żółtą kropką. Nie wracać do tego.
 
+## Przeprowadzka hostingu — ZROBIONA 2026-09-05
+
+Strona żyje pod **https://www.capoeira.koszalin.pl** na Cloudflare Pages, buduje się sama
+co trzy godziny z GitHub Actions. Szczegóły i wszystkie pułapki: [[reference-hosting]].
+
+Pilne przebudowanie na żądanie: zakładka **Actions** w repozytorium → workflow
+„Zbuduj i wdróż" → **Run workflow**. Tym miał być guzik dla Michała.
+
+## Do posprzątania po przeprowadzce
+
+Zrobione: Netlify wyłączone i `netlify.toml` usunięty, Worker skasowany, jego token
+z 23 uprawnieniami też.
+
+Zostało: **pliki WordPressa** na VPS-ie (`/var/www/html/capoeira/data/wordpress`). Apache się
+do nich nie odwołuje, więc leżą bezczynnie. Kacper usunie je przy okazji wygaszania serwera —
+a to pociągnie za sobą sprawę z wierzchołkiem, patrz [[reference-hosting]].
+
 ## Do zrobienia
 
-0. **PRZEPROWADZKA NA CLOUDFLARE — najpilniejsze.** Blokada 7 dni wieku konta już minęła.
-   Po niej: ustawić sekret `CF_DEPLOY_HOOK` i dodać Michała do projektu w Cloudflare, żeby mógł
-   sam kliknąć przebudowanie przy pilnej potrzebie (panelu CMS nie dostaje —
-   [[decision-tryb-pracy]]). Harmonogram odświeżania: [[project-formatowanie-fb]].
-
-1. **Podpiąć repo w Netlify** — tylko właściciel, wymaga autoryzacji aplikacji GitHubowej.
+1. ~~**Podpiąć repo w Netlify**~~ — tylko właściciel, wymaga autoryzacji aplikacji GitHubowej.
    Ustawień nie trzeba wpisywać, są w `netlify.toml`.
    Cloudflare Pages odpadło: nie pozwala założyć konta młodszego niż 7 dni (stan 2026-08-29).
    Gdyby ktoś do niego wracał — musi to być „Connect to Git", nigdy Direct Upload, bo projektu
@@ -64,7 +76,7 @@ Stan na 2026-09-05.
 3. **Dodać kolegę jako collaboratora** — czeka na jego login GitHub. Bez tego nie wejdzie do panelu.
 4. **Podmienić resztę treści oznaczonej `DO UZUPEŁNIENIA`** — biogram Michała, treść „O nas",
    szczegóły batizado. Grafik i dane kontaktowe są już prawdziwe.
-5. **Przełączyć domenę** `capoeira.koszalin.pl` — to subdomena, więc wystarczy CNAME
+5. ~~**Przełączyć domenę** `capoeira.koszalin.pl`~~ — zrobione, patrz wyżej. Historycznie: — to subdomena, więc wystarczy CNAME
    na adres Netlify plus dodanie domeny w panelu hostingu. Przed przełączeniem sprawdzić
    rekordy CAA na `koszalin.pl`, bo mogą zablokować wystawienie certyfikatu.
 

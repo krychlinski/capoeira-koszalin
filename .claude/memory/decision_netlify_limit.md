@@ -18,7 +18,11 @@ przeprowadzka na Cloudflare Pages (500 buildów/miesiąc) według `PRZEPROWADZKA
 samego powodu odświeżanie postów z Facebooka dwa razy dziennie jest na Netlify niemożliwe —
 60 buildów miesięcznie to trzykrotność całego limitu.
 
-Stan na 2026-09-05: przeprowadzka niewykonana, blokada 7 dni wieku konta Cloudflare już minęła.
+**NIEAKTUALNE od 2026-09-05 — przeprowadzka wykonana.** Strona stoi na Cloudflare Pages,
+patrz [[reference-hosting]]. Notatkę zostawiam z jednego powodu: projekt na Netlify nadal
+istnieje i buduje przy każdym wypchnięciu, dopóki się go nie wyłączy. Kredyty idą w powietrze,
+a przy wyczerpaniu limitu Netlify potrafi przysłać alarmujące maile o wstrzymaniu strony —
+która i tak jest już gdzie indziej.
 
 **Korekta z tego samego dnia:** Michał NIE dostanie panelu — zmiany podsyła Kacprowi
 [[decision-tryb-pracy]]. Scenariusz „wieczór klikania gasi stronę" odpada, kredyty zjada tylko
