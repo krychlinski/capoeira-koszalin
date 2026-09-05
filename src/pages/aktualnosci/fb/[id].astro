@@ -2,6 +2,7 @@
 import { existsSync } from 'node:fs';
 import Baza from '../../../layouts/Baza.astro';
 import { pobierzPosty } from '../../../lib/facebook';
+import { naBloki, bezZnacznikow } from '../../../lib/tresc';
 import { dataPl, iso } from '../../../lib/format';
 
 export async function getStaticPaths() {
@@ -13,22 +14,46 @@ const { post } = Astro.props;
 const zdjecia = Array.from({ length: post.liczbaZdjec }, (_, i) => `/media/fb/${post.id}-${i}.jpg`).filter(
   (sciezka) => existsSync(`public${sciezka}`)
 );
-const akapity = post.tresc.split('\n').map((l) => l.trim()).filter(Boolean);
+const linie = post.tresc.split('\n').map((l) => l.trim()).filter(Boolean);
+const tytul = bezZnacznikow(linie[0] ?? '');
+const bloki = naBloki(linie.slice(1).join('\n'));
 ---
 
-<Baza tytul={akapity[0]?.slice(0, 60)} opis={akapity.slice(1).join(' ').slice(0, 160) || akapity[0]}>
+<Baza tytul={tytul.slice(0, 60)} opis={bezZnacznikow(linie.slice(1).join('\n')).slice(0, 160) || tytul}>
   <article>
     <header class="naglowek">
       <div class="kontener">
         <a href="/aktualnosci/" class="powrot">← Aktualności</a>
         <time class="data" datetime={iso(post.data)}>{dataPl(post.data)}</time>
-        <h1>{akapity[0]}</h1>
+        <h1>{tytul}</h1>
       </div>
     </header>
 
     <div class="kontener tresc">
       <div class="proza">
-        {akapity.slice(1).map((a) => <p>{a}</p>)}
+        {bloki.map((b) =>
+          b.typ === 'akapit' ? (
+            <p>{b.tekst}</p>
+          ) : b.numerowana ? (
+            <ol>
+              {b.pozycje.map((poz) => (
+                <li>
+                  {poz.tekst}
+                  {poz.pod.length > 0 && <ul>{poz.pod.map((x) => <li>{x}</li>)}</ul>}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <ul>
+              {b.pozycje.map((poz) => (
+                <li>
+                  {poz.tekst}
+                  {poz.pod.length > 0 && <ul>{poz.pod.map((x) => <li>{x}</li>)}</ul>}
+                </li>
+              ))}
+            </ul>
+          )
+        )}
       </div>
 
       {zdjecia.length > 0 && (

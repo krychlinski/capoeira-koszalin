@@ -27,8 +27,9 @@ const wpisy = await wszystkieAktualnosci();
             <KartaWpisu
               href={x.href}
               tytul={x.tytul}
-              meta={dataPl(x.data)} · Facebook` : dataPl(w.data)}
+              meta={x.zrodloFb ? `${dataPl(x.data)} · Facebook` : dataPl(x.data)}
               zajawka={x.zajawka}
+              punkty={x.punkty}
               zdjecie={x.zdjecie}
               zdjecieUrl={x.zdjecia[0]}
               liczbaZdjec={x.zdjecia.length}

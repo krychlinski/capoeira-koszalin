@@ -122,13 +122,15 @@ export function skroc(tresc: string, limit = 320): { tekst: string; obciety: boo
   return { tekst: tresc.slice(0, ciecie > 0 ? ciecie : limit), obciety: true };
 }
 
-/** Rozbija post na tytuł kafla i resztę treści. */
+/**
+ * Rozbija post na tytuł kafla i resztę treści.
+ *
+ * Reszta zostaje surowa, ze znacznikami wypunktowania — rozpoznaje je dopiero
+ * naBloki w lib/tresc, a bez nich lista byłaby nie do odróżnienia od akapitów.
+ */
 export function rozbij(tresc: string): { tytul: string; reszta: string } {
-  const linie = tresc
-    .split('\n')
-    .map((l) => l.trim().replace(/^[*•\-–]\s*/, ''))
-    .filter(Boolean);
-  const pierwsza = linie[0] ?? '';
+  const linie = tresc.split('\n').map((l) => l.trim()).filter(Boolean);
+  const pierwsza = (linie[0] ?? '').replace(/^[*•\-–]\s*/, '');
   return {
     tytul: pierwsza.length > 90 ? skroc(pierwsza, 90).tekst + '…' : pierwsza,
     reszta: linie.slice(1).join('\n'),

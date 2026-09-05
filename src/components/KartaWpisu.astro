@@ -8,13 +8,15 @@ interface Props {
   tytul: string;
   meta?: string;
   zajawka?: string;
+  /** Zamiast zajawki: pierwsze pozycje wypunktowania z wpisu. */
+  punkty?: string[];
   zdjecie?: string;
   /** Zdjęcie leżące już w public/ — omija optymalizator, bo pobiera je integracja. */
   zdjecieUrl?: string;
   /** Ile zdjęć ma wpis — pokazujemy licznik na kaflu przy albumie. */
   liczbaZdjec?: number;
 }
-const { href, tytul, meta, zajawka, zdjecie, zdjecieUrl, liczbaZdjec = 0 } = Astro.props;
+const { href, tytul, meta, zajawka, punkty, zdjecie, zdjecieUrl, liczbaZdjec = 0 } = Astro.props;
 const foto = obraz(zdjecie);
 ---
 
@@ -32,7 +34,11 @@ const foto = obraz(zdjecie);
   <div class="karta__tresc">
     {meta && <p class="karta__meta">{meta}</p>}
     <h3 class="karta__tytul">{tytul}</h3>
-    {zajawka && <p class="karta__zajawka">{zajawka}</p>}
+    {punkty && punkty.length > 0 ? (
+      <ul class="karta__punkty">{punkty.map((x) => <li>{x}</li>)}</ul>
+    ) : (
+      zajawka && <p class="karta__zajawka">{zajawka}</p>
+    )}
     <span class="karta__wiecej">Czytaj dalej</span>
   </div>
 </a>
@@ -90,6 +96,27 @@ const foto = obraz(zdjecie);
   }
   .karta__tytul { font-size: 1.3rem; margin: 0 0 0.7rem; }
   .karta__zajawka { color: var(--tekst-2); font-size: 0.9375rem; margin: 0 0 1.25rem; }
+  .karta__punkty {
+    list-style: none;
+    color: var(--tekst-2);
+    font-size: 0.9375rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+  }
+  .karta__punkty li {
+    position: relative;
+    padding-left: 0.95rem;
+    margin-bottom: 0.35rem;
+  }
+  .karta__punkty li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 4px;
+    height: 4px;
+    background: var(--akcent);
+  }
   .karta__wiecej {
     margin-top: auto;
     font-family: var(--font-display);

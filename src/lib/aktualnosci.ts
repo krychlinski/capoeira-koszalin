@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { getCollection } from 'astro:content';
 import { pobierzPosty, skroc, rozbij } from './facebook';
+import { naBloki, bezZnacznikow } from './tresc';
 
 export interface Wpis {
   href: string;
@@ -13,6 +14,8 @@ export interface Wpis {
   zdjecie?: string;
   /** Odnośnik do oryginału na Facebooku — tylko dla postów stamtąd. */
   zrodloFb?: string;
+  /** Pierwsze pozycje wypunktowania, gdy wpis zaczyna się listą. */
+  punkty?: string[];
   pelnaTresc?: string;
 }
 
@@ -37,12 +40,24 @@ export async function wszystkieAktualnosci(): Promise<Wpis[]> {
 
   const zFacebooka = (await pobierzPosty()).map((p) => {
     const { tytul, reszta } = rozbij(p.tresc);
-    const { tekst, obciety } = skroc(reszta.replace(/\n+/g, ' '), 160);
+    // Kafel pokazuje wypunktowanie tak samo jak wpis, o ile wpis się nim zaczyna —
+    // sklejone w jeden akapit plany zajęć były nieczytelne. Dla zwykłego tekstu
+    // zostaje skrócona zajawka.
+    const pierwszy = naBloki(reszta)[0];
+    const punkty =
+      pierwszy?.typ === 'lista'
+        ? pierwszy.pozycje.slice(0, 4).map((poz) => {
+            const { tekst, obciety } = skroc(poz.tekst, 70);
+            return tekst + (obciety ? '…' : '');
+          })
+        : undefined;
+    const { tekst, obciety } = skroc(bezZnacznikow(reszta), 160);
     return {
       href: `/aktualnosci/fb/${p.id}/`,
       tytul,
       data: p.data,
-      zajawka: reszta ? tekst + (obciety ? '…' : '') : undefined,
+      punkty,
+      zajawka: punkty || !reszta ? undefined : tekst + (obciety ? '…' : ''),
       // Liczba zdjęć z API to obietnica, nie fakt — pobranie mogło się nie udać.
       // Pokazujemy wyłącznie pliki, które naprawdę są na dysku, żeby zamiast
       // fotografii nie pojawiła się ikona zepsutego obrazka.
