@@ -1,30 +1,41 @@
 # Przeprowadzka z Netlify na Cloudflare Pages
 
 Powód: Netlify liczy **15 kredytów za deploy** przy 300 na miesiąc, czyli **20 deployów**,
-z twardym limitem — po przekroczeniu strona zostaje wstrzymana. Cloudflare Pages daje
-**500 buildów miesięcznie** i nielimitowany transfer.
+z twardym limitem — po przekroczeniu strona zostaje wstrzymana. Cloudflare daje **3000 minut
+budowania miesięcznie** i nielimitowany transfer. Nasz build trwa około dwóch minut, więc
+odświeżanie co trzy godziny (244 buildy) zajmuje jakieś 500 minut z 3000.
 
 Wszystkie pliki konfiguracyjne są już w repozytorium. Poniżej tylko to, co trzeba wyklikać.
 
 ## 1. Utworzenie projektu
 
 Konto Cloudflare musi mieć co najmniej 7 dni — świeże odbija się komunikatem
-„Your user account must be at least 7 days old".
+„Your user account must be at least 7 days old". Dotyczy to zakładania **nowego konta**
+(Account), a nie projektu w koncie już istniejącym.
 
-1. `dash.cloudflare.com` → **Workers & Pages** → **Create** → zakładka **Pages**
-2. **Connect to Git** — nie Direct Upload. Projektu z bezpośredniego uploadu **nie da się
-   później połączyć z repozytorium**, trzeba by go skasować i założyć od nowa.
-3. Wybierz repozytorium `capoeira-koszalin`
+**Idziemy przez Workers, nie przez Pages.** Cloudflare wycofało Pages w kwietniu 2025;
+istniejące projekty działają dalej, ale nowe zakłada się jako Worker ze statycznymi zasobami.
+Wszystko, czego potrzebujemy, tam jest: `_headers`, `_redirects` i deploy hooki (te ostatnie
+od kwietnia 2026).
+
+1. `dash.cloudflare.com` → **Workers & Pages** → **Create** → **Import a repository**
+2. Wybierz repozytorium `capoeira-koszalin`
 
 | Pole | Wartość |
 |---|---|
 | Project name | `capoeira-koszalin` |
-| Production branch | `main` |
-| Framework preset | Astro |
 | Build command | `npm run build:czysty` |
-| Build output directory | `dist` |
+| Deploy command | `npx wrangler deploy` |
 
-Wersję Node ustala `.nvmrc`.
+Odznacz **Builds for non-production branches** — pracujemy tylko na `main`, a zaznaczone
+budowałoby każdą inną gałąź.
+
+Reszty nie wpisuje się w formularzu, bo jest w `wrangler.jsonc` w repozytorium: nazwa,
+katalog z plikami (`dist`), adresy z ukośnikiem na końcu i własna strona 404. Wersję Node
+ustala `.nvmrc`.
+
+**Bez `wrangler.jsonc` w repozytorium build się wywali** — `wrangler deploy` nie ma wtedy
+skąd wziąć konfiguracji. Plik musi być wypchnięty na GitHuba przed pierwszym budowaniem.
 
 **Dlaczego `build:czysty`, a nie `npm run build`:** cache warstwy treści Astro potrafi
 przetrwać między buildami i generować podstrony dla wpisów, które już usunięto. Skrypt
@@ -43,9 +54,9 @@ rozstrzyga, którym się posłużyć.
 
 Opcjonalnie: `FB_DNI` (domyślnie 31), `FB_API_VERSION` (domyślnie v26.0).
 
-## 3. Odświeżanie dwa razy dziennie
+## 3. Odświeżanie co trzy godziny
 
-1. Cloudflare → projekt → **Settings → Builds → Add deploy hook**
+1. Cloudflare → projekt → **Settings → Builds → Deploy Hooks**
    - nazwa: `harmonogram`, gałąź: `main`
    - skopiuj wygenerowany adres
 2. GitHub → repozytorium → **Settings → Secrets and variables → Actions → New repository secret**

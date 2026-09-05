@@ -1,0 +1,18 @@
+{
+  // Strona jest w całości statyczna — Worker nie ma własnego kodu, podaje tylko
+  // pliki zbudowane przez Astro. Dlatego nie ma pola "main" ani wiązania ASSETS:
+  // te są potrzebne wyłącznie wtedy, gdy Worker sam obsługuje żądania.
+  //
+  // Cloudflare wycofało Pages w kwietniu 2025 i nowe projekty zakłada się już
+  // jako Workers ze statycznymi zasobami. Pliki public/_headers i public/_redirects
+  // działają tu tak samo jak w Pages.
+  "name": "capoeira-koszalin",
+  "compatibility_date": "2026-09-05",
+  "assets": {
+    "directory": "./dist/",
+    // Adresy podstron kończą się ukośnikiem (/o-nas/), a nieistniejące trafiają
+    // na naszą stronę 404 zamiast na komunikat Cloudflare.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

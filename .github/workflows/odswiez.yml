@@ -1,11 +1,14 @@
 name: Odśwież stronę
 
-# Buduje stronę dwa razy dziennie, żeby zaciągnąć nowe posty z Facebooka.
+# Buduje stronę co trzy godziny, żeby zaciągnąć nowe posty z Facebooka.
 # Bez tego aktualności odświeżają się tylko przy zapisie w CMS-ie albo commicie.
 #
-# Godziny są w UTC. 04:00 i 16:00 UTC to 6:00 i 18:00 czasu polskiego latem,
-# a 5:00 i 17:00 zimą — GitHub nie obsługuje stref czasowych, więc przy zmianie
-# czasu godzina przesuwa się o jedną. Przy odświeżaniu aktualności to bez znaczenia.
+# Osiem razy na dobę to 243 buildy miesięcznie. Limit Cloudflare wynosi 500 MIESIĘCZNIE,
+# nie tygodniowo, więc zostaje 257 na nasze własne zmiany. Co dwie godziny byłoby 365
+# i zapas spadłby do 135 — za ciasno przy dniu z kilkunastoma poprawkami.
+#
+# Godziny są w UTC, GitHub nie obsługuje stref czasowych. Przy odświeżaniu aktualności
+# to bez znaczenia — liczy się odstęp, nie pora.
 #
 # GitHub zastrzega, że zaplanowane zadania bywają opóźnione przy dużym obciążeniu.
 # Wyłącza je też w repozytoriach bez aktywności przez 60 dni — wtedy wystarczy
@@ -13,7 +16,7 @@ name: Odśwież stronę
 
 on:
   schedule:
-    - cron: '0 4,16 * * *'
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 
 jobs:
