@@ -7,6 +7,9 @@
   // jako Workers ze statycznymi zasobami. Pliki public/_headers i public/_redirects
   // działają tu tak samo jak w Pages.
   "name": "capoeira-koszalin",
+  // Każde wdrożenie dostawałoby własny publiczny adres podglądu — to ta sama
+  // treść pod kilkoma adresami, czyli dokładnie to, czego wyszukiwarki nie lubią.
+  "preview_urls": false,
   "compatibility_date": "2026-09-05",
   "assets": {
     "directory": "./dist/",

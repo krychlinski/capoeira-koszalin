@@ -80,12 +80,19 @@ Podmień adres w dwóch miejscach i wypchnij:
 
 `capoeira.koszalin.pl` to subdomena, więc nie trzeba przenosić całej strefy DNS:
 
-1. u dostawcy DNS dodaj **CNAME** wskazujący na `<projekt>.pages.dev`
-2. w Cloudflare Pages → **Custom domains** potwierdź domenę
+1. u dostawcy DNS dodaj **CNAME** wskazujący na `capoeira-koszalin.kacper-rychlinski.workers.dev`
+2. w Cloudflare → projekt → **Settings → Domains & Routes → Add** potwierdź domenę
 
 **Oba kroki są obowiązkowe** — sam CNAME bez potwierdzenia w panelu daje błąd 522.
 Certyfikat SSL wystawia się automatycznie, o ile rekordy CAA na `koszalin.pl` nie blokują
 Cloudflare — warto to sprawdzić przed przełączeniem.
+
+3. W repozytorium zmień adres w **dwóch** miejscach na `https://capoeira.koszalin.pl`:
+   `astro.config.mjs` → `site` oraz `public/robots.txt` → wiersz `Sitemap:`.
+   Stąd biorą się adresy kanoniczne i cała mapa witryny. Zostawione po staremu każą
+   wyszukiwarkom uznawać za właściwy adres, którego już nie ma.
+4. Rozważ `"workers_dev": false` w `wrangler.jsonc` — inaczej ta sama strona zostaje
+   dostępna także pod adresem `.workers.dev`, czyli ta sama treść pod dwoma adresami.
 
 ## 6. Wygaszenie Netlify
 
