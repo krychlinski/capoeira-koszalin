@@ -71,6 +71,10 @@ const strony = defineCollection({
     tytul: z.string(),
     naglowek: z.string().optional(),
     zdjecie: z.string().optional(),
+    // Numerowane punkty — używa ich strona „Pierwszy trening”.
+    punktyNadtytul: z.string().optional(),
+    punktyTytul: z.string().optional(),
+    punkty: z.array(z.object({ tytul: z.string(), opis: z.string() })).optional(),
   }),
 });
 

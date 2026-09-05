@@ -141,6 +141,30 @@ content:
           multiple: true
           unique: true
 
+  - name: strona-pierwszy-trening
+    label: Strona „Pierwszy trening”
+    type: file
+    path: src/content/strony/pierwszy-trening.md
+    format: yaml-frontmatter
+    fields:
+      - { name: tytul, label: Tytuł, type: string, required: true }
+      - name: naglowek
+        label: Nagłówek
+        type: text
+        description: Zdanie pod tytułem. Tu piszemy, że pierwszy trening jest bezpłatny.
+      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: punktyNadtytul, label: Etykieta nad punktami, type: string, description: 'Np. „Co zabrać”.' }
+      - { name: punktyTytul, label: Nagłówek punktów, type: string }
+      - name: punkty
+        label: Punkty
+        type: object
+        list: true
+        description: Numery 01, 02, 03 nadają się same, według kolejności na liście.
+        fields:
+          - { name: tytul, label: Nagłówek, type: string, required: true }
+          - { name: opis, label: Opis, type: text, required: true }
+      - { name: body, label: Dodatkowy tekst, type: rich-text, description: Nieobowiązkowy, pojawia się pod punktami. }
+
   - name: strona-o-nas
     label: Strona „O nas”
     type: file

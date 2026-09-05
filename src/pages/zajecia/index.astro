@@ -28,6 +28,7 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
       <div class="pod-grafikiem">
         <p>Nie wiesz, do której grupy pasujesz? Zadzwoń — dobierzemy ją razem.</p>
         <div class="pod-grafikiem__akcje">
+          <a href="/pierwszy-trening/" class="przycisk przycisk--obrys">Przychodzisz pierwszy raz?</a>
           <a href="/cennik/" class="przycisk przycisk--obrys">Zobacz cennik</a>
           {ustawienia.telefon && (
             <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk">
@@ -49,37 +50,6 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
     </section>
   )}
 
-  <section class="sekcja sekcja--ciasna pierwszy-raz">
-    <div class="kontener">
-      <p class="nadtytul">Przychodzisz pierwszy raz</p>
-      <h2>Co zabrać</h2>
-      <p class="wstep">Pierwszy trening jest zawsze darmowy i do niczego nie zobowiązuje.</p>
-      <div class="punkty">
-        <div class="punkt">
-          <span class="punkt__numer">01</span>
-          <h3>Wygodny strój</h3>
-          <p>
-            Luźny i komfortowy, nieutrudniający ruchów — bawełniana koszulka, dresy albo legginsy.
-            Bez wystających, twardych elementów: cekinów, zamków, guzików.
-          </p>
-        </div>
-        <div class="punkt">
-          <span class="punkt__numer">02</span>
-          <h3>Butelka wody</h3>
-          <p>Ćwiczymy na boso, więc butów nie potrzebujesz. Woda i strój w zupełności wystarczą.</p>
-        </div>
-        <div class="punkt">
-          <span class="punkt__numer">03</span>
-          <h3>Telefon do nas</h3>
-          <p>
-            Zanim przyjdziesz, możesz się z nami skontaktować — podamy szczegóły i pomożemy
-            dobrać grupę.
-          </p>
-        </div>
-      </div>
-      <a href="/faq/" class="przycisk przycisk--obrys">Więcej częstych pytań</a>
-    </div>
-  </section>
 </Baza>
 
 <style>
@@ -103,21 +73,4 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
     letter-spacing: 0.04em;
   }
 
-  .punkty {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 2rem;
-    margin-block: 2.5rem;
-  }
-  .wstep { color: var(--tekst-2); max-width: 52ch; margin-top: -0.5rem; }
-  .punkt h3 { margin-bottom: 0.5rem; }
-  .punkt p { color: var(--tekst-2); font-size: 0.9375rem; margin: 0; }
-  .punkt__numer {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    line-height: 1;
-    color: var(--akcent-scisz);
-    margin-bottom: 0.75rem;
-  }
 </style>

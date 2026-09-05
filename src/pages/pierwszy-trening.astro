@@ -1,0 +1,74 @@
+---
+import { getEntry, render } from 'astro:content';
+import Baza from '../layouts/Baza.astro';
+import NaglowekStrony from '../components/NaglowekStrony.astro';
+import ustawienia from '../data/ustawienia.json';
+
+const strona = await getEntry('strony', 'pierwszy-trening');
+const Tresc = strona ? (await render(strona)).Content : null;
+const punkty = strona?.data.punkty ?? [];
+---
+
+<Baza
+  tytul={strona?.data.tytul ?? 'Pierwszy trening'}
+  opis={strona?.data.naglowek ?? 'Pierwszy trening capoeiry w Koszalinie jest bezpłatny i do niczego nie zobowiązuje.'}
+>
+  <NaglowekStrony
+    nadtytul="Zanim przyjdziesz"
+    tytul={strona?.data.tytul ?? 'Pierwszy trening'}
+    opis={strona?.data.naglowek}
+  />
+
+  <section class="sekcja sekcja--ciasna">
+    <div class="kontener">
+      {strona?.data.punktyNadtytul && <p class="nadtytul">{strona.data.punktyNadtytul}</p>}
+      {strona?.data.punktyTytul && <h2>{strona.data.punktyTytul}</h2>}
+
+      {punkty.length > 0 && (
+        <div class="punkty">
+          {punkty.map((punkt, i) => (
+            <div class="punkt">
+              <span class="punkt__numer">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{punkt.tytul}</h3>
+              <p>{punkt.opis}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {Tresc && <div class="proza proza--dopisek"><Tresc /></div>}
+
+      <div class="akcje">
+        <a href="/zajecia/" class="przycisk">Zobacz plan treningów</a>
+        {ustawienia.telefon && (
+          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {ustawienia.telefon}
+          </a>
+        )}
+        <a href="/faq/" class="przycisk przycisk--obrys">Częste pytania</a>
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .punkty {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin-block: 2.5rem;
+  }
+  .punkt h3 { margin-bottom: 0.5rem; }
+  .punkt p { color: var(--tekst-2); font-size: 0.9375rem; margin: 0; }
+  .punkt__numer {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--akcent-scisz);
+    margin-bottom: 0.75rem;
+  }
+
+  .proza--dopisek { margin-bottom: 2.5rem; }
+  .akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+</style>
