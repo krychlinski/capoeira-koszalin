@@ -50,6 +50,20 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
     </div>
   </section>
 
+  <section class="cta">
+    <div class="kontener cta__wnetrze">
+      <h2>Pierwszy trening<br /><span>nic nie kosztuje</span></h2>
+      <div class="cta__akcje">
+        <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
+        {ustawienia.telefon && (
+          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {ustawienia.telefon}
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+
   <section class="sekcja sekcja--ciasna zajecia-blok" id="kiedy-trenujemy">
     <div class="kontener">
       <p class="nadtytul">Grafik</p>
@@ -57,10 +71,9 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
       <Komunikat />
       <Grafik zajecia={zajecia} />
       <div class="zajecia-blok__stopka">
-        <p>Pierwszy trening jest bezpłatny. Przyjdź w wygodnym ubraniu — resztę pokażemy na miejscu.</p>
+        <p>Przyjdź w wygodnym ubraniu — resztę pokażemy na miejscu.</p>
         <div class="zajecia-blok__akcje">
           <a href="/cennik/" class="przycisk przycisk--obrys">Cennik</a>
-          <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
         </div>
       </div>
     </div>
@@ -105,8 +118,9 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
             <KartaWpisu
               href={x.href}
               tytul={x.tytul}
-              meta={dataPl(x.data)} · Facebook` : dataPl(a.data)}
+              meta={x.zrodloFb ? `${dataPl(x.data)} · Facebook` : dataPl(x.data)}
               zajawka={x.zajawka}
+              punkty={x.punkty}
               zdjecie={x.zdjecie}
               zdjecieUrl={x.zdjecia[0]}
               liczbaZdjec={x.zdjecia.length}
@@ -139,19 +153,6 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
     </section>
   )}
 
-  <section class="cta">
-    <div class="kontener cta__wnetrze">
-      <h2>Pierwszy trening<br /><span>nic nie kosztuje</span></h2>
-      <div class="cta__akcje">
-        <a href="/zajecia/" class="przycisk">Sprawdź grafik</a>
-        {ustawienia.telefon && (
-          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
-            {ustawienia.telefon}
-          </a>
-        )}
-      </div>
-    </div>
-  </section>
 </Baza>
 
 <style>
@@ -168,8 +169,13 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
   .intro__tekst { color: var(--tekst-2); font-size: 1.0625rem; }
   .intro__tekst .przycisk { margin-top: 0.75rem; }
 
+  /* Sekcje na przemian ciemne i jasne. Numeruje je przeglądarka, a nie ja, więc
+     ukrycie wydarzenia albo galerii nie rozbija rytmu — kolejne przejmują numery.
+     Hasło ma własne tło ze zdjęciem i nie bierze w tym udziału. */
+  section:not(.hero):nth-of-type(odd) { background-color: var(--tlo-2); }
+  section:not(.hero):nth-of-type(even) { background-color: var(--tlo); }
+
   .zajecia-blok {
-    background: var(--tlo-2);
     border-block: 1px solid var(--linia);
     scroll-margin-top: 5rem;
   }
@@ -242,10 +248,8 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
 
   .cta {
     padding-block: clamp(4rem, 10vw, 7rem);
-    background:
-      radial-gradient(80% 120% at 80% 20%, rgba(var(--akcent-rgb), 0.16), transparent 65%),
-      var(--tlo-2);
-    border-top: 1px solid var(--linia);
+    background-image: radial-gradient(80% 120% at 80% 20%, rgba(var(--akcent-rgb), 0.16), transparent 65%);
+    border-block: 1px solid var(--linia);
   }
   .cta__wnetrze {
     display: flex;

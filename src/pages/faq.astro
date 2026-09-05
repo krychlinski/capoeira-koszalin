@@ -23,7 +23,7 @@ const zOdpowiedziami = await Promise.all(
     <div class="kontener">
       <div class="lista">
         {zOdpowiedziami.map(({ wpis, Odpowiedz }, i) => (
-          <details class="pytanie" open={i === 0}>
+          <details class="pytanie">
             <summary class="pytanie__naglowek">
               <span class="pytanie__numer">{String(i + 1).padStart(2, '0')}</span>
               <span class="pytanie__tresc">{wpis.data.pytanie}</span>

@@ -144,6 +144,8 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Treść renderowana z Markdown (wpisy, wydarzenia, strony statyczne). */
 .proza {
+  --znak-bok: clamp(72px, 11vw, 104px);
+  --znak-odstep: clamp(1.25rem, 3vw, 2rem);
   max-width: 68ch;
   color: var(--tekst-2);
   font-size: 1.0625rem;
@@ -152,6 +154,31 @@ img { max-width: 100%; height: auto; display: block; }
 .proza h3 { margin-top: 2em; color: var(--tekst); }
 .proza a { color: var(--akcent); }
 .proza img { margin-block: 2rem; border: 1px solid var(--linia); }
+/* Znak przynależności wyrównany w pionie do środka swojego akapitu. Kolumnę pod
+   niego robi wcięcie akapitu, a sam obrazek jest z niego wyjęty — układ dwóch
+   kolumn (flex, grid) rozbiłby tekst na osobne kawałki na każdym pogrubieniu. */
+.proza .znak {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--znak-bok);
+  height: auto;
+  margin: 0;
+  border: 0;
+}
+.proza p:has(.znak) {
+  position: relative;
+  min-height: var(--znak-bok);
+  align-content: center;
+  padding-left: calc(var(--znak-bok) + var(--znak-odstep));
+}
+/* Na telefonie kolumna obok znaku zwężałaby się do jakichś 29 znaków w wierszu,
+   czyli poniżej granicy wygodnego czytania — tam znak idzie nad tekst. */
+@media (max-width: 560px) {
+  .proza .znak { position: static; transform: none; display: block; margin-bottom: 1rem; }
+  .proza p:has(.znak) { padding-left: 0; min-height: 0; }
+}
 .proza blockquote {
   margin: 2rem 0;
   padding-left: 1.5rem;

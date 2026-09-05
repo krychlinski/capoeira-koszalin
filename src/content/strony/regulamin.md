@@ -22,9 +22,7 @@ Kandydat do uczestnictwa w treningach, zwany dalej "kandydatem" zostaje zapisany
 
 ### § 4
 
-Kandydat zostaje poinformowany przez upoważnionego przedstawiciela o warunkach organizacyjno-
-
--finansowych uczestnictwa w treningach oraz o rodzaju i charakterze treningów CAPOEIRA.
+Kandydat zostaje poinformowany przez upoważnionego przedstawiciela o warunkach organizacyjno-finansowych uczestnictwa w treningach oraz o rodzaju i charakterze treningów CAPOEIRA.
 
 ### § 5
 
@@ -56,23 +54,19 @@ Uczestnik powinien być dodatkowo ubezpieczony od następstw nieszczęśliwych w
 
 ### § 10
 
-Uczestnik jest zobowiązany do uiszczania składek /opłat za udział w treningach w trybie, terminach
-
-i wysokości określonych przez organizatora.
+Uczestnik jest zobowiązany do uiszczania składek /opłat za udział w treningach w trybie, terminach i wysokości określonych przez organizatora.
 
 ## III. Strój treningowy
 
 ### § 11
 
-Uczestnik treningów grup początkujących, zobowiązany jest do posiadania czystego i schludnego sportowego stroju (dres, getry, podkoszulek bawełniany lub uniform CAPOEIRA)
+Uczestnik treningów grup początkujących, zobowiązany jest do posiadania czystego i schludnego sportowego stroju (dres, getry, podkoszulek bawełniany lub uniform CAPOEIRA).
 
 ### § 12
 
 1. Sznur (Cordao) wolno nosić tylko zgodny z nadanym stopniem. Osoby początkujące mogą używać białego sznura.
 
-2. Oficjalny wykaz stopni i sznurów oraz wymagania egzaminacyjne, znajdują się w informatorze UNICAR
-
-CAPOEIRA dostępnym u instruktora.
+2. Oficjalny wykaz stopni i sznurów oraz wymagania egzaminacyjne, znajdują się w informatorze UNICAR CAPOEIRA dostępnym u instruktora.
 
 ## IV. Warunki udziału w ćwiczeniach z partnerem i walce sparingowej
 
@@ -90,9 +84,7 @@ Każdy uczestnik zobowiązany jest do znajomości i przestrzegania zasad bezpiec
 
 ### § 16
 
-W przypadku podjęcia decyzji przez uczestnika treningu, który ukończył 14 lat, o udziale w ćwiczeniu z partnerem lub w sparingu, ponosi on pełne ryzyko odniesienia urazu (kontuzji) w przypadku naruszenia postanowień tego Regulaminu lub umyślnego, przypadkowego, normalnego, nienormalnego
-
-zastosowania danej techniki CAPOEIRA przez siebie lub partnera i w pełni zrzeka się ewentualnych roszczeń wobec organizatorów, trenerów, instruktorów, przedstawicieli, członków, autoryzowanych i zaproszonych gości, w związku z ewentualnie zaistniałym wypadkiem.
+W przypadku podjęcia decyzji przez uczestnika treningu, który ukończył 14 lat, o udziale w ćwiczeniu z partnerem lub w sparingu, ponosi on pełne ryzyko odniesienia urazu (kontuzji) w przypadku naruszenia postanowień tego Regulaminu lub umyślnego, przypadkowego, normalnego, nienormalnego zastosowania danej techniki CAPOEIRA przez siebie lub partnera i w pełni zrzeka się ewentualnych roszczeń wobec organizatorów, trenerów, instruktorów, przedstawicieli, członków, autoryzowanych i zaproszonych gości, w związku z ewentualnie zaistniałym wypadkiem.
 
 ### § 17
 
@@ -118,15 +110,9 @@ Każdy uczestnik treningu może w dowolnym momencie przerwać ćwiczenie z partn
 
 3. Uczestnicy treningu mogą ćwiczyć tylko w obecności instruktora.
 
-4. Bezpośrednio przed rozpoczęciem treningu, uczestnicy (uczniowie), ustawiają się w szeregu według
+4. Bezpośrednio przed rozpoczęciem treningu, uczestnicy (uczniowie), ustawiają się w szeregu według posiadanych stopni- od prawego, na linii wskazanej przez instruktora. W przypadku równych stopni obowiązuje zasada senioratu (decyduje data wcześniejszego zdania egzaminu na stopień, pełniona funkcja lub oczywista różnica wieku między uczestnikami). Zasadę senioratu stosuje się także podczas roda (gry w kręgu).
 
-posiadanych stopni- od prawego, na linii wskazanej przez instruktora. W przypadku równych stopni
-
-obowiązuje zasada senioratu (decyduje data wcześniejszego zdania egzaminu na stopień, pełniona funkcja lub oczywista różnica wieku między uczestnikami). Zasadę senioratu stosuje się także podczas roda (gry w kręgu).
-
-5. W trakcie całego treningu, obowiązuje dyscyplina i podporządkowanie uczestników komendom
-
-i poleceniom instruktora, prowadzącego trening.
+5. W trakcie całego treningu, obowiązuje dyscyplina i podporządkowanie uczestników komendom i poleceniom instruktora, prowadzącego trening.
 
 6. Osoba spóźniona, po wejściu na salę z szatni staje przy wejściu i czeka na decyzję instruktora.
 
@@ -138,9 +124,7 @@ i poleceniom instruktora, prowadzącego trening.
 
 10. W czasie treningu osobom w ubraniach cywilnych nie wolno przebywać na terenie sali, za wyjątkiem gości zaproszonych przez instruktora.
 
-11. Nie należy przynosić na trening wartościowych rzeczy. Za pozostawienie ich w szatni, pełne ryzyko i
-
-konsekwencje ponosi ich właściciel.
+11. Nie należy przynosić na trening wartościowych rzeczy. Za pozostawienie ich w szatni, pełne ryzyko i konsekwencje ponosi ich właściciel.
 
 12. Palenie tytoniu, picie alkoholu, zażywanie narkotyków i środków dopingujących na terenie sali jest surowo zabronione.
 
