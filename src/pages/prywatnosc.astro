@@ -1,14 +1,14 @@
 ---
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
-import ustawienia from '../data/ustawienia.json';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import settings from '../data/settings.json';
 ---
 
-<Baza tytul="Prywatność i ciasteczka" opis="Jakie dane zbiera ta strona. Krótko: prawie żadnych.">
-  <NaglowekStrony
-    nadtytul="Bez ściemy"
-    tytul="Prywatność"
-    opis="Ta strona nie zbiera o Tobie danych i nie ustawia własnych ciasteczek."
+<Base title="Prywatność i ciasteczka" description="Jakie dane zbiera ta strona. Krótko: prawie żadnych.">
+  <PageHeader
+    eyebrow="Bez ściemy"
+    title="Prywatność"
+    description="Ta strona nie zbiera o Tobie danych i nie ustawia własnych ciasteczek."
   />
 
   <section class="sekcja sekcja--ciasna">
@@ -52,4 +52,4 @@ import ustawienia from '../data/ustawienia.json';
       </div>
     </div>
   </section>
-</Baza>
+</Base>

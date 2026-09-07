@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from 'astro';
-import { poprawHtml } from './lib/typografia';
+import { applyTypography } from './lib/typography';
 
 /**
  * Nakłada polskie reguły typograficzne na każdą wygenerowaną stronę.
@@ -9,16 +9,16 @@ import { poprawHtml } from './lib/typografia';
  * co zobaczy odwiedzający. Wcześniejsza wersja poprawiała tylko gotowy build
  * i localhost kłamał.
  */
-export const onRequest: MiddlewareHandler = async (_kontekst, dalej) => {
-  const odpowiedz = await dalej();
+export const onRequest: MiddlewareHandler = async (_context, next) => {
+  const response = await next();
 
-  const typ = odpowiedz.headers.get('content-type') ?? '';
-  if (!typ.includes('text/html')) return odpowiedz;
+  const type = response.headers.get('content-type') ?? '';
+  if (!type.includes('text/html')) return response;
 
-  const html = await odpowiedz.text();
-  return new Response(poprawHtml(html), {
-    status: odpowiedz.status,
-    statusText: odpowiedz.statusText,
-    headers: odpowiedz.headers,
+  const html = await response.text();
+  return new Response(applyTypography(html), {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
   });
 };

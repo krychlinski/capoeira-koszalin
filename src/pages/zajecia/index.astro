@@ -1,38 +1,38 @@
 ---
 import { getCollection, getEntry, render } from 'astro:content';
-import Baza from '../../layouts/Baza.astro';
-import NaglowekStrony from '../../components/NaglowekStrony.astro';
-import Grafik from '../../components/Grafik.astro';
-import Komunikat from '../../components/Komunikat.astro';
-import ustawienia from '../../data/ustawienia.json';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Schedule from '../../components/Schedule.astro';
+import Notice from '../../components/Notice.astro';
+import settings from '../../data/settings.json';
 
-const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
-const oferta = await getEntry('strony', 'oferta');
-const Oferta = oferta ? (await render(oferta)).Content : null;
+const classes = (await getCollection('classes')).sort((a, b) => a.data.order - b.data.order);
+const offer = await getEntry('pages', 'oferta');
+const Offer = offer ? (await render(offer)).Content : null;
 ---
 
-<Baza
-  tytul="Zajęcia"
-  opis="Grafik treningów capoeiry w Koszalinie — grupy od 3 lat, młodzież, dorośli, akrobatyka i mobility."
+<Base
+  title="Zajęcia"
+  description="Grafik treningów capoeiry w Koszalinie — grupy od 3 lat, młodzież, dorośli, akrobatyka i mobility."
 >
-  <NaglowekStrony
-    nadtytul="Grafik"
-    tytul="Zajęcia"
-    opis="Trenujemy przez cały rok szkolny. Pierwszy trening jest bezpłatny i niezobowiązujący."
+  <PageHeader
+    eyebrow="Grafik"
+    title="Zajęcia"
+    description="Trenujemy przez cały rok szkolny. Pierwszy trening jest bezpłatny i niezobowiązujący."
   />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
-      <Komunikat />
-      <Grafik zajecia={zajecia} />
+      <Notice />
+      <Schedule classes={classes} />
       <div class="pod-grafikiem">
         <p>Nie wiesz, do której grupy pasujesz? Zadzwoń — dobierzemy ją razem.</p>
         <div class="pod-grafikiem__akcje">
           <a href="/pierwszy-trening/" class="przycisk przycisk--obrys">Przychodzisz pierwszy raz?</a>
           <a href="/cennik/" class="przycisk przycisk--obrys">Zobacz cennik</a>
-          {ustawienia.telefon && (
-            <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk">
-              {ustawienia.telefon}
+          {settings.phone && (
+            <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk">
+              {settings.phone}
             </a>
           )}
         </div>
@@ -40,17 +40,17 @@ const Oferta = oferta ? (await render(oferta)).Content : null;
     </div>
   </section>
 
-  {Oferta && (
+  {Offer && (
     <section class="sekcja sekcja--ciasna oferta">
       <div class="kontener">
         <p class="nadtytul">Co robimy</p>
         <h2>Oferta</h2>
-        <div class="proza proza--oferta"><Oferta /></div>
+        <div class="proza proza--oferta"><Offer /></div>
       </div>
     </section>
   )}
 
-</Baza>
+</Base>
 
 <style>
   .pod-grafikiem {

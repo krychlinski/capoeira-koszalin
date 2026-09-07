@@ -1,34 +1,34 @@
 ---
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import Baza from '../../layouts/Baza.astro';
-import { obraz } from '../../lib/media';
-import { dataPl, ileZdjec } from '../../lib/format';
+import Base from '../../layouts/Base.astro';
+import { resolveImage } from '../../lib/media';
+import { formatDate, photoCount } from '../../lib/format';
 
 export async function getStaticPaths() {
-  const albumy = await getCollection('galeria');
-  return albumy.map((album) => ({ params: { slug: album.id }, props: { album } }));
+  const albums = await getCollection('gallery');
+  return albums.map((album) => ({ params: { slug: album.id }, props: { album } }));
 }
 
 const { album } = Astro.props;
-const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== undefined);
+const images = album.data.images.map((s) => resolveImage(s)).filter((f) => f !== undefined);
 ---
 
-<Baza tytul={album.data.tytul} opis={`Zdjęcia: ${album.data.tytul}`}>
+<Base title={album.data.title} description={`Zdjęcia: ${album.data.title}`}>
   <header class="naglowek">
     <div class="kontener">
       <a href="/galeria/" class="powrot">← Galeria</a>
-      <p class="meta">{dataPl(album.data.data)} · <span set:html={ileZdjec(zdjecia.length).replace(" ", "&nbsp;")} /></p>
-      <h1>{album.data.tytul}</h1>
+      <p class="meta">{formatDate(album.data.date)} · <span set:html={photoCount(images.length).replace(" ", "&nbsp;")} /></p>
+      <h1>{album.data.title}</h1>
     </div>
   </header>
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
       <div class="siatka">
-        {zdjecia.map((foto, i) => (
-          <button class="kafel" data-indeks={i} aria-label={`Powiększ zdjęcie ${i + 1}`}>
-            <Image src={foto} alt="" widths={[400, 800]} sizes="(max-width: 700px) 50vw, 280px" loading="lazy" />
+        {images.map((photo, i) => (
+          <button class="kafel" data-index={i} aria-label={`Powiększ zdjęcie ${i + 1}`}>
+            <Image src={photo} alt="" widths={[400, 800]} sizes="(max-width: 700px) 50vw, 280px" loading="lazy" />
           </button>
         ))}
       </div>
@@ -36,14 +36,14 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
   </section>
 
   <dialog class="lightbox" data-lightbox tabindex="-1">
-    <button class="lightbox__zamknij" data-zamknij aria-label="Zamknij">×</button>
-    <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-wstecz aria-label="Poprzednie">‹</button>
-    <img class="lightbox__foto" data-foto alt="" />
-    <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-dalej aria-label="Następne">›</button>
+    <button class="lightbox__zamknij" data-close aria-label="Zamknij">×</button>
+    <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-prev aria-label="Poprzednie">‹</button>
+    <img class="lightbox__foto" data-photo alt="" />
+    <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-next aria-label="Następne">›</button>
   </dialog>
 
-  <script type="application/json" id="pelne-zdjecia" set:html={JSON.stringify(zdjecia.map((f) => f.src))} />
-</Baza>
+  <script type="application/json" id="album-images" set:html={JSON.stringify(images.map((f) => f.src))} />
+</Base>
 
 <style>
   .naglowek {
@@ -134,21 +134,21 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
 </style>
 
 <script>
-  const dane = document.getElementById('pelne-zdjecia');
-  const zdjecia: string[] = dane ? JSON.parse(dane.textContent || '[]') : [];
+  const source = document.getElementById('album-images');
+  const images: string[] = source ? JSON.parse(source.textContent || '[]') : [];
   const lightbox = document.querySelector<HTMLDialogElement>('[data-lightbox]');
-  const foto = document.querySelector<HTMLImageElement>('[data-foto]');
-  let aktualny = 0;
+  const photo = document.querySelector<HTMLImageElement>('[data-photo]');
+  let current = 0;
 
-  const pokaz = (i: number) => {
-    if (!foto || zdjecia.length === 0) return;
-    aktualny = (i + zdjecia.length) % zdjecia.length;
-    foto.src = zdjecia[aktualny];
+  const show = (i: number) => {
+    if (!photo || images.length === 0) return;
+    current = (i + images.length) % images.length;
+    photo.src = images[current];
   };
 
-  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((kafel) => {
-    kafel.addEventListener('click', () => {
-      pokaz(Number(kafel.dataset.indeks));
+  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((tile) => {
+    tile.addEventListener('click', () => {
+      show(Number(tile.dataset.index));
       lightbox?.showModal();
       // Bez tego przeglądarka zaznacza pierwszy przycisk i rysuje wokół niego
       // swoją obwódkę. Atrybut autofocus na <dialog> nie jest respektowany wszędzie.
@@ -156,9 +156,9 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
     });
   });
 
-  document.querySelector('[data-zamknij]')?.addEventListener('click', () => lightbox?.close());
-  document.querySelector('[data-wstecz]')?.addEventListener('click', () => pokaz(aktualny - 1));
-  document.querySelector('[data-dalej]')?.addEventListener('click', () => pokaz(aktualny + 1));
+  document.querySelector('[data-close]')?.addEventListener('click', () => lightbox?.close());
+  document.querySelector('[data-prev]')?.addEventListener('click', () => show(current - 1));
+  document.querySelector('[data-next]')?.addEventListener('click', () => show(current + 1));
 
   lightbox?.addEventListener('click', (e) => {
     if (e.target === lightbox) lightbox.close();
@@ -166,7 +166,7 @@ const zdjecia = album.data.zdjecia.map((s) => obraz(s)).filter((f) => f !== unde
 
   document.addEventListener('keydown', (e) => {
     if (!lightbox?.open) return;
-    if (e.key === 'ArrowLeft') pokaz(aktualny - 1);
-    if (e.key === 'ArrowRight') pokaz(aktualny + 1);
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
   });
 </script>

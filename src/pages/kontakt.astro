@@ -1,25 +1,25 @@
 ---
 import { getEntry, render } from 'astro:content';
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
-import ustawienia from '../data/ustawienia.json';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import settings from '../data/settings.json';
 
-const strona = await getEntry('strony', 'kontakt');
-const Tresc = strona ? (await render(strona)).Content : null;
+const page = await getEntry('pages', 'kontakt');
+const Content = page ? (await render(page)).Content : null;
 
-const telHref = ustawienia.telefon ? `tel:+48${ustawienia.telefon.replace(/\s/g, '')}` : null;
+const telHref = settings.phone ? `tel:+48${settings.phone.replace(/\s/g, '')}` : null;
 const social = [
-  { href: ustawienia.facebook, tekst: 'Facebook' },
-  { href: ustawienia.instagram, tekst: 'Instagram' },
-  { href: ustawienia.youtube, tekst: 'YouTube' },
+  { href: settings.facebook, text: 'Facebook' },
+  { href: settings.instagram, text: 'Instagram' },
+  { href: settings.youtube, text: 'YouTube' },
 ].filter((s) => s.href);
 ---
 
-<Baza tytul="Kontakt" opis="Zadzwoń albo napisz — odpowiemy i powiemy, kiedy przyjść na pierwszy trening.">
-  <NaglowekStrony
-    nadtytul="Odezwij się"
-    tytul="Kontakt"
-    opis="Najszybciej złapiesz nas telefonicznie. Możesz też po prostu przyjść na trening — nie trzeba się zapowiadać."
+<Base title="Kontakt" description="Zadzwoń albo napisz — odpowiemy i powiemy, kiedy przyjść na pierwszy trening.">
+  <PageHeader
+    eyebrow="Odezwij się"
+    title="Kontakt"
+    description="Najszybciej złapiesz nas telefonicznie. Możesz też po prostu przyjść na trening — nie trzeba się zapowiadać."
   />
 
   <section class="sekcja sekcja--ciasna">
@@ -28,21 +28,21 @@ const social = [
         {telHref && (
           <div class="pozycja">
             <p class="pozycja__etykieta">Telefon</p>
-            <a href={telHref} class="pozycja__wartosc pozycja__wartosc--duza">{ustawienia.telefon}</a>
+            <a href={telHref} class="pozycja__wartosc pozycja__wartosc--duza">{settings.phone}</a>
           </div>
         )}
 
-        {ustawienia.email && (
+        {settings.email && (
           <div class="pozycja">
             <p class="pozycja__etykieta">E-mail</p>
-            <a href={`mailto:${ustawienia.email}`} class="pozycja__wartosc">{ustawienia.email}</a>
+            <a href={`mailto:${settings.email}`} class="pozycja__wartosc">{settings.email}</a>
           </div>
         )}
 
-        {ustawienia.adres && (
+        {settings.address && (
           <div class="pozycja">
             <p class="pozycja__etykieta">Gdzie trenujemy</p>
-            <p class="pozycja__wartosc">{ustawienia.adres}</p>
+            <p class="pozycja__wartosc">{settings.address}</p>
           </div>
         )}
 
@@ -51,7 +51,7 @@ const social = [
             <p class="pozycja__etykieta">Social media</p>
             <div class="social">
               {social.map((s) => (
-                <a href={s.href} class="pozycja__wartosc" target="_blank" rel="noopener noreferrer">{s.tekst}</a>
+                <a href={s.href} class="pozycja__wartosc" target="_blank" rel="noopener noreferrer">{s.text}</a>
               ))}
             </div>
           </div>
@@ -61,11 +61,11 @@ const social = [
       </div>
 
       <div class="tresc">
-        {Tresc && <div class="proza"><Tresc /></div>}
+        {Content && <div class="proza"><Content /></div>}
       </div>
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .siatka {

@@ -1,32 +1,32 @@
 ---
 import { getCollection } from 'astro:content';
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
-import ustawienia from '../data/ustawienia.json';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import settings from '../data/settings.json';
 
-const wszystkie = (await getCollection('cennik')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
-const miesieczne = wszystkie.filter((p) => p.data.kategoria === 'miesieczne');
-const dodatkowe = wszystkie.filter((p) => p.data.kategoria === 'dodatkowe');
+const wszystkie = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
+const monthly = wszystkie.filter((p) => p.data.category === 'monthly');
+const extra = wszystkie.filter((p) => p.data.category === 'extra');
 ---
 
-<Baza tytul="Cennik" opis="Karnety i opłaty w Akademii Capoeira Koszalin. Pierwszy trening jest bezpłatny.">
-  <NaglowekStrony
-    nadtytul="Opłaty"
-    tytul="Cennik"
-    opis="Pierwszy trening zapoznawczy jest bezpłatny i do niczego nie zobowiązuje."
+<Base title="Cennik" description="Karnety i opłaty w Akademii Capoeira Koszalin. Pierwszy trening jest bezpłatny.">
+  <PageHeader
+    eyebrow="Opłaty"
+    title="Cennik"
+    description="Pierwszy trening zapoznawczy jest bezpłatny i do niczego nie zobowiązuje."
   />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
       <h2 class="tytul-grupy">Karnety miesięczne</h2>
       <div class="pozycje">
-        {miesieczne.map((p) => (
+        {monthly.map((p) => (
           <div class="pozycja">
             <div class="pozycja__opis">
-              <h3 class="pozycja__nazwa">{p.data.nazwa}</h3>
-              {p.data.opis && <p class="pozycja__szczegol">{p.data.opis}</p>}
+              <h3 class="pozycja__nazwa">{p.data.name}</h3>
+              {p.data.description && <p class="pozycja__szczegol">{p.data.description}</p>}
             </div>
-            <p class="pozycja__cena">{p.data.cena}</p>
+            <p class="pozycja__cena">{p.data.price}</p>
           </div>
         ))}
       </div>
@@ -37,13 +37,13 @@ const dodatkowe = wszystkie.filter((p) => p.data.kategoria === 'dodatkowe');
 
       <h2 class="tytul-grupy tytul-grupy--drugi">Opłaty dodatkowe</h2>
       <div class="pozycje">
-        {dodatkowe.map((p) => (
+        {extra.map((p) => (
           <div class="pozycja">
             <div class="pozycja__opis">
-              <h3 class="pozycja__nazwa">{p.data.nazwa}</h3>
-              {p.data.opis && <p class="pozycja__szczegol">{p.data.opis}</p>}
+              <h3 class="pozycja__nazwa">{p.data.name}</h3>
+              {p.data.description && <p class="pozycja__szczegol">{p.data.description}</p>}
             </div>
-            <p class="pozycja__cena">{p.data.cena}</p>
+            <p class="pozycja__cena">{p.data.price}</p>
           </div>
         ))}
       </div>
@@ -58,15 +58,15 @@ const dodatkowe = wszystkie.filter((p) => p.data.kategoria === 'dodatkowe');
       </div>
       <div class="zacheta__akcje">
         <a href="/zajecia/" class="przycisk">Sprawdź grafik</a>
-        {ustawienia.telefon && (
-          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
-            {ustawienia.telefon}
+        {settings.phone && (
+          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {settings.phone}
           </a>
         )}
       </div>
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .tytul-grupy { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 1.75rem; color: var(--tekst-2); }

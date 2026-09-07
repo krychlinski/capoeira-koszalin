@@ -1,58 +1,58 @@
 ---
 import { getEntry, getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
-import { obraz } from '../lib/media';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { resolveImage } from '../lib/media';
 
-const strona = await getEntry('strony', 'o-nas');
-const Tresc = strona ? (await render(strona)).Content : null;
-const foto = obraz(strona?.data.zdjecie);
+const page = await getEntry('pages', 'o-nas');
+const Content = page ? (await render(page)).Content : null;
+const photo = resolveImage(page?.data.image);
 
-const lista = (await getCollection('instruktorzy')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
-const instruktorzy = await Promise.all(
-  lista.map(async (i) => ({ wpis: i, foto: obraz(i.data.zdjecie), Biogram: (await render(i)).Content }))
+const list = (await getCollection('instructors')).sort((a, b) => a.data.order - b.data.order);
+const instructors = await Promise.all(
+  list.map(async (i) => ({ entry: i, photo: resolveImage(i.data.image), Bio: (await render(i)).Content }))
 );
 ---
 
-<Baza tytul={strona?.data.tytul ?? 'O nas'} opis="Akademia Capoeira Koszalin — kim jesteśmy i kto prowadzi treningi.">
-  <NaglowekStrony nadtytul="Grupa" tytul={strona?.data.tytul ?? 'O nas'} opis={strona?.data.naglowek} />
+<Base title={page?.data.title ?? 'O nas'} description="Akademia Capoeira Koszalin — kim jesteśmy i kto prowadzi treningi.">
+  <PageHeader eyebrow="Grupa" title={page?.data.title ?? 'O nas'} description={page?.data.heading} />
 
-  {foto && (
+  {photo && (
     <div class="kontener">
-      <Image src={foto} alt="" widths={[800, 1200, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" class="foto" />
+      <Image src={photo} alt="" widths={[800, 1200, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" class="foto" />
     </div>
   )}
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
-      {Tresc ? (
-        <div class="proza"><Tresc /></div>
+      {Content ? (
+        <div class="proza"><Content /></div>
       ) : (
         <p class="pusto">Treść tej strony uzupełnisz w panelu, w sekcji „Strony”.</p>
       )}
     </div>
   </section>
 
-  {instruktorzy.length > 0 && (
+  {instructors.length > 0 && (
     <section class="sekcja sekcja--ciasna kadra">
       <div class="kontener">
         <p class="nadtytul">Kto prowadzi</p>
         <h2>Instruktorzy</h2>
 
         <div class="lista">
-          {instruktorzy.map(({ wpis, foto: portret, Biogram }) => (
-            <article class={portret ? 'osoba' : 'osoba osoba--bez-zdjecia'}>
-              {portret && (
+          {instructors.map(({ entry, photo: portrait, Bio }) => (
+            <article class={portrait ? 'osoba' : 'osoba osoba--bez-zdjecia'}>
+              {portrait && (
                 <div class="osoba__foto">
-                  <Image src={portret} alt={wpis.data.imie} widths={[400, 800]} sizes="(max-width: 800px) 100vw, 300px" loading="lazy" />
+                  <Image src={portrait} alt={entry.data.name} widths={[400, 800]} sizes="(max-width: 800px) 100vw, 300px" loading="lazy" />
                 </div>
               )}
               <div class="osoba__tresc">
-                {wpis.data.apelido && <p class="osoba__apelido">{wpis.data.apelido}</p>}
-                <h3 class="osoba__imie">{wpis.data.imie}</h3>
-                {wpis.data.stopien && <p class="osoba__stopien">{wpis.data.stopien}</p>}
-                <div class="proza"><Biogram /></div>
+                {entry.data.apelido && <p class="osoba__apelido">{entry.data.apelido}</p>}
+                <h3 class="osoba__imie">{entry.data.name}</h3>
+                {entry.data.corda && <p class="osoba__stopien">{entry.data.corda}</p>}
+                <div class="proza"><Bio /></div>
               </div>
             </article>
           ))}
@@ -60,7 +60,7 @@ const instruktorzy = await Promise.all(
       </div>
     </section>
   )}
-</Baza>
+</Base>
 
 <style>
   :global(.foto) {

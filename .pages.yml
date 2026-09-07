@@ -9,10 +9,10 @@ media:
   rename: safe
 
 content:
-  - name: aktualnosci
+  - name: news
     label: Aktualności
     type: collection
-    path: src/content/aktualnosci
+    path: src/content/news
     format: yaml-frontmatter
     filename: '{year}-{month}-{day}-{primary}.md'
     view:
@@ -21,24 +21,24 @@ content:
       order: desc
       fields: [tytul, data, opublikowany]
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
-      - name: zajawka
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: date, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - name: excerpt
         label: Zajawka
         type: text
         description: Jedno–dwa zdania. To widać na liście wpisów i w podglądzie na Facebooku.
-      - { name: zdjecie, label: Zdjęcie główne, type: image }
-      - name: opublikowany
+      - { name: image, label: Zdjęcie główne, type: image }
+      - name: published
         label: Opublikowany
         type: boolean
         default: true
         description: Odznacz, żeby schować wpis bez usuwania go.
       - { name: body, label: Treść, type: rich-text }
 
-  - name: wydarzenia
+  - name: events
     label: Wydarzenia
     type: collection
-    path: src/content/wydarzenia
+    path: src/content/events
     format: yaml-frontmatter
     filename: '{primary}.md'
     view:
@@ -47,22 +47,22 @@ content:
       order: desc
       fields: [tytul, dataOd, miejsce]
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - { name: dataOd, label: Data od, type: date, required: true, options: { format: yyyy-MM-dd } }
-      - name: dataDo
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: startDate, label: Data od, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - name: endDate
         label: Data do
         type: date
         options: { format: yyyy-MM-dd }
         description: Wypełnij tylko przy wydarzeniu wielodniowym.
-      - { name: miejsce, label: Miejsce, type: string }
-      - { name: zajawka, label: Zajawka, type: text }
-      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: venue, label: Miejsce, type: string }
+      - { name: excerpt, label: Zajawka, type: text }
+      - { name: image, label: Zdjęcie, type: image }
       - { name: body, label: Opis, type: rich-text }
 
-  - name: zajecia
+  - name: classes
     label: Grafik zajęć
     type: collection
-    path: src/content/zajecia
+    path: src/content/classes
     format: yaml-frontmatter
     filename: '{primary}.md'
     view:
@@ -71,36 +71,36 @@ content:
       order: asc
       fields: [grupa, wiek, miejsce]
     fields:
-      - name: grupa
+      - name: group
         label: Nazwa grupy
         type: string
         required: true
         description: Np. „Dzieci” albo „Młodzież i dorośli”.
-      - { name: podtytul, label: Podtytuł, type: string, description: 'Wiek lub czas trwania, np. „od 14 lat · 90 minut”.' }
-      - name: terminy
+      - { name: subtitle, label: Podtytuł, type: string, description: 'Wiek lub czas trwania, np. „od 14 lat · 90 minut”.' }
+      - name: sessions
         label: Terminy
         type: object
         list: true
         fields:
-          - name: dzien
+          - name: day
             label: Dzień
             type: select
             options:
               values: [Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela]
-          - { name: od, label: Od, type: string, description: 'Format 18:00' }
-          - { name: do, label: Do, type: string }
-      - { name: miejsce, label: Miejsce, type: string, description: Nazwa sali lub szkoły. }
-      - { name: adres, label: Adres, type: string }
-      - name: kolejnosc
+          - { name: from, label: Od, type: string, description: 'Format 18:00' }
+          - { name: to, label: Do, type: string }
+      - { name: venue, label: Miejsce, type: string, description: Nazwa sali lub szkoły. }
+      - { name: address, label: Adres, type: string }
+      - name: order
         label: Kolejność
         type: number
         default: 1
         description: Mniejsza liczba = wyżej na stronie.
 
-  - name: instruktorzy
+  - name: instructors
     label: Instruktorzy
     type: collection
-    path: src/content/instruktorzy
+    path: src/content/instructors
     format: yaml-frontmatter
     filename: '{primary}.md'
     view:
@@ -109,17 +109,17 @@ content:
       order: asc
       fields: [imie, apelido, stopien]
     fields:
-      - { name: imie, label: Imię i nazwisko, type: string, required: true }
+      - { name: name, label: Imię i nazwisko, type: string, required: true }
       - { name: apelido, label: Apelido, type: string, description: Capoeirowe przezwisko. }
-      - { name: stopien, label: Stopień / corda, type: string }
-      - { name: zdjecie, label: Zdjęcie, type: image }
-      - { name: kolejnosc, label: Kolejność, type: number, default: 1 }
+      - { name: corda, label: Stopień / corda, type: string }
+      - { name: image, label: Zdjęcie, type: image }
+      - { name: order, label: Kolejność, type: number, default: 1 }
       - { name: body, label: Biogram, type: rich-text }
 
-  - name: galeria
+  - name: gallery
     label: Galeria
     type: collection
-    path: src/content/galeria
+    path: src/content/gallery
     format: yaml-frontmatter
     filename: '{primary}.md'
     view:
@@ -128,13 +128,13 @@ content:
       order: desc
       fields: [tytul, data]
     fields:
-      - { name: tytul, label: Tytuł albumu, type: string, required: true }
-      - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
-      - name: okladka
+      - { name: title, label: Tytuł albumu, type: string, required: true }
+      - { name: date, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - name: cover
         label: Okładka
         type: image
         description: Zostaw puste, żeby użyć pierwszego zdjęcia z albumu.
-      - name: zdjecia
+      - name: images
         label: Zdjęcia
         type: image
         options:
@@ -144,53 +144,53 @@ content:
   - name: strona-pierwszy-trening
     label: Strona „Pierwszy trening”
     type: file
-    path: src/content/strony/pierwszy-trening.md
+    path: src/content/pages/pierwszy-trening.md
     format: yaml-frontmatter
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - name: naglowek
+      - { name: title, label: Tytuł, type: string, required: true }
+      - name: heading
         label: Nagłówek
         type: text
         description: Zdanie pod tytułem. Tu piszemy, że pierwszy trening jest bezpłatny.
-      - { name: zdjecie, label: Zdjęcie, type: image }
-      - { name: punktyNadtytul, label: Etykieta nad punktami, type: string, description: 'Np. „Co zabrać”.' }
-      - { name: punktyTytul, label: Nagłówek punktów, type: string }
-      - name: punkty
+      - { name: image, label: Zdjęcie, type: image }
+      - { name: pointsEyebrow, label: Etykieta nad punktami, type: string, description: 'Np. „Co zabrać”.' }
+      - { name: pointsHeading, label: Nagłówek punktów, type: string }
+      - name: points
         label: Punkty
         type: object
         list: true
         description: Numery 01, 02, 03 nadają się same, według kolejności na liście.
         fields:
-          - { name: tytul, label: Nagłówek, type: string, required: true }
-          - { name: opis, label: Opis, type: text, required: true }
+          - { name: title, label: Nagłówek, type: string, required: true }
+          - { name: description, label: Opis, type: text, required: true }
       - { name: body, label: Dodatkowy tekst, type: rich-text, description: Nieobowiązkowy, pojawia się pod punktami. }
 
   - name: strona-o-nas
     label: Strona „O nas”
     type: file
-    path: src/content/strony/o-nas.md
+    path: src/content/pages/o-nas.md
     format: yaml-frontmatter
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - { name: naglowek, label: Nagłówek, type: text, description: Zdanie pod tytułem. }
-      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: heading, label: Nagłówek, type: text, description: Zdanie pod tytułem. }
+      - { name: image, label: Zdjęcie, type: image }
       - { name: body, label: Treść, type: rich-text }
 
   - name: strona-kontakt
     label: Strona „Kontakt”
     type: file
-    path: src/content/strony/kontakt.md
+    path: src/content/pages/kontakt.md
     format: yaml-frontmatter
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - { name: naglowek, label: Nagłówek, type: text }
-      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: heading, label: Nagłówek, type: text }
+      - { name: image, label: Zdjęcie, type: image }
       - { name: body, label: Treść, type: rich-text }
 
-  - name: cennik
+  - name: pricing
     label: Cennik
     type: collection
-    path: src/content/cennik
+    path: src/content/pricing
     format: yaml-frontmatter
     filename: '{primary}.md'
     view:
@@ -199,17 +199,17 @@ content:
       order: asc
       fields: [nazwa, cena, kategoria]
     fields:
-      - { name: nazwa, label: Nazwa, type: string, required: true }
-      - { name: cena, label: Cena, type: string, required: true, description: 'Np. „200 zł” albo „od 150 zł”.' }
-      - { name: opis, label: Opis, type: text }
-      - name: kategoria
+      - { name: name, label: Nazwa, type: string, required: true }
+      - { name: price, label: Cena, type: string, required: true, description: 'Np. „200 zł” albo „od 150 zł”.' }
+      - { name: description, label: Opis, type: text }
+      - name: category
         label: Kategoria
         type: select
         options:
           values:
             - { name: miesieczne, label: Karnet miesięczny }
             - { name: dodatkowe, label: Opłata dodatkowa }
-      - { name: kolejnosc, label: Kolejność, type: number, default: 1 }
+      - { name: order, label: Kolejność, type: number, default: 1 }
 
   - name: faq
     label: Częste pytania
@@ -223,66 +223,66 @@ content:
       order: asc
       fields: [pytanie, kolejnosc]
     fields:
-      - { name: pytanie, label: Pytanie, type: string, required: true }
-      - { name: kolejnosc, label: Kolejność, type: number, default: 1 }
+      - { name: question, label: Pytanie, type: string, required: true }
+      - { name: order, label: Kolejność, type: number, default: 1 }
       - { name: body, label: Odpowiedź, type: rich-text }
 
   - name: strona-oferta
     label: Strona „Oferta”
     type: file
-    path: src/content/strony/oferta.md
+    path: src/content/pages/oferta.md
     format: yaml-frontmatter
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - { name: naglowek, label: Nagłówek, type: text }
-      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: heading, label: Nagłówek, type: text }
+      - { name: image, label: Zdjęcie, type: image }
       - { name: body, label: Treść, type: rich-text }
 
   - name: strona-regulamin
     label: Strona „Regulamin”
     type: file
-    path: src/content/strony/regulamin.md
+    path: src/content/pages/regulamin.md
     format: yaml-frontmatter
     fields:
-      - { name: tytul, label: Tytuł, type: string, required: true }
-      - { name: naglowek, label: Nagłówek, type: text }
-      - { name: zdjecie, label: Zdjęcie, type: image }
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: heading, label: Nagłówek, type: text }
+      - { name: image, label: Zdjęcie, type: image }
       - { name: body, label: Treść, type: rich-text }
 
-  - name: ustawienia
+  - name: settings
     label: Ustawienia
     type: file
-    path: src/data/ustawienia.json
+    path: src/data/settings.json
     format: json
     fields:
-      - { name: nazwa, label: Nazwa akademii, type: string, required: true }
-      - { name: grupa, label: Nazwa grupy, type: string }
-      - name: opisSeo
+      - { name: name, label: Nazwa akademii, type: string, required: true }
+      - { name: group, label: Nazwa grupy, type: string }
+      - name: seoDescription
         label: Opis dla Google
         type: text
         description: Do 160 znaków — to widać w wynikach wyszukiwania.
-      - { name: hasloHero, label: Hasło na stronie głównej, type: text }
-      - { name: heroZdjecie, label: Zdjęcie tła (strona główna), type: image }
-      - name: heroWideoYoutube
+      - { name: heroTagline, label: Hasło na stronie głównej, type: text }
+      - { name: heroImage, label: Zdjęcie tła (strona główna), type: image }
+      - name: heroYoutubeVideo
         label: Wideo YouTube (strona główna)
         type: string
         description: Samo ID filmu, np. dQw4w9WgXcQ. Ma pierwszeństwo przed zdjęciem.
-      - name: komunikat
+      - name: notice
         label: Komunikat na stronie
         type: object
         fields:
-          - name: tresc
+          - name: body
             label: Treść
             type: text
             description: 'Krótka informacja nad grafikiem — odwołane zajęcia, zmiana sali, ferie. Pogrubienie: **tekst**. Puste = brak komunikatu.'
-          - name: dataDo
+          - name: until
             label: Wyświetlaj do
             type: date
             options: { format: yyyy-MM-dd }
             description: Po tym dniu komunikat zniknie sam. Puste = wisi, dopóki go nie skasujesz.
-      - { name: telefon, label: Telefon, type: string }
+      - { name: phone, label: Telefon, type: string }
       - { name: email, label: E-mail, type: string }
-      - { name: adres, label: Adres, type: text }
+      - { name: address, label: Adres, type: text }
       - { name: facebook, label: Facebook, type: string, description: Pełny adres URL. }
       - { name: instagram, label: Instagram, type: string }
       - { name: youtube, label: YouTube, type: string }

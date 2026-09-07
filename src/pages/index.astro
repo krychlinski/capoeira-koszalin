@@ -1,32 +1,32 @@
 ---
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import Baza from '../layouts/Baza.astro';
+import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import Grafik from '../components/Grafik.astro';
-import Komunikat from '../components/Komunikat.astro';
-import KartaWpisu from '../components/KartaWpisu.astro';
-import ustawienia from '../data/ustawienia.json';
-import { obraz } from '../lib/media';
-import { dataPl, zakresDat } from '../lib/format';
-import { wszystkieAktualnosci } from '../lib/aktualnosci';
+import Schedule from '../components/Schedule.astro';
+import Notice from '../components/Notice.astro';
+import PostCard from '../components/PostCard.astro';
+import settings from '../data/settings.json';
+import { resolveImage } from '../lib/media';
+import { formatDate, formatDateRange } from '../lib/format';
+import { allNews } from '../lib/news';
 
-const zajecia = (await getCollection('zajecia')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
+const classes = (await getCollection('classes')).sort((a, b) => a.data.order - b.data.order);
 
-const teraz = new Date();
-const nadchodzace = (await getCollection('wydarzenia'))
-  .filter((w) => (w.data.dataDo ?? w.data.dataOd) >= teraz)
-  .sort((a, b) => a.data.dataOd.getTime() - b.data.dataOd.getTime());
-const najblizsze = nadchodzace[0];
-const fotoWydarzenia = obraz(najblizsze?.data.zdjecie);
+const now = new Date();
+const upcoming = (await getCollection('events'))
+  .filter((w) => (w.data.endDate ?? w.data.startDate) >= now)
+  .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime());
+const nextEvent = upcoming[0];
+const eventPhoto = resolveImage(nextEvent?.data.image);
 
-const aktualnosci = (await wszystkieAktualnosci()).slice(0, 3);
+const aktualnosci = (await allNews()).slice(0, 3);
 
-const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
-const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
+const albums = (await getCollection('gallery')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
 ---
 
-<Baza>
+<Base>
   <Hero />
 
   <section class="sekcja intro" id="czym-jest-capoeira">
@@ -55,9 +55,9 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
       <h2>Pierwszy trening<br /><span>nic nie kosztuje</span></h2>
       <div class="cta__akcje">
         <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
-        {ustawienia.telefon && (
-          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
-            {ustawienia.telefon}
+        {settings.phone && (
+          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {settings.phone}
           </a>
         )}
       </div>
@@ -68,8 +68,8 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
     <div class="kontener">
       <p class="nadtytul">Grafik</p>
       <h2>Kiedy trenujemy</h2>
-      <Komunikat />
-      <Grafik zajecia={zajecia} />
+      <Notice />
+      <Schedule classes={classes} />
       <div class="zajecia-blok__stopka">
         <p>Przyjdź w wygodnym ubraniu — resztę pokażemy na miejscu.</p>
         <div class="zajecia-blok__akcje">
@@ -79,25 +79,25 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
     </div>
   </section>
 
-  {najblizsze && (
+  {nextEvent && (
     <section class="sekcja wydarzenie">
       <div class="kontener wydarzenie__siatka">
         <div class="wydarzenie__foto">
-          {fotoWydarzenia ? (
-            <Image src={fotoWydarzenia} alt="" widths={[600, 1000]} sizes="(max-width: 900px) 100vw, 520px" loading="lazy" />
+          {eventPhoto ? (
+            <Image src={eventPhoto} alt="" widths={[600, 1000]} sizes="(max-width: 900px) 100vw, 520px" loading="lazy" />
           ) : (
             <div class="wydarzenie__zastepnik" aria-hidden="true"></div>
           )}
         </div>
         <div class="wydarzenie__tresc">
           <p class="nadtytul">Najbliższe wydarzenie</p>
-          <h2>{najblizsze.data.tytul}</h2>
+          <h2>{nextEvent.data.title}</h2>
           <p class="wydarzenie__data">
-            {zakresDat(najblizsze.data.dataOd, najblizsze.data.dataDo)}
-            {najblizsze.data.miejsce && <span> · {najblizsze.data.miejsce}</span>}
+            {formatDateRange(nextEvent.data.startDate, nextEvent.data.endDate)}
+            {nextEvent.data.venue && <span> · {nextEvent.data.venue}</span>}
           </p>
-          {najblizsze.data.zajawka && <p class="wydarzenie__zajawka">{najblizsze.data.zajawka}</p>}
-          <a href={`/wydarzenia/${najblizsze.id}/`} class="przycisk">Szczegóły</a>
+          {nextEvent.data.excerpt && <p class="wydarzenie__zajawka">{nextEvent.data.excerpt}</p>}
+          <a href={`/wydarzenia/${nextEvent.id}/`} class="przycisk">Szczegóły</a>
         </div>
       </div>
     </section>
@@ -115,15 +115,15 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
         </div>
         <div class="siatka-kart">
           {aktualnosci.map((x) => (
-            <KartaWpisu
+            <PostCard
               href={x.href}
-              tytul={x.tytul}
-              meta={x.zrodloFb ? `${dataPl(x.data)} · Facebook` : dataPl(x.data)}
-              zajawka={x.zajawka}
-              punkty={x.punkty}
-              zdjecie={x.zdjecie}
-              zdjecieUrl={x.zdjecia[0]}
-              liczbaZdjec={x.zdjecia.length}
+              title={x.title}
+              meta={x.facebookUrl ? `${formatDate(x.date)} · Facebook` : formatDate(x.date)}
+              excerpt={x.excerpt}
+              points={x.points}
+              image={x.image}
+              imageUrl={x.images[0]}
+              imageCount={x.images.length}
             />
           ))}
         </div>
@@ -131,7 +131,7 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
     </section>
   )}
 
-  {podglad.length > 0 && (
+  {preview.length > 0 && (
     <section class="sekcja sekcja--ciasna">
       <div class="kontener">
         <div class="naglowek-listy">
@@ -139,21 +139,21 @@ const podglad = albumy.flatMap((a) => a.data.zdjecia).slice(0, 6);
             <p class="nadtytul">Roda w obiektywie</p>
             <h2>Galeria</h2>
           </div>
-          <a href="/galeria/" class="przycisk przycisk--obrys">Zobacz albumy</a>
+          <a href="/galeria/" class="przycisk przycisk--obrys">Zobacz albums</a>
         </div>
       </div>
       <div class="pasek">
-        {podglad.map((sciezka) => {
-          const foto = obraz(sciezka);
-          return foto ? (
-            <Image src={foto} alt="" widths={[400, 800]} sizes="320px" loading="lazy" class="pasek__foto" />
+        {preview.map((path) => {
+          const photo = resolveImage(path);
+          return photo ? (
+            <Image src={photo} alt="" widths={[400, 800]} sizes="320px" loading="lazy" class="pasek__foto" />
           ) : null;
         })}
       </div>
     </section>
   )}
 
-</Baza>
+</Base>
 
 <style>
   /* Pasek nawigacji jest przyklejony, więc cel skoku musi mieć zapas u góry. */

@@ -1,25 +1,25 @@
-const MIESIACE = [
+const MONTHS = [
   'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
   'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia',
 ];
 
-export function dataPl(d: Date): string {
-  return `${d.getDate()} ${MIESIACE[d.getMonth()]} ${d.getFullYear()}`;
+export function formatDate(d: Date): string {
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-export function dataKrotka(d: Date): string {
+export function formatDateShort(d: Date): string {
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
 }
 
-export function zakresDat(od: Date, do_?: Date): string {
-  if (!do_ || od.getTime() === do_.getTime()) return dataPl(od);
-  if (od.getMonth() === do_.getMonth() && od.getFullYear() === do_.getFullYear()) {
-    return `${od.getDate()}–${do_.getDate()} ${MIESIACE[od.getMonth()]} ${od.getFullYear()}`;
+export function formatDateRange(from: Date, to?: Date): string {
+  if (!to || from.getTime() === to.getTime()) return formatDate(from);
+  if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
+    return `${from.getDate()}–${to.getDate()} ${MONTHS[from.getMonth()]} ${from.getFullYear()}`;
   }
-  return `${dataPl(od)} – ${dataPl(do_)}`;
+  return `${formatDate(from)} – ${formatDate(to)}`;
 }
 
-export function iso(d: Date): string {
+export function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
@@ -30,14 +30,14 @@ export function iso(d: Date): string {
  * już inna, za to 22-24 znowu ta pierwsza. Zamiast rozpisywać te warunki
  * korzystamy z Intl.PluralRules, które ma reguły wbudowane w przeglądarkę.
  */
-const REGULY = new Intl.PluralRules('pl-PL');
+const PLURAL_RULES = new Intl.PluralRules('pl-PL');
 
-export function odmien(n: number, jeden: string, kilka: string, wiele: string): string {
-  const forma = REGULY.select(n);
-  return forma === 'one' ? jeden : forma === 'few' ? kilka : wiele;
+export function plural(n: number, one: string, few: string, many: string): string {
+  const form = PLURAL_RULES.select(n);
+  return form === 'one' ? one : form === 'few' ? few : many;
 }
 
 /** „1 zdjęcie", „4 zdjęcia", „7 zdjęć" */
-export function ileZdjec(n: number): string {
-  return `${n} ${odmien(n, 'zdjęcie', 'zdjęcia', 'zdjęć')}`;
+export function photoCount(n: number): string {
+  return `${n} ${plural(n, 'zdjęcie', 'zdjęcia', 'zdjęć')}`;
 }

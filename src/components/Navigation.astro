@@ -1,0 +1,158 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-pelne.png';
+import settings from '../data/settings.json';
+
+const { pathname } = Astro.url;
+
+// Puste działy chowamy z menu i wracają same, gdy ktoś doda pierwszy wpis
+// w panelu. Dzięki temu nikt nie musi pamiętać o odkryciu ich z powrotem.
+const hasGallery = (await getCollection('gallery')).length > 0;
+const hasEvents = (await getCollection('events')).length > 0;
+
+const links = [
+  { href: '/pierwszy-trening/', text: 'Pierwszy trening', widoczny: true },
+  { href: '/zajecia/', text: 'Zajęcia', widoczny: true },
+  { href: '/cennik/', text: 'Cennik', widoczny: true },
+  { href: '/faq/', text: 'FAQ', widoczny: true },
+  { href: '/wydarzenia/', text: 'Wydarzenia', widoczny: hasEvents },
+  { href: '/aktualnosci/', text: 'Aktualności', widoczny: true },
+  { href: '/galeria/', text: 'Galeria', widoczny: hasGallery },
+  { href: '/o-nas/', text: 'O nas', widoczny: true },
+  { href: '/kontakt/', text: 'Kontakt', widoczny: true },
+].filter((l) => l.widoczny);
+const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
+---
+
+<header class="nawigacja" data-nav>
+  <div class="nawigacja__wnetrze kontener">
+    <a class="marka" href="/">
+      <Image
+        src={logo}
+        alt={settings.name}
+        widths={[200, 400]}
+        sizes="150px"
+        loading="eager"
+        class="marka__logo"
+      />
+    </a>
+
+    <button class="hamburger" aria-label="Menu" aria-expanded="false" data-hamburger>
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="menu" data-menu>
+      {links.map((l) => (
+        <a href={l.href} class:list={['menu__link', { 'menu__link--aktywny': isActive(l.href) }]}>
+          {l.text}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nawigacja {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .nawigacja[data-stuck] {
+    background: rgba(11, 11, 12, 0.88);
+    backdrop-filter: blur(14px);
+    border-bottom-color: var(--linia);
+  }
+  .nawigacja__wnetrze {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    min-height: 76px;
+  }
+
+  .marka { display: block; line-height: 0; }
+  .marka :global(.marka__logo) {
+    width: 150px;
+    height: auto;
+    max-width: 100%;
+  }
+  @media (max-width: 480px) {
+    .marka :global(.marka__logo) { width: 122px; }
+  }
+
+  .menu { display: flex; align-items: center; gap: 1.35rem; }
+  .menu__link {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tekst-2);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .menu__link:hover { color: var(--tekst); }
+  .menu__link--aktywny { color: var(--akcent); }
+
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--tekst);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .hamburger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .hamburger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 900px) {
+    .hamburger { display: flex; }
+    .menu {
+      position: fixed;
+      inset: 76px 0 auto;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      background: rgba(11, 11, 12, 0.97);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--linia);
+      padding: 1rem var(--gutter) 2rem;
+      display: none;
+    }
+    .menu[data-open] { display: flex; }
+    .menu__link { font-size: 1.5rem; padding: 0.7rem 0; letter-spacing: 0.06em; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector('[data-nav]');
+  const menu = document.querySelector('[data-menu]');
+  const hamburger = document.querySelector('[data-hamburger]');
+
+  const stick = () => {
+    if (window.scrollY > 24) header?.setAttribute('data-stuck', '');
+    else header?.removeAttribute('data-stuck');
+  };
+  stick();
+  window.addEventListener('scroll', stick, { passive: true });
+
+  hamburger?.addEventListener('click', () => {
+    const open = menu?.hasAttribute('data-open');
+    if (open) menu?.removeAttribute('data-open');
+    else menu?.setAttribute('data-open', '');
+    hamburger.setAttribute('aria-expanded', String(!open));
+  });
+</script>

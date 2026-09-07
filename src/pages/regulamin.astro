@@ -1,21 +1,21 @@
 ---
 import { getEntry, render } from 'astro:content';
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
 
-const strona = await getEntry('strony', 'regulamin');
-const Tresc = strona ? (await render(strona)).Content : null;
+const page = await getEntry('pages', 'regulamin');
+const Content = page ? (await render(page)).Content : null;
 ---
 
-<Baza tytul="Regulamin" opis="Regulamin uczestnictwa w treningach Akademii Capoeira Koszalin.">
-  <NaglowekStrony nadtytul="Formalności" tytul="Regulamin" opis={strona?.data.naglowek} />
+<Base title="Regulamin" description="Regulamin uczestnictwa w treningach Akademii Capoeira Koszalin.">
+  <PageHeader eyebrow="Formalności" title="Regulamin" description={page?.data.heading} />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
-      {Tresc ? <div class="proza proza--regulamin"><Tresc /></div> : <p class="pusto">Brak treści.</p>}
+      {Content ? <div class="proza proza--regulamin"><Content /></div> : <p class="pusto">Brak treści.</p>}
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .proza--regulamin :global(h2) {

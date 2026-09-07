@@ -1,38 +1,38 @@
 ---
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import Baza from '../../layouts/Baza.astro';
-import NaglowekStrony from '../../components/NaglowekStrony.astro';
-import { obraz } from '../../lib/media';
-import { dataPl, ileZdjec } from '../../lib/format';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { resolveImage } from '../../lib/media';
+import { formatDate, photoCount } from '../../lib/format';
 
-const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
+const albums = (await getCollection('gallery')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Baza tytul="Galeria" opis="Zdjęcia z treningów, batizado i rod Akademii Capoeira Koszalin.">
-  <NaglowekStrony nadtytul="Roda w obiektywie" tytul="Galeria" />
+<Base title="Galeria" description="Zdjęcia z treningów, batizado i rod Akademii Capoeira Koszalin.">
+  <PageHeader eyebrow="Roda w obiektywie" title="Galeria" />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
-      {albumy.length === 0 ? (
+      {albums.length === 0 ? (
         <p class="pusto">Albumy pojawią się tu po dodaniu zdjęć w panelu.</p>
       ) : (
         <div class="albumy">
-          {albumy.map((album) => {
-            const okladka = obraz(album.data.okladka ?? album.data.zdjecia[0]);
+          {albums.map((album) => {
+            const cover = resolveImage(album.data.cover ?? album.data.images[0]);
             return (
               <a class="album" href={`/galeria/${album.id}/`}>
                 <div class="album__foto">
-                  {okladka ? (
-                    <Image src={okladka} alt="" widths={[500, 900]} sizes="(max-width: 700px) 100vw, 380px" loading="lazy" />
+                  {cover ? (
+                    <Image src={cover} alt="" widths={[500, 900]} sizes="(max-width: 700px) 100vw, 380px" loading="lazy" />
                   ) : (
                     <div class="album__zastepnik" aria-hidden="true"></div>
                   )}
                 </div>
                 <div class="album__opis">
-                  <h2 class="album__tytul">{album.data.tytul}</h2>
+                  <h2 class="album__tytul">{album.data.title}</h2>
                   <p class="album__meta">
-                    {dataPl(album.data.data)} · <span set:html={ileZdjec(album.data.zdjecia.length).replace(" ", "&nbsp;")} />
+                    {formatDate(album.data.date)} · <span set:html={photoCount(album.data.images.length).replace(" ", "&nbsp;")} />
                   </p>
                 </div>
               </a>
@@ -42,7 +42,7 @@ const albumy = (await getCollection('galeria')).sort((a, b) => b.data.data.getTi
       )}
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .albumy { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }

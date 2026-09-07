@@ -1,55 +1,55 @@
 ---
 import { getEntry, render } from 'astro:content';
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
-import ustawienia from '../data/ustawienia.json';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import settings from '../data/settings.json';
 
-const strona = await getEntry('strony', 'pierwszy-trening');
-const Tresc = strona ? (await render(strona)).Content : null;
-const punkty = strona?.data.punkty ?? [];
+const page = await getEntry('pages', 'pierwszy-trening');
+const Content = page ? (await render(page)).Content : null;
+const points = page?.data.points ?? [];
 ---
 
-<Baza
-  tytul={strona?.data.tytul ?? 'Pierwszy trening'}
-  opis={strona?.data.naglowek ?? 'Pierwszy trening capoeiry w Koszalinie jest bezpłatny i do niczego nie zobowiązuje.'}
+<Base
+  title={page?.data.title ?? 'Pierwszy trening'}
+  description={page?.data.heading ?? 'Pierwszy trening capoeiry w Koszalinie jest bezpłatny i do niczego nie zobowiązuje.'}
 >
-  <NaglowekStrony
-    nadtytul="Zanim przyjdziesz"
-    tytul={strona?.data.tytul ?? 'Pierwszy trening'}
-    opis={strona?.data.naglowek}
+  <PageHeader
+    eyebrow="Zanim przyjdziesz"
+    title={page?.data.title ?? 'Pierwszy trening'}
+    description={page?.data.heading}
   />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
-      {strona?.data.punktyNadtytul && <p class="nadtytul">{strona.data.punktyNadtytul}</p>}
-      {strona?.data.punktyTytul && <h2>{strona.data.punktyTytul}</h2>}
+      {page?.data.pointsEyebrow && <p class="nadtytul">{page.data.pointsEyebrow}</p>}
+      {page?.data.pointsHeading && <h2>{page.data.pointsHeading}</h2>}
 
-      {punkty.length > 0 && (
+      {points.length > 0 && (
         <div class="punkty">
-          {punkty.map((punkt, i) => (
+          {points.map((punkt, i) => (
             <div class="punkt">
               <span class="punkt__numer">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{punkt.tytul}</h3>
-              <p>{punkt.opis}</p>
+              <h3>{punkt.title}</h3>
+              <p>{punkt.description}</p>
             </div>
           ))}
         </div>
       )}
 
-      {Tresc && <div class="proza proza--dopisek"><Tresc /></div>}
+      {Content && <div class="proza proza--dopisek"><Content /></div>}
 
       <div class="akcje">
         <a href="/zajecia/" class="przycisk">Zobacz plan treningów</a>
-        {ustawienia.telefon && (
-          <a href={`tel:+48${ustawienia.telefon.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
-            {ustawienia.telefon}
+        {settings.phone && (
+          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+            {settings.phone}
           </a>
         )}
         <a href="/faq/" class="przycisk przycisk--obrys">Częste pytania</a>
       </div>
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .punkty {

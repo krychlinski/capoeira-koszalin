@@ -1,25 +1,25 @@
 ---
 import { Image } from 'astro:assets';
-import ustawienia from '../data/ustawienia.json';
-import { obraz } from '../lib/media';
+import settings from '../data/settings.json';
+import { resolveImage } from '../lib/media';
 
-const tlo = obraz(ustawienia.heroZdjecie);
-const wideo = ustawienia.heroWideoYoutube?.trim();
+const background = resolveImage(settings.heroImage);
+const video = settings.heroYoutubeVideo?.trim();
 ---
 
 <section class="hero">
   <div class="hero__tlo">
-    {wideo ? (
+    {video ? (
       <iframe
         class="hero__wideo"
-        src={`https://www.youtube.com/embed/${wideo}?autoplay=1&mute=1&loop=1&playlist=${wideo}&controls=0&showinfo=0&modestbranding=1&playsinline=1&rel=0`}
+        src={`https://www.youtube.com/embed/${video}?autoplay=1&mute=1&loop=1&playlist=${video}&controls=0&showinfo=0&modestbranding=1&playsinline=1&rel=0`}
         title="Capoeira"
         allow="autoplay; encrypted-media"
         loading="lazy"
         tabindex="-1"
       />
-    ) : tlo ? (
-      <Image src={tlo} alt="" widths={[900, 1400, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+    ) : background ? (
+      <Image src={background} alt="" widths={[900, 1400, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
     ) : null}
   </div>
 
@@ -28,14 +28,14 @@ const wideo = ustawienia.heroWideoYoutube?.trim();
   <div class="kontener hero__tresc">
     <p class="hero__grupa">
       <img src="/unicar.svg" alt="" class="hero__pieczec" width="150" height="150" loading="eager" />
-      <span>{ustawienia.grupa}</span>
+      <span>{settings.group}</span>
     </p>
     <h1 class="hero__tytul">
       <span>Akademia</span>
       <span class="hero__tytul--akcent">Capoeira</span>
       <span class="hero__miasto">Koszalin</span>
     </h1>
-    <p class="hero__haslo">{ustawienia.hasloHero}</p>
+    <p class="hero__haslo">{settings.heroTagline}</p>
     <div class="hero__akcje">
       <a href="#kiedy-trenujemy" class="przycisk">Przyjdź na trening</a>
       <a href="#czym-jest-capoeira" class="przycisk przycisk--obrys">Czym jest capoeira</a>

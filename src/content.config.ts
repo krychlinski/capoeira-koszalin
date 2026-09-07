@@ -1,100 +1,101 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const aktualnosci = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/aktualnosci' }),
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
   schema: z.object({
-    tytul: z.string(),
-    data: z.coerce.date(),
-    zajawka: z.string().optional(),
-    zdjecie: z.string().optional(),
-    opublikowany: z.boolean().default(true),
+    title: z.string(),
+    date: z.coerce.date(),
+    excerpt: z.string().optional(),
+    image: z.string().optional(),
+    published: z.boolean().default(true),
   }),
 });
 
-const wydarzenia = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/wydarzenia' }),
+const events = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/events' }),
   schema: z.object({
-    tytul: z.string(),
-    dataOd: z.coerce.date(),
-    dataDo: z.coerce.date().optional(),
-    miejsce: z.string().optional(),
-    zajawka: z.string().optional(),
-    zdjecie: z.string().optional(),
+    title: z.string(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
+    venue: z.string().optional(),
+    excerpt: z.string().optional(),
+    image: z.string().optional(),
   }),
 });
 
-const instruktorzy = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/instruktorzy' }),
+const instructors = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/instructors' }),
   schema: z.object({
-    imie: z.string(),
+    name: z.string(),
+    // Apelido i corda to terminy capoeiry, nie tłumaczymy ich.
     apelido: z.string().optional(),
-    stopien: z.string().optional(),
-    zdjecie: z.string().optional(),
-    kolejnosc: z.number().default(0),
+    corda: z.string().optional(),
+    image: z.string().optional(),
+    order: z.number().default(0),
   }),
 });
 
-const zajecia = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/zajecia' }),
+const classes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/classes' }),
   schema: z.object({
-    grupa: z.string(),
-    podtytul: z.string().optional(),
-    miejsce: z.string().optional(),
-    adres: z.string().optional(),
-    terminy: z
+    group: z.string(),
+    subtitle: z.string().optional(),
+    venue: z.string().optional(),
+    address: z.string().optional(),
+    sessions: z
       .array(
         z.object({
-          dzien: z.string(),
-          od: z.string(),
-          do: z.string().optional(),
+          day: z.string(),
+          from: z.string(),
+          to: z.string().optional(),
         })
       )
       .default([]),
-    kolejnosc: z.number().default(0),
+    order: z.number().default(0),
   }),
 });
 
-const galeria = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/galeria' }),
+const gallery = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/gallery' }),
   schema: z.object({
-    tytul: z.string(),
-    data: z.coerce.date(),
-    okladka: z.string().optional(),
-    zdjecia: z.array(z.string()).default([]),
+    title: z.string(),
+    date: z.coerce.date(),
+    cover: z.string().optional(),
+    images: z.array(z.string()).default([]),
   }),
 });
 
-const strony = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/strony' }),
+const pages = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),
   schema: z.object({
-    tytul: z.string(),
-    naglowek: z.string().optional(),
-    zdjecie: z.string().optional(),
+    title: z.string(),
+    heading: z.string().optional(),
+    image: z.string().optional(),
     // Numerowane punkty — używa ich strona „Pierwszy trening”.
-    punktyNadtytul: z.string().optional(),
-    punktyTytul: z.string().optional(),
-    punkty: z.array(z.object({ tytul: z.string(), opis: z.string() })).optional(),
+    pointsEyebrow: z.string().optional(),
+    pointsHeading: z.string().optional(),
+    points: z.array(z.object({ title: z.string(), description: z.string() })).optional(),
   }),
 });
 
-const cennik = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/cennik' }),
+const pricing = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pricing' }),
   schema: z.object({
-    nazwa: z.string(),
-    cena: z.string(),
-    opis: z.string().optional(),
-    kategoria: z.enum(['miesieczne', 'dodatkowe']).default('miesieczne'),
-    kolejnosc: z.number().default(0),
+    name: z.string(),
+    price: z.string(),
+    description: z.string().optional(),
+    category: z.enum(['monthly', 'extra']).default('monthly'),
+    order: z.number().default(0),
   }),
 });
 
 const faq = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/faq' }),
   schema: z.object({
-    pytanie: z.string(),
-    kolejnosc: z.number().default(0),
+    question: z.string(),
+    order: z.number().default(0),
   }),
 });
 
-export const collections = { aktualnosci, wydarzenia, instruktorzy, zajecia, galeria, strony, cennik, faq };
+export const collections = { news, events, instructors, classes, gallery, pages, pricing, faq };

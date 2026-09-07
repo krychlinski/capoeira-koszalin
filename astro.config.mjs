@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import obrazkiFacebooka from './integracje/obrazki-fb.mjs';
+import facebookImages from './integrations/facebook-images.mjs';
 
 export default defineConfig({
   // UWAGA: przy przełączaniu domeny zmień to RAZEM z adresem mapy witryny
@@ -9,5 +9,5 @@ export default defineConfig({
   // więc rozjazd każe wyszukiwarkom indeksować nieistniejący serwis.
   site: 'https://www.capoeira.koszalin.pl',
   build: { format: 'directory' },
-  integrations: [obrazkiFacebooka(), sitemap({ filter: (strona) => !strona.includes('/admin') })],
+  integrations: [facebookImages(), sitemap({ filter: (page) => !page.includes('/admin') })],
 });

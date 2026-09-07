@@ -1,45 +1,45 @@
 ---
-import Baza from '../../layouts/Baza.astro';
-import NaglowekStrony from '../../components/NaglowekStrony.astro';
-import KartaWpisu from '../../components/KartaWpisu.astro';
-import { wszystkieAktualnosci } from '../../lib/aktualnosci';
-import { dataPl } from '../../lib/format';
-import ustawienia from '../../data/ustawienia.json';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PostCard from '../../components/PostCard.astro';
+import { allNews } from '../../lib/news';
+import { formatDate } from '../../lib/format';
+import settings from '../../data/settings.json';
 
-const wpisy = await wszystkieAktualnosci();
+const entries = await allNews();
 ---
 
-<Baza tytul="Aktualności" opis="Co się dzieje w Akademii Capoeira Koszalin.">
-  <NaglowekStrony nadtytul="Z życia grupy" tytul="Aktualności" />
+<Base title="Aktualności" description="Co się dzieje w Akademii Capoeira Koszalin.">
+  <PageHeader eyebrow="Z życia grupy" title="Aktualności" />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
-      {wpisy.length === 0 ? (
+      {entries.length === 0 ? (
         <p class="pusto">
           Nie ma jeszcze żadnych wpisów.
-          {ustawienia.facebook && (
-            <> Zajrzyj na <a href={ustawienia.facebook} target="_blank" rel="noopener noreferrer">nasz Facebook</a>.</>
+          {settings.facebook && (
+            <> Zajrzyj na <a href={settings.facebook} target="_blank" rel="noopener noreferrer">nasz Facebook</a>.</>
           )}
         </p>
       ) : (
         <div class="siatka-kart">
-          {wpisy.map((x) => (
-            <KartaWpisu
+          {entries.map((x) => (
+            <PostCard
               href={x.href}
-              tytul={x.tytul}
-              meta={x.zrodloFb ? `${dataPl(x.data)} · Facebook` : dataPl(x.data)}
-              zajawka={x.zajawka}
-              punkty={x.punkty}
-              zdjecie={x.zdjecie}
-              zdjecieUrl={x.zdjecia[0]}
-              liczbaZdjec={x.zdjecia.length}
+              title={x.title}
+              meta={x.facebookUrl ? `${formatDate(x.date)} · Facebook` : formatDate(x.date)}
+              excerpt={x.excerpt}
+              points={x.points}
+              image={x.image}
+              imageUrl={x.images[0]}
+              imageCount={x.images.length}
             />
           ))}
         </div>
       )}
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .siatka-kart { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }

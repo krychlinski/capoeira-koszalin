@@ -1,0 +1,53 @@
+---
+import settings from '../data/settings.json';
+
+const notice = (settings as any).notice;
+const body: string = notice?.body?.trim() ?? '';
+const until: string = notice?.until?.trim() ?? '';
+
+// Strona jest statyczna, więc data ważności nie zadziała sama z siebie przy budowaniu —
+// wygasza ją skrypt w przeglądarce. Dzięki temu komunikat znika co do dnia, bez commita.
+const expired = until ? new Date(until) < new Date() : false;
+const visible = body && !expired;
+
+// Prosta zamiana **pogrubienia** — pełny markdown to przesada na jedno zdanie.
+const html = body.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+---
+
+{visible && (
+  <aside class="komunikat" data-notice data-until={until || null}>
+    <span class="komunikat__znacznik" aria-hidden="true"></span>
+    <p class="komunikat__tresc" set:html={html} />
+  </aside>
+)}
+
+<style>
+  .komunikat {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    background: color-mix(in srgb, var(--akcent) 10%, var(--tlo-2));
+    border: 1px solid color-mix(in srgb, var(--akcent) 35%, var(--linia));
+  }
+  .komunikat__znacznik {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.55rem;
+    border-radius: 50%;
+    background: var(--akcent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--akcent) 22%, transparent);
+  }
+  .komunikat__tresc { margin: 0; color: var(--tekst); font-size: 0.9375rem; }
+  .komunikat__tresc :global(strong) { color: var(--akcent); font-weight: 600; }
+</style>
+
+<script>
+  // Build mógł pójść przed datą wygaśnięcia — sprawdzamy ponownie u odwiedzającego.
+  document.querySelectorAll<HTMLElement>('[data-notice]').forEach((el) => {
+    const until = el.dataset.until;
+    if (until && new Date(until) < new Date()) el.remove();
+  });
+</script>

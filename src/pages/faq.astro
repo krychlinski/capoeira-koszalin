@@ -1,41 +1,41 @@
 ---
 import { getCollection, render } from 'astro:content';
-import Baza from '../layouts/Baza.astro';
-import NaglowekStrony from '../components/NaglowekStrony.astro';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
 
-const pytania = (await getCollection('faq')).sort((a, b) => a.data.kolejnosc - b.data.kolejnosc);
-const zOdpowiedziami = await Promise.all(
-  pytania.map(async (p) => ({ wpis: p, Odpowiedz: (await render(p)).Content }))
+const questions = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+const withAnswers = await Promise.all(
+  questions.map(async (p) => ({ entry: p, Answer: (await render(p)).Content }))
 );
 ---
 
-<Baza
-  tytul="Częste pytania"
-  opis="Co zabrać na trening, czy trzeba być sprawnym, od jakiego wieku, jak się zapisać — odpowiedzi na najczęstsze pytania."
+<Base
+  title="Częste pytania"
+  description="Co zabrać na trening, czy trzeba być sprawnym, od jakiego wieku, jak się zapisać — odpowiedzi na najczęstsze pytania."
 >
-  <NaglowekStrony
-    nadtytul="Zanim przyjdziesz"
-    tytul="Częste pytania"
-    opis="Jeśli czegoś tu brakuje, zadzwoń — chętnie odpowiemy."
+  <PageHeader
+    eyebrow="Zanim przyjdziesz"
+    title="Częste pytania"
+    description="Jeśli czegoś tu brakuje, zadzwoń — chętnie odpowiemy."
   />
 
   <section class="sekcja sekcja--ciasna">
     <div class="kontener">
       <div class="lista">
-        {zOdpowiedziami.map(({ wpis, Odpowiedz }, i) => (
+        {withAnswers.map(({ entry, Answer }, i) => (
           <details class="pytanie">
             <summary class="pytanie__naglowek">
               <span class="pytanie__numer">{String(i + 1).padStart(2, '0')}</span>
-              <span class="pytanie__tresc">{wpis.data.pytanie}</span>
+              <span class="pytanie__tresc">{entry.data.question}</span>
               <span class="pytanie__znak" aria-hidden="true"></span>
             </summary>
-            <div class="pytanie__odpowiedz proza"><Odpowiedz /></div>
+            <div class="pytanie__odpowiedz proza"><Answer /></div>
           </details>
         ))}
       </div>
     </div>
   </section>
-</Baza>
+</Base>
 
 <style>
   .lista { border-top: 1px solid var(--linia); }

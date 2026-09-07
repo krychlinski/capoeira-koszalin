@@ -1,54 +1,54 @@
 ---
 import { existsSync } from 'node:fs';
-import Baza from '../../../layouts/Baza.astro';
-import { pobierzPosty } from '../../../lib/facebook';
-import { naBloki, bezZnacznikow } from '../../../lib/tresc';
-import { dataPl, iso } from '../../../lib/format';
+import Base from '../../../layouts/Base.astro';
+import { fetchPosts } from '../../../lib/facebook';
+import { toBlocks, stripMarkers } from '../../../lib/blocks';
+import { formatDate, isoDate } from '../../../lib/format';
 
 export async function getStaticPaths() {
-  const posty = await pobierzPosty();
+  const posty = await fetchPosts();
   return posty.map((p) => ({ params: { id: p.id }, props: { post: p } }));
 }
 
 const { post } = Astro.props;
-const zdjecia = Array.from({ length: post.liczbaZdjec }, (_, i) => `/media/fb/${post.id}-${i}.jpg`).filter(
-  (sciezka) => existsSync(`public${sciezka}`)
+const images = Array.from({ length: post.imageCount }, (_, i) => `/media/fb/${post.id}-${i}.jpg`).filter(
+  (path) => existsSync(`public${path}`)
 );
-const linie = post.tresc.split('\n').map((l) => l.trim()).filter(Boolean);
-const tytul = bezZnacznikow(linie[0] ?? '');
-const bloki = naBloki(linie.slice(1).join('\n'));
+const lines = post.body.split('\n').map((l) => l.trim()).filter(Boolean);
+const title = stripMarkers(lines[0] ?? '');
+const blocks = toBlocks(lines.slice(1).join('\n'));
 ---
 
-<Baza tytul={tytul.slice(0, 60)} opis={bezZnacznikow(linie.slice(1).join('\n')).slice(0, 160) || tytul}>
+<Base title={title.slice(0, 60)} description={stripMarkers(lines.slice(1).join('\n')).slice(0, 160) || title}>
   <article>
     <header class="naglowek">
       <div class="kontener">
         <a href="/aktualnosci/" class="powrot">← Aktualności</a>
-        <time class="data" datetime={iso(post.data)}>{dataPl(post.data)}</time>
-        <h1>{tytul}</h1>
+        <time class="data" datetime={isoDate(post.date)}>{formatDate(post.date)}</time>
+        <h1>{title}</h1>
       </div>
     </header>
 
     <div class="kontener tresc">
       <div class="proza">
-        {bloki.map((b) =>
-          b.typ === 'akapit' ? (
-            <p>{b.tekst}</p>
-          ) : b.numerowana ? (
+        {blocks.map((b) =>
+          b.type === 'paragraph' ? (
+            <p>{b.text}</p>
+          ) : b.ordered ? (
             <ol>
-              {b.pozycje.map((poz) => (
+              {b.items.map((item) => (
                 <li>
-                  {poz.tekst}
-                  {poz.pod.length > 0 && <ul>{poz.pod.map((x) => <li>{x}</li>)}</ul>}
+                  {item.text}
+                  {item.children.length > 0 && <ul>{item.children.map((x) => <li>{x}</li>)}</ul>}
                 </li>
               ))}
             </ol>
           ) : (
             <ul>
-              {b.pozycje.map((poz) => (
+              {b.items.map((item) => (
                 <li>
-                  {poz.tekst}
-                  {poz.pod.length > 0 && <ul>{poz.pod.map((x) => <li>{x}</li>)}</ul>}
+                  {item.text}
+                  {item.children.length > 0 && <ul>{item.children.map((x) => <li>{x}</li>)}</ul>}
                 </li>
               ))}
             </ul>
@@ -56,10 +56,10 @@ const bloki = naBloki(linie.slice(1).join('\n'));
         )}
       </div>
 
-      {zdjecia.length > 0 && (
+      {images.length > 0 && (
         <div class="galeria">
-          {zdjecia.map((src, i) => (
-            <button class="kafel" data-indeks={i} aria-label={`Powiększ zdjęcie ${i + 1} z ${zdjecia.length}`}>
+          {images.map((src, i) => (
+            <button class="kafel" data-index={i} aria-label={`Powiększ zdjęcie ${i + 1} z ${images.length}`}>
               <img src={src} alt="" loading="lazy" decoding="async" />
             </button>
           ))}
@@ -68,22 +68,22 @@ const bloki = naBloki(linie.slice(1).join('\n'));
 
       <p class="zrodlo">
         Wpis pochodzi z naszego Facebooka.
-        <a href={post.odnosnik} target="_blank" rel="noopener noreferrer">Zobacz oryginał</a>
+        <a href={post.permalink} target="_blank" rel="noopener noreferrer">Zobacz oryginał</a>
       </p>
     </div>
   </article>
 
-  {zdjecia.length > 0 && (
+  {images.length > 0 && (
     <dialog class="lightbox" data-lightbox tabindex="-1">
-      <button class="lightbox__zamknij" data-zamknij aria-label="Zamknij">×</button>
-      <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-wstecz aria-label="Poprzednie">‹</button>
-      <img class="lightbox__foto" data-foto alt="" />
-      <span class="lightbox__licznik" data-licznik></span>
-      <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-dalej aria-label="Następne">›</button>
+      <button class="lightbox__zamknij" data-close aria-label="Zamknij">×</button>
+      <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-prev aria-label="Poprzednie">‹</button>
+      <img class="lightbox__foto" data-photo alt="" />
+      <span class="lightbox__licznik" data-counter></span>
+      <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-next aria-label="Następne">›</button>
     </dialog>
-    <script type="application/json" id="zdjecia-postu" set:html={JSON.stringify(zdjecia)} />
+    <script type="application/json" id="post-images" set:html={JSON.stringify(images)} />
   )}
-</Baza>
+</Base>
 
 <style>
   .naglowek {
@@ -186,23 +186,23 @@ const bloki = naBloki(linie.slice(1).join('\n'));
 </style>
 
 <script>
-  const dane = document.getElementById('zdjecia-postu');
-  const zdjecia: string[] = dane ? JSON.parse(dane.textContent || '[]') : [];
+  const source = document.getElementById('post-images');
+  const images: string[] = source ? JSON.parse(source.textContent || '[]') : [];
   const lightbox = document.querySelector<HTMLDialogElement>('[data-lightbox]');
-  const foto = document.querySelector<HTMLImageElement>('[data-foto]');
-  const licznik = document.querySelector<HTMLElement>('[data-licznik]');
-  let aktualny = 0;
+  const photo = document.querySelector<HTMLImageElement>('[data-photo]');
+  const counter = document.querySelector<HTMLElement>('[data-counter]');
+  let current = 0;
 
-  const pokaz = (i: number) => {
-    if (!foto || !zdjecia.length) return;
-    aktualny = (i + zdjecia.length) % zdjecia.length;
-    foto.src = zdjecia[aktualny];
-    if (licznik) licznik.textContent = `${aktualny + 1} / ${zdjecia.length}`;
+  const show = (i: number) => {
+    if (!photo || !images.length) return;
+    current = (i + images.length) % images.length;
+    photo.src = images[current];
+    if (counter) counter.textContent = `${current + 1} / ${images.length}`;
   };
 
-  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((kafel) => {
-    kafel.addEventListener('click', () => {
-      pokaz(Number(kafel.dataset.indeks));
+  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((tile) => {
+    tile.addEventListener('click', () => {
+      show(Number(tile.dataset.index));
       lightbox?.showModal();
       // Bez tego przeglądarka zaznacza pierwszy przycisk i rysuje wokół niego
       // swoją obwódkę. Atrybut autofocus na <dialog> nie jest respektowany wszędzie.
@@ -210,13 +210,17 @@ const bloki = naBloki(linie.slice(1).join('\n'));
     });
   });
 
-  document.querySelector('[data-zamknij]')?.addEventListener('click', () => lightbox?.close());
-  document.querySelector('[data-wstecz]')?.addEventListener('click', () => pokaz(aktualny - 1));
-  document.querySelector('[data-dalej]')?.addEventListener('click', () => pokaz(aktualny + 1));
-  lightbox?.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.close(); });
+  document.querySelector('[data-close]')?.addEventListener('click', () => lightbox?.close());
+  document.querySelector('[data-prev]')?.addEventListener('click', () => show(current - 1));
+  document.querySelector('[data-next]')?.addEventListener('click', () => show(current + 1));
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) lightbox.close();
+  });
+
   document.addEventListener('keydown', (e) => {
     if (!lightbox?.open) return;
-    if (e.key === 'ArrowLeft') pokaz(aktualny - 1);
-    if (e.key === 'ArrowRight') pokaz(aktualny + 1);
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
   });
 </script>
