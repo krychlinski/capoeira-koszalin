@@ -97,20 +97,48 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 58f78072cb67c0aa3663aeb0818b111b
 
-      # MUSI iść po wdrożeniu. Powiadomienia wychodzą puste, a service worker
-      # dociąga treść z /aktualnosci/latest.json — gdyby rozgłoszenie poszło przed
-      # wdrożeniem, ludzie dostaliby powiadomienie o poprzednim wpisie.
+      # MUSI iść po wdrożeniu, i to nie byle jak. Powiadomienia wychodzą puste,
+      # a service worker sam dociąga treść z /aktualnosci/latest.json — gdyby
+      # rozgłoszenie poszło, zanim brzeg Cloudflare zacznie podawać nową wersję,
+      # ludzie dostaliby powiadomienie o POPRZEDNIM wpisie. Okno jest krótkie
+      # (zaobserwowane: około dwie minuty po wdrożeniu), ale realne, a objaw
+      # byłby losowy i nie zostawiałby śladu w logach.
       #
-      # Wołamy przy każdym budowaniu, także wtedy, gdy nic się nie zmieniło:
-      # Worker pamięta ostatni rozesłany wpis i sam pomija powtórki.
+      # Dlatego nie czekamy na ślepo, tylko odpytujemy produkcję, aż poda
+      # dokładnie ten odcisk, który przed chwilą zbudowaliśmy.
+      #
+      # Krok NIE jest bramkowany decyzją o wdrożeniu. Gdy produkcja nie zdąży,
+      # kończymy bez rozgłaszania, a Worker — który pomija powtórki po dacie —
+      # sprawi, że zrobi to kolejne budowanie. Bramkowanie tego kroku gubiłoby
+      # wtedy powiadomienie na zawsze: następnym razem odciski już by się
+      # zgadzały, więc wdrożenia by nie było, a razem z nim rozgłoszenia.
       - name: Rozgłoś nowy wpis
-        if: steps.zmiana.outputs.wdrazac == 'tak'
         run: |
           id=$(jq -r '.latest.id // empty' dist/aktualnosci/latest.json)
           if [ -z "$id" ]; then
             echo "Brak wpisów — nie ma czego rozgłaszać."
             exit 0
           fi
+
+          nowy=$(jq -r '.fingerprint' dist/aktualnosci/latest.json)
+          gotowe=nie
+          for i in $(seq 1 20); do
+            zdalny=$(curl -sS --max-time 15 \
+              https://www.capoeira.koszalin.pl/aktualnosci/latest.json \
+              | jq -r '.fingerprint // empty' 2>/dev/null || true)
+            if [ "$zdalny" = "$nowy" ]; then
+              gotowe=tak
+              echo "Produkcja podaje świeżą wersję (próba $i)."
+              break
+            fi
+            sleep 6
+          done
+
+          if [ "$gotowe" != "tak" ]; then
+            echo "::warning::Produkcja nadal podaje starszą wersję strony. Nie rozgłaszam, żeby nie wysłać ludzi po poprzedni wpis — zrobi to kolejne budowanie."
+            exit 0
+          fi
+
           curl -sS --fail-with-body -X POST \
             https://capoeira-push.kacper-rychlinski.workers.dev/notify \
             -H 'Content-Type: application/json' \

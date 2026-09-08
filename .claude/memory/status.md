@@ -134,10 +134,17 @@ bez prawdziwej subskrypcji: [[reference-push]].
 `/prywatnosc/` przepisana — opisuje, że zapisujemy sam adres endpointu, że powiadomienia idą
 puste i że pośredniczy producent przeglądarki.
 
-**Nie sprawdzone na żywym urządzeniu.** Podpis VAPID zweryfikowany wobec prawdziwego serwera
-Google, ale pełnej ścieżki „zapis w przeglądarce → powiadomienie na ekranie" nie dało się
-przejść: przeglądarka w narzędziach ma powiadomienia zablokowane na sztywno. Pierwszy test
-należy do Kacpra.
+**SPRAWDZONE NA ŻYWO 2026-09-08** w Safari na macOS, na całej długości: zapis w przeglądarce →
+subskrypcja w KV → rozgłoszenie → powiadomienie na ekranie → kliknięcie otwiera wpis
+i przeglądarka wychodzi na wierzch.
+
+Pierwsze podejście miało trzy usterki, wszystkie wyszły dopiero na prawdziwym urządzeniu i żadnej
+nie widziało budowanie: tekst wpisu w tytule zamiast w treści, kliknięcie nierobiące nic przez
+`navigate()`, oraz brak `focus()` po otwarciu karty. Szczegóły: [[reference-push]].
+
+Wykrywanie iPhone'a zadziałało poprawnie — w zwykłej karcie Safari blok pokazuje instrukcję
+zamiast przycisku prowadzącego donikąd. Instrukcję trzeba było rozpisać na kroki, bo pozycji
+„Do ekranu początkowego" bywa w menu udostępniania nie widać.
 
 ## Sale treningowe — stan przejściowy
 

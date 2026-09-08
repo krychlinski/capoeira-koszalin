@@ -92,10 +92,26 @@ w `public/_headers`. Buforowana kopia `latest.json` byłaby podwójnie zdradliwa
 pokazywałby poprzedni wpis, a workflow uznawałby prawdziwą zmianę za brak zmiany i **nigdy by
 nie wdrożył**.
 
-## Kolejność w workflow ma znaczenie
+## Kolejność w workflow ma znaczenie — i samo „po wdrożeniu" nie wystarcza
 
 Krok „Rozgłoś nowy wpis" idzie **po** wdrożeniu. Powiadomienie jest puste, więc service worker
 dociąga treść z sieci — rozgłoszenie przed wdrożeniem wysłałoby ludzi po poprzedni wpis.
+
+**Ale wdrożenie nie znaczy jeszcze, że produkcja podaje nową wersję.** Zaobserwowane
+2026-09-08: przez około dwie minuty po udanym wdrożeniu `www.capoeira.koszalin.pl/sw.js`
+zwracał starą treść, mimo że w Cloudflare leżała już nowa (żądanie z doklejonym parametrem
+podawało świeżą). To nieodświeżona kopia na brzegu i `Cache-Control: no-cache` jej nie wyklucza.
+
+Gdyby rozgłoszenie trafiło w to okno, service worker dociągnąłby stary `latest.json`
+i pokazał **poprzedni wpis**. Objaw byłby losowy i nie zostawiałby śladu w logach.
+
+Dlatego krok odpytuje produkcję (do 2 minut), aż poda dokładnie ten odcisk, który przed chwilą
+zbudowaliśmy, i dopiero wtedy woła Worker.
+
+**Ten krok nie jest bramkowany decyzją o wdrożeniu** i to jest celowe. Gdy produkcja nie zdąży,
+kończymy bez rozgłaszania, a zrobi to kolejne budowanie — Worker i tak pomija powtórki po dacie.
+Gdyby krok był bramkowany, powiadomienie przepadłoby na zawsze: przy następnym budowaniu odciski
+już by się zgadzały, więc nie byłoby wdrożenia, a razem z nim rozgłoszenia.
 
 Wołamy przy każdym budowaniu; Worker pamięta ostatni rozesłany wpis w `state:last-post`
 i pomija powtórki. Bez tego znacznika ten sam post szedłby w świat co godzinę.
@@ -116,6 +132,43 @@ i dusi prawdziwe powiadomienia. Zaszczepia się go obecnym najnowszym wpisem:
 **Świadome zachowanie:** gdy między budowaniami pojawią się DWA wpisy, powiadomienie idzie
 jedno — o nowszym. Starszy nie dostaje własnego. Kacper uznał to za w porządku (2026-09-08);
 i tak wspólny `tag` sprawiłby, że drugie powiadomienie podmieniłoby pierwsze na ekranie.
+
+## Jak wygląda powiadomienie i jak je testować ręcznie
+
+Tytuł jest **stały** („Nowy wpis w aktualnościach"), a tekst wpisu idzie w **treść**. Odwrotnie
+było źle: tytuł to jeden wiersz i system ucina go bez litości, a pierwsza linia wpisu
+z Facebooka bywa długa na 90 znaków (Malandro pisze rozbudowane wstępy). W treści mieszczą się
+dwa, trzy wiersze.
+
+Na macOS ikoną powiadomienia jest **ikona przeglądarki**, nie nasz znak — system to nadpisuje
+i nic z tym nie zrobimy. Na Chrome i Androidzie nasza ikona się pojawia.
+
+Ręczny strzał (sekret leży w `.notify-secret`, w `.gitignore`):
+
+```
+W=https://capoeira-push.kacper-rychlinski.workers.dev
+PRZED=$(curl -s $W/health | python3 -c "import sys,json;print(json.dumps(json.load(sys.stdin)['ostatniWpis']))")
+curl -s -X POST -H 'Content-Type: application/json' -H "X-Notify-Secret: $(cat .notify-secret)" \
+  -d "{\"id\":\"/test/\",\"date\":\"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)\"}" $W/notify
+```
+
+**Zawsze przywróć potem `state:last-post` do wartości `$PRZED`** — inaczej zostaje w nim data
+z chwili testu i dusi prawdziwe powiadomienia jako „starsze".
+
+## Kliknięcie w powiadomienie — trzy podejścia, dwa błędne
+
+1. `navigate()` na istniejącej karcie. **Rzuca** na kartach, których ten service worker nie
+   kontroluje, a rzucało wewnątrz `waitUntil`, więc obietnica cicho odrzucała i kliknięcie
+   nie robiło NIC.
+2. `navigate()` z przechwyceniem wyjątku. Gdy zadziała, przestawia kartę **w tle** — z
+   perspektywy klikającego powiadomienie po prostu znika. Objaw identyczny jak przy błędzie,
+   więc nie do odróżnienia bez konsoli.
+3. **Działa:** karta stojąca już na tym wpisie zostaje wysunięta na wierzch, w każdym innym
+   wypadku `openWindow()` **plus `focus()` na zwróconym oknie**. Bez tego `focus()` Safari na
+   macOS otwierał kartę, ale nie wychodził na wierzch i wyglądało to na brak reakcji.
+
+Sprawdzone na żywo w Safari 2026-09-08: powiadomienie przychodzi, kliknięcie otwiera wpis
+i przeglądarka sama wychodzi na wierzch.
 
 ## Ograniczenia, które trzeba znać
 
