@@ -189,6 +189,26 @@ zalogowany ma pełny dostęp do strony. Wygląda to jak problem z uprawnieniami 
 **Nie wracać do surowego `permalink_url`.** Na komputerze działa jedno i drugie, więc różnicy
 nie widać, dopóki ktoś nie kliknie z telefonu.
 
+## W karcie Safari NIE DA SIĘ sprawdzić, czy ktoś ma już ikonę na ekranie głównym
+
+iOS nie udostępnia takiej informacji (`getInstalledRelatedApps()` jest tylko w Chrome na
+Androidzie). Blok nie może więc zakładać, że odwiedzający dopiero instaluje — pierwsza wersja
+zakładała i uparcie instruowała kogoś, kto zainstalował dzień wcześniej.
+
+Rozwiązanie: zdanie działające w obu wypadkach („masz już ikonę? otwórz stronę z niej"),
+instrukcja instalacji zwinięta w `<details>`, plus „Nie pokazuj tego więcej" zapisywane
+w `localStorage`. Nie da się tego zrobić lepiej, dopóki Apple nie doda odpowiedniego API.
+
+**Dwie pułapki złapane przy tym w przeglądarce, obu nie widać w kodzie:**
+
+- `.button` ustawia `display: inline-flex`, co **bije** domyślne `display: none` od atrybutu
+  `[hidden]`. `button.hidden = true` nie ukrywało niczego. Potrzebna jawna reguła
+  `.bell__button[hidden] { display: none; }`.
+- Zakresowe style Astro **nie obejmują znaczników wstawianych skryptem** — Astro dokłada atrybut
+  zakresu przy budowaniu, a elementy powstałe w przeglądarce go nie mają. Wszystko, co wstawia
+  `innerHTML`, wymaga `:global()`. Przycisk „Nie pokazuj tego więcej" wyglądał przez to jak
+  domyślny przycisk systemowy.
+
 ## Ograniczenia, które trzeba znać
 
 - **iPhone: tylko po dodaniu do ekranu głównego.** Safari nie dostarcza push w zwykłej karcie.

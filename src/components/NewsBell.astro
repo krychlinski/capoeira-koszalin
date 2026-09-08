@@ -82,12 +82,43 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
     gap: 0.45rem;
   }
   .bell__lead :global(.bell__steps li) { padding-left: 0.2rem; }
-  .bell__lead :global(.bell__steps strong) { color: var(--text); font-weight: 500; }
+  .bell__lead :global(.bell__steps strong),
+  .bell__lead :global(strong) { color: var(--text); font-weight: 500; }
+
+  .bell__lead :global(.bell__how) { margin-top: 0.9rem; }
+  .bell__lead :global(.bell__how summary) {
+    cursor: pointer;
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .bell__lead :global(.bell__how[open] summary) { margin-bottom: 0.35rem; }
+  .bell__lead :global(.bell__how .bell__steps) { margin-top: 0.6rem; }
+
+  /* :global, bo ten przycisk wstawia skrypt — zakresowe style Astro dokładają
+     atrybut przy budowaniu i nie obejmują znaczników powstałych w przeglądarce. */
+  .bell__note :global(.bell__dismiss) {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--text-2);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .bell__note :global(.bell__dismiss:hover) { color: var(--accent); }
 
   .bell__action { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; }
   /* Przycisk nie rozpycha się na całą szerokość kolumny na telefonie — tekst
      pod nim jest dłuższy i inaczej ciągnąłby go przez cały ekran. */
   .bell__button { white-space: nowrap; }
+  /* Klasa .button ustawia display: inline-flex, co BIJE domyślne display: none
+     od atrybutu [hidden] — bez tego ukrywanie przycisku nic nie robi. */
+  .bell__button[hidden] { display: none; }
   .bell__icon { flex: none; }
 
   /* Powiadomienia włączone — przycisk przestaje zapraszać i staje się stanem.
@@ -142,24 +173,53 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
     const standalone =
       window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
+    // Zapamiętanie „już to wiem” — w zwykłej karcie Safari NIE DA SIĘ sprawdzić,
+    // czy ktoś ma już ikonę na ekranie głównym; iOS nie udostępnia takiej
+    // informacji. Bez tego blok w kółko instruuje kogoś, kto dawno zainstalował.
+    const SCHOWANE = 'bell-ios-schowane';
+    const pamiec = {
+      czyta: () => {
+        try {
+          return localStorage.getItem(SCHOWANE) === '1';
+        } catch {
+          return false;
+        }
+      },
+      zapisz: () => {
+        try {
+          localStorage.setItem(SCHOWANE, '1');
+        } catch {
+          // Tryb prywatny — trudno, przy następnym wejściu pokaże się znowu.
+        }
+      },
+    };
+
     if (!supported) {
-      if (iOS && !standalone) {
+      if (iOS && !standalone && !pamiec.czyta()) {
         root.hidden = false;
-        button.disabled = true;
-        heading.textContent = 'Dodaj stronę do ekranu głównego';
-        // Instrukcja rozpisana na kroki, bo wersja jednym zdaniem nie wystarczyła
-        // przy pierwszym zderzeniu z prawdziwym telefonem. Pozycji „Do ekranu
-        // początkowego” bywa w menu nie widać i trzeba ją włączyć ręcznie.
+        // Nie zakładamy, że ikony jeszcze nie ma. Najpierw zdanie, które działa
+        // w obu wypadkach, a instrukcja instalacji jest zwinięta — kto ją już
+        // przeszedł, nie musi na nią patrzeć.
+        heading.textContent = 'Powiadomienia działają z ekranu głównego';
         lead.innerHTML =
-          'Safari wysyła powiadomienia tylko ze strony zapisanej na ekranie głównym — w zwykłej karcie nie da się ich włączyć nigdzie w ustawieniach.' +
+          'Safari nie wysyła powiadomień ze zwykłej karty — nie da się ich włączyć nigdzie w ustawieniach. ' +
+          '<strong>Masz już ikonę Akademii na ekranie głównym? Otwórz stronę z niej i włącz dzwoneczek tam.</strong>' +
+          '<details class="bell__how">' +
+          '<summary>Nie mam jeszcze ikony — jak ją dodać</summary>' +
           '<ol class="bell__steps">' +
           '<li>Stuknij przycisk udostępniania (kwadrat ze strzałką w górę).</li>' +
           '<li>Wybierz z listy <strong>„Do ekranu początkowego”</strong>. Jeśli tej pozycji nie ma, zjedź na sam dół listy, stuknij <strong>„Edytuj czynności…”</strong> i dodaj ją zielonym plusem.</li>' +
-          '<li>Otwórz stronę z nowej ikony na ekranie głównym — nie z Safari.</li>' +
+          '<li>Otwórz stronę z nowej ikony — nie z Safari.</li>' +
           '<li>Wróć tutaj: przycisk będzie już działał.</li>' +
-          '</ol>';
-        label.textContent = 'Powiadomienia niedostępne';
-        note.textContent = 'Wymaga iOS 16.4 lub nowszego.';
+          '</ol>' +
+          '</details>';
+        button.hidden = true;
+        note.innerHTML =
+          'Wymaga iOS 16.4 lub nowszego. <button type="button" class="bell__dismiss" data-bell-dismiss>Nie pokazuj tego więcej</button>';
+        root.querySelector('[data-bell-dismiss]')?.addEventListener('click', () => {
+          pamiec.zapisz();
+          root.hidden = true;
+        });
       }
       return;
     }
