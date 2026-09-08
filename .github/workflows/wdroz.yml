@@ -115,7 +115,7 @@ jobs:
             https://capoeira-push.kacper-rychlinski.workers.dev/notify \
             -H 'Content-Type: application/json' \
             -H "X-Notify-Secret: $NOTIFY_SECRET" \
-            -d "{\"id\":$(jq '.latest.id' dist/aktualnosci/latest.json)}"
+            -d "$(jq -c '{id: .latest.id, date: .latest.date}' dist/aktualnosci/latest.json)"
           echo
         env:
           NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}

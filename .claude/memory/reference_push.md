@@ -97,9 +97,25 @@ nie wdrożył**.
 Krok „Rozgłoś nowy wpis" idzie **po** wdrożeniu. Powiadomienie jest puste, więc service worker
 dociąga treść z sieci — rozgłoszenie przed wdrożeniem wysłałoby ludzi po poprzedni wpis.
 
-Wołamy przy każdym budowaniu, także gdy nic się nie zmieniło; Worker pamięta ostatni rozesłany
-wpis w `state:last-post` i pomija powtórki. Bez tego znacznika ten sam post szedłby w świat
-co trzy godziny.
+Wołamy przy każdym budowaniu; Worker pamięta ostatni rozesłany wpis w `state:last-post`
+i pomija powtórki. Bez tego znacznika ten sam post szedłby w świat co godzinę.
+
+**Porównujemy DATĘ, nie identyfikator.** Pierwsza wersja porównywała adres wpisu i miała przez to
+usterkę: gdy ktoś **skasuje** post na Facebooku, najnowszym staje się z powrotem poprzedni.
+Jego adres różni się od zapamiętanego, więc Worker uznawał to za nowość i rozsyłał powiadomienie
+**o starym wpisie**. Data nie da się na to nabrać — cofnięcie się w czasie nigdy nie jest nowym
+wpisem. Przy okazji edycja starego wpisu też nie powiadamia: treść się zmienia, data nie.
+
+Sprawdzone na żywym Workerze (2026-09-08) w czterech przypadkach: nowy wpis wysyła, ten sam
+pomija, **starszy po skasowaniu pomija**, prawdziwie nowszy wysyła.
+
+**Po testach trzeba wyczyścić `state:last-post`**, inaczej zostaje w nim data z przyszłości
+i dusi prawdziwe powiadomienia. Zaszczepia się go obecnym najnowszym wpisem:
+`wrangler kv key put "state:last-post" "$(jq -c '{id: .latest.id, date: .latest.date}' dist/aktualnosci/latest.json)" --namespace-id <id> --remote`
+
+**Świadome zachowanie:** gdy między budowaniami pojawią się DWA wpisy, powiadomienie idzie
+jedno — o nowszym. Starszy nie dostaje własnego. Kacper uznał to za w porządku (2026-09-08);
+i tak wspólny `tag` sprawiłby, że drugie powiadomienie podmieniłoby pierwsze na ekranie.
 
 ## Ograniczenia, które trzeba znać
 

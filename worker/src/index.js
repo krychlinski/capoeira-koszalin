@@ -123,12 +123,42 @@ async function notify(request, env) {
     return json({ error: 'brak uprawnień' }, 401);
   }
   const body = await request.json().catch(() => null);
-  if (!body?.id) return json({ error: 'brak identyfikatora wpisu' }, 400);
+  if (!body?.id || !body?.date) return json({ error: 'brak identyfikatora albo daty' }, 400);
 
-  // Budowanie chodzi co trzy godziny, a wpis zostaje na stronie tygodniami.
-  // Bez tego znacznika ten sam post szedłby w świat przy każdym budowaniu.
-  const last = await env.SUBS.get('state:last-post');
-  if (last === body.id) return json({ ok: true, skipped: 'wpis już rozesłany' }, 200);
+  const when = Date.parse(body.date);
+  if (Number.isNaN(when)) return json({ error: 'nieczytelna data wpisu' }, 400);
+
+  // Porównujemy DATĘ, nie identyfikator. Powody są dwa:
+  //
+  // 1. Budowanie chodzi co godzinę, a wpis zostaje na stronie tygodniami — bez
+  //    znacznika ten sam post szedłby w świat przy każdym budowaniu.
+  // 2. Gdy ktoś SKASUJE post na Facebooku, najnowszym staje się z powrotem
+  //    poprzedni. Jego identyfikator różni się od zapamiętanego, więc porównanie
+  //    po identyfikatorze uznałoby to za nowość i rozesłało powiadomienie
+  //    o starym wpisie. Data nie da się na to nabrać: cofnięcie się w czasie
+  //    nigdy nie jest nowym wpisem.
+  //
+  // Edycja starego wpisu też nie powiadamia — treść się zmienia, data nie.
+  const raw = await env.SUBS.get('state:last-post');
+  let last = null;
+  try {
+    last = raw ? JSON.parse(raw) : null;
+  } catch {
+    // Zapis w starym formacie (sam identyfikator). Traktujemy jak brak stanu.
+    last = null;
+  }
+
+  const before = last?.date ? Date.parse(last.date) : NaN;
+  if (!Number.isNaN(before) && when <= before) {
+    return json(
+      {
+        ok: true,
+        skipped: when === before ? 'ten wpis już rozesłany' : 'wpis starszy niż ostatnio rozesłany',
+        ostatni: last,
+      },
+      200
+    );
+  }
 
   const sent = [];
   let cursor;
@@ -163,7 +193,7 @@ async function notify(request, env) {
   } while (cursor);
 
   const results = await Promise.all(sent);
-  await env.SUBS.put('state:last-post', body.id);
+  await env.SUBS.put('state:last-post', JSON.stringify({ id: body.id, date: body.date }));
 
   const summary = results.reduce((acc, r) => ({ ...acc, [r]: (acc[r] || 0) + 1 }), {});
   return json({ ok: true, wyslano: results.length, wynik: summary }, 200);
@@ -177,11 +207,14 @@ async function health(request, env) {
     count += page.keys.length;
     cursor = page.list_complete ? null : page.cursor;
   } while (cursor);
-  return json(
-    { ok: true, subskrypcje: count, ostatniWpis: await env.SUBS.get('state:last-post') },
-    200,
-    corsHeaders(request, env)
-  );
+  const raw = await env.SUBS.get('state:last-post');
+  let ostatniWpis = null;
+  try {
+    ostatniWpis = raw ? JSON.parse(raw) : null;
+  } catch {
+    ostatniWpis = raw;
+  }
+  return json({ ok: true, subskrypcje: count, ostatniWpis }, 200, corsHeaders(request, env));
 }
 
 export default {
