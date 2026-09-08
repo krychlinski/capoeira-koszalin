@@ -72,7 +72,13 @@ self.addEventListener('notificationclick', (event) => {
       // zadziała, przestawia kartę w tle — z perspektywy klikającego
       // powiadomienie po prostu znika i nic się nie dzieje. Nowa karta jest
       // przewidywalna: zawsze widać skutek kliknięcia.
-      return self.clients.openWindow(target);
+      const nowa = await self.clients.openWindow(target);
+      // Samo otwarcie karty nie prosi systemu o wysunięcie przeglądarki na
+      // wierzch — w Safari na macOS strona otwierała się poprawnie, ale dopiero
+      // po ręcznym przełączeniu się na przeglądarkę było to widać.
+      // Czy system posłucha, zależy już od niego; my mamy o to poprosić.
+      if (nowa) await nowa.focus().catch(() => {});
+      return nowa;
     })()
   );
 });

@@ -38,3 +38,6 @@ public/media/fb/
 # klucze VAPID do powiadomień push — klucz prywatny podpisuje powiadomienia
 # i jest odpowiednikiem hasła. Publiczny jest jawny, siedzi wprost w kodzie strony.
 .vapid.json
+
+# sekret do ręcznego wywoływania rozgłoszenia — jak .vapid.json, nigdy do repo
+.notify-secret
