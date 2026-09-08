@@ -55,19 +55,23 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     (async () => {
       const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      // Jeśli strona jest już gdzieś otwarta, przechodzimy w tej karcie zamiast
-      // otwierać kolejną — inaczej po kilku powiadomieniach robi się ich las.
-      const otwarta = all.find((c) => new URL(c.url).origin === self.location.origin);
-      if (otwarta) {
+
+      // Karta stojąca już na tym wpisie — wystarczy ją wysunąć na wierzch.
+      const naMiejscu = all.find((c) => {
         try {
-          await otwarta.navigate(target);
-          return otwarta.focus();
+          return new URL(c.url).pathname === target;
         } catch {
-          // navigate() działa tylko na kartach kontrolowanych przez tego service
-          // workera i rzuca na pozostałych. Bez tego przechwycenia kliknięcie
-          // w powiadomienie nie robiło NIC — obietnica cicho odrzucała.
+          return false;
         }
-      }
+      });
+      if (naMiejscu) return naMiejscu.focus();
+
+      // W każdym innym wypadku OTWIERAMY NOWĄ KARTĘ, zamiast przestawiać
+      // istniejącą przez navigate(). Ta metoda zawiodła dwa razy z rzędu:
+      // rzuca na kartach, których ten service worker nie kontroluje, a gdy już
+      // zadziała, przestawia kartę w tle — z perspektywy klikającego
+      // powiadomienie po prostu znika i nic się nie dzieje. Nowa karta jest
+      // przewidywalna: zawsze widać skutek kliknięcia.
       return self.clients.openWindow(target);
     })()
   );
