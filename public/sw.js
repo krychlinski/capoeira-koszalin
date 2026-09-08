@@ -28,7 +28,13 @@ self.addEventListener('push', (event) => {
     (async () => {
       let data = FALLBACK;
       try {
-        const res = await fetch('/aktualnosci/latest.json', { cache: 'no-store' });
+        // Doklejony znacznik czasu, a nie sam { cache: 'no-store' }. Zaobserwowane
+        // 2026-09-08: brzeg Cloudflare potrafi przez kilka minut po wdrożeniu
+        // podawać starą treść mimo Cache-Control: no-cache, a żądanie z dodatkowym
+        // parametrem dostawało świeżą. Bez tego powiadomienie o nowym wpisie
+        // pokazywałoby czasem tytuł POPRZEDNIEGO — losowo i bez śladu w logach,
+        // bo każdy węzeł brzegowy odświeża się osobno.
+        const res = await fetch('/aktualnosci/latest.json?t=' + Date.now(), { cache: 'no-store' });
         const { latest } = await res.json();
         if (latest?.title) data = { body: latest.title, url: latest.url };
       } catch {

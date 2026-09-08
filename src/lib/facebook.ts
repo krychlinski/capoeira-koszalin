@@ -1,3 +1,4 @@
+import settings from '../data/settings.json';
 export interface FacebookPost {
   id: string;
   body: string;
@@ -104,7 +105,7 @@ async function load(): Promise<FacebookPost[]> {
         id: String(p.id),
         body: p.message.trim(),
         date: new Date(p.created_time),
-        permalink: p.permalink_url ?? `https://www.facebook.com/${page.id}/`,
+        permalink: permalinkFor(String(p.id), p.permalink_url),
         imageCount: imageUrls(p).length,
       }));
 
@@ -128,6 +129,27 @@ export function truncate(source: string, limit = 320): { text: string; truncated
  * Reszta zostaje surowa, ze znacznikami wypunktowania — rozpoznaje je dopiero
  * toBlocks w lib/blocks, a bez nich lista byłaby nie do odróżnienia od akapitów.
  */
+/**
+ * Adres wpisu na Facebooku zbudowany na NAZWIE strony, a nie na jej numerze.
+ *
+ * Graph API oddaje permalinki w postaci `facebook.com/1547293853862190/posts/123`.
+ * iOS przechwytuje odnośniki do facebook.com i otwiera je w aplikacji Facebooka,
+ * a ta regularnie nie potrafi rozwiązać adresu z numerycznym identyfikatorem —
+ * pokazuje „To nie jest dostępne”, nawet gdy zalogowany ma pełny dostęp do strony.
+ * Adres z nazwą (`facebook.com/CapoeiraUnicarKoszalin/posts/123`) otwiera się
+ * poprawnie, bo aplikacja umie po niej trafić do strony.
+ *
+ * Identyfikator wpisu to druga część `post.id` (`<strona>_<wpis>`). Gdy czegokolwiek
+ * brakuje, zostawiamy adres prosto z Graph API — lepszy niedziałający w aplikacji
+ * niż żaden.
+ */
+function permalinkFor(postId: string, fromGraph?: string): string {
+  const slug = settings.facebook?.match(/facebook\.com\/([^/?#]+)/)?.[1];
+  const story = postId.includes('_') ? postId.split('_')[1] : null;
+  if (slug && story) return `https://www.facebook.com/${slug}/posts/${story}`;
+  return fromGraph ?? settings.facebook ?? 'https://www.facebook.com/';
+}
+
 export function splitTitle(source: string): { title: string; rest: string } {
   const lines = source.split('\n').map((l) => l.trim()).filter(Boolean);
   const first = (lines[0] ?? '').replace(/^[*•\-–]\s*/, '');

@@ -108,6 +108,12 @@ i pokazał **poprzedni wpis**. Objaw byłby losowy i nie zostawiałby śladu w l
 Dlatego krok odpytuje produkcję (do 2 minut), aż poda dokładnie ten odcisk, który przed chwilą
 zbudowaliśmy, i dopiero wtedy woła Worker.
 
+**Odpytujemy z doklejonym znacznikiem czasu i tak samo robi service worker.** Węzły brzegowe
+Cloudflare odświeżają się niezależnie od siebie, więc sprawdzenie z runnera GitHuba mówi tylko
+o jednym z nich — telefon w Koszalinie pyta inny. Bez tego parametru można potwierdzić świeżość
+u siebie i mimo to wysłać ludziom powiadomienie z tytułem POPRZEDNIEGO wpisu. Objaw losowy,
+zależny od tego, gdzie kto stoi, i bez śladu w logach.
+
 **Ten krok nie jest bramkowany decyzją o wdrożeniu** i to jest celowe. Gdy produkcja nie zdąży,
 kończymy bez rozgłaszania, a zrobi to kolejne budowanie — Worker i tak pomija powtórki po dacie.
 Gdyby krok był bramkowany, powiadomienie przepadłoby na zawsze: przy następnym budowaniu odciski
@@ -169,6 +175,19 @@ z chwili testu i dusi prawdziwe powiadomienia jako „starsze".
 
 Sprawdzone na żywo w Safari 2026-09-08: powiadomienie przychodzi, kliknięcie otwiera wpis
 i przeglądarka sama wychodzi na wierzch.
+
+## Odnośniki do Facebooka muszą używać NAZWY strony, nie numeru
+
+Graph API oddaje permalinki w postaci `facebook.com/1547293853862190/posts/123`. iOS przechwytuje
+odnośniki do facebook.com i otwiera je w aplikacji Facebooka, a ta regularnie **nie potrafi
+rozwiązać adresu z numerycznym identyfikatorem** — pokazuje „To nie jest dostępne", nawet gdy
+zalogowany ma pełny dostęp do strony. Wygląda to jak problem z uprawnieniami i tak było zgłoszone.
+
+`permalinkFor()` w `lib/facebook.ts` składa więc adres z nazwy strony wyciągniętej z
+`settings.facebook` i drugiej części `post.id`: `facebook.com/CapoeiraUnicarKoszalin/posts/123`.
+
+**Nie wracać do surowego `permalink_url`.** Na komputerze działa jedno i drugie, więc różnicy
+nie widać, dopóki ktoś nie kliknie z telefonu.
 
 ## Ograniczenia, które trzeba znać
 

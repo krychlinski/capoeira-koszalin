@@ -123,8 +123,12 @@ jobs:
           nowy=$(jq -r '.fingerprint' dist/aktualnosci/latest.json)
           gotowe=nie
           for i in $(seq 1 20); do
+            # Znacznik czasu jak w service workerze — sprawdzamy to, co naprawdę
+            # dostanie przeglądarka, a nie kopię z węzła brzegowego akurat tego
+            # runnera. Węzły odświeżają się niezależnie, więc bez tego badalibyśmy
+            # co innego niż widzi telefon w Koszalinie.
             zdalny=$(curl -sS --max-time 15 \
-              https://www.capoeira.koszalin.pl/aktualnosci/latest.json \
+              "https://www.capoeira.koszalin.pl/aktualnosci/latest.json?t=$(date +%s)-$i" \
               | jq -r '.fingerprint // empty' 2>/dev/null || true)
             if [ "$zdalny" = "$nowy" ]; then
               gotowe=tak
