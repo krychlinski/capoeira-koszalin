@@ -4,6 +4,7 @@
 - [Status wdrożenia](status.md) — co zrobione, co następne, znane drobiazgi
 
 ## Działające mechanizmy
+- [Powiadomienia push](reference_push.md) — dzwoneczek na aktualnościach, Worker + KV, puste powiadomienia, iOS tylko z ekranu głównego
 - [Automat z Facebooka](todo_facebook_api.md) — zaciąga posty z ostatnich 31 dni, działa od 2026-09-02
 
 ## Decyzje

@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import PostCard from '../../components/PostCard.astro';
+import NewsBell from '../../components/NewsBell.astro';
 import { allNews } from '../../lib/news';
 import { formatDate } from '../../lib/format';
 import settings from '../../data/settings.json';
@@ -14,6 +15,8 @@ const entries = await allNews();
 
   <section class="section section--tight">
     <div class="container">
+      <NewsBell />
+
       {entries.length === 0 ? (
         <p class="empty">
           Nie ma jeszcze żadnych wpisów.
@@ -22,7 +25,7 @@ const entries = await allNews();
           )}
         </p>
       ) : (
-        <div class="card-grid">
+        <div class="card-grid card-grid--below-bell">
           {entries.map((x) => (
             <PostCard
               href={x.href}
@@ -43,6 +46,9 @@ const entries = await allNews();
 
 <style>
   .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  /* Dzwoneczek jest ukryty, dopóki skrypt nie stwierdzi, że przeglądarka go
+     obsługuje. Odstęp musi więc znikać razem z nim, a nie wisieć nad siatką. */
+  .card-grid--below-bell { margin-top: 2.5rem; }
   .empty { color: var(--text-3); }
   .empty a { color: var(--accent); }
 </style>

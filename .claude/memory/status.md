@@ -125,6 +125,20 @@ nie zadanie programistyczne. Komunikat nad grafikiem wygasa sam, ten tekst nie.
 
 Do rozważenia: mapki nie ma jeszcze na „Zajęciach" ani „Pierwszym treningu".
 
+## Powiadomienia push — URUCHOMIONE 2026-09-08
+
+Dzwoneczek na `/aktualnosci/`. Pierwszy backend w tym projekcie: Cloudflare Worker + KV,
+`capoeira-push.kacper-rychlinski.workers.dev`. Szczegóły, sekrety i sposób testowania podpisu
+bez prawdziwej subskrypcji: [[reference-push]].
+
+`/prywatnosc/` przepisana — opisuje, że zapisujemy sam adres endpointu, że powiadomienia idą
+puste i że pośredniczy producent przeglądarki.
+
+**Nie sprawdzone na żywym urządzeniu.** Podpis VAPID zweryfikowany wobec prawdziwego serwera
+Google, ale pełnej ścieżki „zapis w przeglądarce → powiadomienie na ekranie" nie dało się
+przejść: przeglądarka w narzędziach ma powiadomienia zablokowane na sztywno. Pierwszy test
+należy do Kacpra.
+
 ## Sale treningowe — stan przejściowy
 
 Sezon 2026/2027 startuje **1 września w SP9**, ale tylko na dwa tygodnie. **Od 15 września**

@@ -48,3 +48,25 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 58f78072cb67c0aa3663aeb0818b111b
+
+      # MUSI iść po wdrożeniu. Powiadomienia wychodzą puste, a service worker
+      # dociąga treść z /aktualnosci/latest.json — gdyby rozgłoszenie poszło przed
+      # wdrożeniem, ludzie dostaliby powiadomienie o poprzednim wpisie.
+      #
+      # Wołamy przy każdym budowaniu, także wtedy, gdy nic się nie zmieniło:
+      # Worker pamięta ostatni rozesłany wpis i sam pomija powtórki.
+      - name: Rozgłoś nowy wpis
+        run: |
+          id=$(jq -r '.id // empty' dist/aktualnosci/latest.json)
+          if [ -z "$id" ]; then
+            echo "Brak wpisów — nie ma czego rozgłaszać."
+            exit 0
+          fi
+          curl -sS --fail-with-body -X POST \
+            https://capoeira-push.kacper-rychlinski.workers.dev/notify \
+            -H 'Content-Type: application/json' \
+            -H "X-Notify-Secret: $NOTIFY_SECRET" \
+            -d "{\"id\":$(jq '.id' dist/aktualnosci/latest.json)}"
+          echo
+        env:
+          NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}

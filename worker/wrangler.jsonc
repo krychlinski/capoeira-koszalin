@@ -1,0 +1,19 @@
+{
+  // Worker obsługujący powiadomienia push. Osobny od konfiguracji Pages w korzeniu
+  // repozytorium — tamta opisuje statyczną stronę, ta usługę.
+  //
+  // Worker NIE serwuje strony i nie potrzebuje własnej domeny; siedzi pod adresem
+  // *.workers.dev, a strona po prostu do niego strzela. Dlatego nie dotyczy go
+  // problem, przez który Worker odpadł jako hosting: obcy DNS i wierzchołek strefy.
+  "name": "capoeira-push",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "observability": { "enabled": true },
+  // Subskrypcje przeglądarek oraz znacznik ostatnio rozesłanego wpisu.
+  "kv_namespaces": [{ "binding": "SUBS", "id": "29130d4f514d4f7d9aaf7496cbc47572" }],
+  "vars": {
+    "VAPID_PUBLIC": "BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtYN-V6eoL83Qv90npcXd1ZKR9bGPXBM",
+    "VAPID_SUBJECT": "mailto:kontakt@capoeira.koszalin.pl",
+    "ALLOWED_ORIGINS": "https://www.capoeira.koszalin.pl,http://localhost:4321"
+  }
+}

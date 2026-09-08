@@ -34,3 +34,7 @@ MATERIAŁY/
 
 # zdjęcia pobierane z Facebooka przy budowaniu
 public/media/fb/
+
+# klucze VAPID do powiadomień push — klucz prywatny podpisuje powiadomienia
+# i jest odpowiednikiem hasła. Publiczny jest jawny, siedzi wprost w kodzie strony.
+.vapid.json
