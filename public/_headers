@@ -5,6 +5,19 @@
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Odcisk najnowszych wpisów. Czytają go service worker po odebraniu powiadomienia
+# i workflow przy każdym budowaniu — obaj potrzebują stanu SPRZED chwili, nie sprzed
+# godziny. Buforowana kopia sprawiłaby, że service worker pokazałby poprzedni wpis,
+# a workflow uznałby prawdziwą zmianę za brak zmiany i nigdy by nie wdrożył.
+# Nagłówek z kodu endpointu tu nie działa: przy budowaniu statycznym to plik na dysku,
+# a nagłówki nadaje hosting.
+/aktualnosci/latest.json
+  Cache-Control: no-cache, must-revalidate
+
+# Service worker musi móc się odświeżyć, inaczej stara wersja zostaje na zawsze.
+/sw.js
+  Cache-Control: no-cache
+
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

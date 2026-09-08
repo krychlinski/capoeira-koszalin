@@ -25,7 +25,7 @@ self.addEventListener('push', (event) => {
       let data = FALLBACK;
       try {
         const res = await fetch('/aktualnosci/latest.json', { cache: 'no-store' });
-        const latest = await res.json();
+        const { latest } = await res.json();
         if (latest?.title) {
           data = { title: latest.title, body: 'Nowy wpis w aktualnościach', url: latest.url };
         }

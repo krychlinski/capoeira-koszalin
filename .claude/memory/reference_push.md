@@ -63,6 +63,35 @@ najpierw sprawdza podpis VAPID, a dopiero potem token, więc odpowiedź rozróż
 Tak zweryfikowano podpisywanie 2026-09-08 (wynik `{"wygasła":1}`). Worker kasuje przy okazji
 subskrypcje z 404/410, więc atrapa sprząta się sama.
 
+## Odcisk: budujemy zawsze, wdrażamy tylko przy zmianie
+
+Budowanie jest darmowe (Actions w publicznym repo), **wdrożenie zużywa limit Cloudflare**.
+Bez rozdzielenia tych dwóch rzeczy częstsze zaglądanie do Facebooka kosztowałoby wprost:
+harmonogram co godzinę to ~580 wdrożeń miesięcznie przy sufcie rzędu 500.
+
+`/aktualnosci/latest.json` niesie więc `fingerprint` — skrót z pól, które FAKTYCZNIE renderujemy
+(adres, tytuł, data, liczba zdjęć, pełna treść każdego wpisu). Workflow porównuje świeży odcisk
+z tym leżącym na produkcji i przy równości kończy bez wdrożenia i bez powiadomienia. Wdrożeń jest
+tyle, ile prawdziwych zmian — kilka miesięcznie zamiast kilkuset.
+
+**Dlaczego odcisk, a nie filtrowanie zdarzeń:** komentarz pod postem nie rusza żadnego z tych pól,
+bo komentarzy w ogóle nie pobieramy z Graph API. Nie trzeba więc pamiętać listy wyjątków —
+z definicji reaguje tylko to, co widać na stronie.
+
+Sprawdzenie działa **tylko przy uruchomieniu z harmonogramu**. Wypchnięcie zmiany i przycisk
+„Run workflow" wdrażają zawsze, bo tam zmiana może siedzieć w szacie albo w treści z panelu,
+czyli poza odciskiem aktualności. Gdy produkcja jest nieosiągalna albo nie ma jeszcze odcisku —
+wdrażamy; przy wątpliwości lepiej wdrożyć niepotrzebnie niż przegapić wpis.
+
+Odcisk musi być **stabilny**: dwa czyste budowania bez zmian w treści dają ten sam skrót
+(sprawdzone). Gdyby się chwiał, wdrażałoby się zawsze i cała rzecz nie miałaby sensu.
+
+**Pułapka, na którą się nadziałem:** `Cache-Control` ustawiony w kodzie endpointu nic tu nie daje.
+Przy budowaniu statycznym to zwykły plik na dysku, a nagłówki nadaje hosting — trzeba je wpisać
+w `public/_headers`. Buforowana kopia `latest.json` byłaby podwójnie zdradliwa: service worker
+pokazywałby poprzedni wpis, a workflow uznawałby prawdziwą zmianę za brak zmiany i **nigdy by
+nie wdrożył**.
+
 ## Kolejność w workflow ma znaczenie
 
 Krok „Rozgłoś nowy wpis" idzie **po** wdrożeniu. Powiadomienie jest puste, więc service worker
@@ -77,8 +106,13 @@ co trzy godziny.
 - **iPhone: tylko po dodaniu do ekranu głównego.** Safari nie dostarcza push w zwykłej karcie.
   Stąd `public/site.webmanifest` i `display: standalone` — bez manifestu nie da się tego nawet
   spróbować. Dzwoneczek wykrywa ten przypadek i zamiast znikać, tłumaczy, co zrobić.
-- **Opóźnienie do 3 godzin** — tyle wynosi odstęp budowań. Da się zejść niżej, minuty Actions
-  w publicznym repozytorium są darmowe.
+- **Opóźnienie do godziny w dzień, do trzech w nocy.** Harmonogram: `7 4-20 * * *`
+  i `7 23,2 * * *` (UTC), czyli co godzinę 6:07–22:07 czasu polskiego i dwa razy w nocy.
+  Minuta 7, bo o pełnej godzinie zaplanowane workflow czekają u GitHuba w kolejce najdłużej.
+  Zimą wszystko przesuwa się o godzinę wcześniej — GitHub nie zna stref czasowych.
+- **Webhook Mety świadomie odrzucony** (2026-09-08). Kupowałby godzinę, a kosztował zależność
+  od Mety, przegląd aplikacji i filtrowanie zdarzeń. Kacper uznał, że godzina opóźnienia nic
+  nie psuje. Nie wracać bez wyraźnej potrzeby.
 - `/prywatnosc/` została przepisana i opisuje ten stan. **Każda zmiana w tym, co przechowujemy,
   wymaga poprawienia tamtej strony** — tak samo jak przy wtyczce Facebooka.
 
