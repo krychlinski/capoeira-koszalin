@@ -74,6 +74,15 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
     font-size: 0.9375rem;
     color: var(--text-2);
   }
+  /* Kroki instrukcji dla iPhone'a — wstawiane przez skrypt, więc :global. */
+  .bell__lead :global(.bell__steps) {
+    margin: 0.9rem 0 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .bell__lead :global(.bell__steps li) { padding-left: 0.2rem; }
+  .bell__lead :global(.bell__steps strong) { color: var(--text); font-weight: 500; }
 
   .bell__action { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; }
   /* Przycisk nie rozpycha się na całą szerokość kolumny na telefonie — tekst
@@ -138,10 +147,19 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
         root.hidden = false;
         button.disabled = true;
         heading.textContent = 'Dodaj stronę do ekranu głównego';
-        lead.textContent =
-          'Safari wysyła powiadomienia tylko ze strony zapisanej na ekranie głównym. Otwórz menu udostępniania, wybierz „Do ekranu początkowego”, a potem wróć tutaj — dzwoneczek będzie już działał.';
+        // Instrukcja rozpisana na kroki, bo wersja jednym zdaniem nie wystarczyła
+        // przy pierwszym zderzeniu z prawdziwym telefonem. Pozycji „Do ekranu
+        // początkowego” bywa w menu nie widać i trzeba ją włączyć ręcznie.
+        lead.innerHTML =
+          'Safari wysyła powiadomienia tylko ze strony zapisanej na ekranie głównym — w zwykłej karcie nie da się ich włączyć nigdzie w ustawieniach.' +
+          '<ol class="bell__steps">' +
+          '<li>Stuknij przycisk udostępniania (kwadrat ze strzałką w górę).</li>' +
+          '<li>Wybierz z listy <strong>„Do ekranu początkowego”</strong>. Jeśli tej pozycji nie ma, zjedź na sam dół listy, stuknij <strong>„Edytuj czynności…”</strong> i dodaj ją zielonym plusem.</li>' +
+          '<li>Otwórz stronę z nowej ikony na ekranie głównym — nie z Safari.</li>' +
+          '<li>Wróć tutaj: przycisk będzie już działał.</li>' +
+          '</ol>';
         label.textContent = 'Powiadomienia niedostępne';
-        note.textContent = '';
+        note.textContent = 'Wymaga iOS 16.4 lub nowszego.';
       }
       return;
     }

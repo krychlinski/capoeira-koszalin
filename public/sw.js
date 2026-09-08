@@ -8,9 +8,13 @@
  * service workera to najczęstsze źródło „dlaczego widzę starą wersję”.
  */
 
+/* Tytuł jest STAŁY, a tekst wpisu idzie w treść — nie odwrotnie.
+   Tytuł powiadomienia to jeden wiersz i system ucina go bez litości, a wpisy
+   z Facebooka mają pierwszą linię długą nawet na 90 znaków. W treści mieszczą
+   się dwa, trzy wiersze, więc tam widać, o co chodzi. */
+const TITLE = 'Nowy wpis w aktualnościach';
 const FALLBACK = {
-  title: 'Akademia Capoeira Koszalin',
-  body: 'Pojawił się nowy wpis w aktualnościach.',
+  body: 'Otwórz, żeby zobaczyć, co nowego w Akademii.',
   url: '/aktualnosci/',
 };
 
@@ -26,15 +30,13 @@ self.addEventListener('push', (event) => {
       try {
         const res = await fetch('/aktualnosci/latest.json', { cache: 'no-store' });
         const { latest } = await res.json();
-        if (latest?.title) {
-          data = { title: latest.title, body: 'Nowy wpis w aktualnościach', url: latest.url };
-        }
+        if (latest?.title) data = { body: latest.title, url: latest.url };
       } catch {
         // Brak sieci albo zły plik — pokazujemy powiadomienie ogólne. Milczenie
         // byłoby gorsze: przeglądarka i tak wymaga, żeby po pushu coś się pojawiło.
       }
 
-      await self.registration.showNotification(data.title, {
+      await self.registration.showNotification(TITLE, {
         body: data.body,
         icon: '/favicon.png',
         badge: '/favicon.png',
@@ -55,10 +57,15 @@ self.addEventListener('notificationclick', (event) => {
       const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
       // Jeśli strona jest już gdzieś otwarta, przechodzimy w tej karcie zamiast
       // otwierać kolejną — inaczej po kilku powiadomieniach robi się ich las.
-      for (const client of all) {
-        if (new URL(client.url).origin === self.location.origin) {
-          await client.navigate(target);
-          return client.focus();
+      const otwarta = all.find((c) => new URL(c.url).origin === self.location.origin);
+      if (otwarta) {
+        try {
+          await otwarta.navigate(target);
+          return otwarta.focus();
+        } catch {
+          // navigate() działa tylko na kartach kontrolowanych przez tego service
+          // workera i rzuca na pozostałych. Bez tego przechwycenia kliknięcie
+          // w powiadomienie nie robiło NIC — obietnica cicho odrzucała.
         }
       }
       return self.clients.openWindow(target);
