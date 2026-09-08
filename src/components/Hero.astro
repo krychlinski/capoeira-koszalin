@@ -125,7 +125,14 @@ const video = settings.heroYoutubeVideo?.trim();
     margin: 0 0 1.5rem;
   }
   .hero__title span { display: block; }
-  .hero__title--accent { color: var(--accent); }
+  .hero__title--accent {
+    color: var(--accent);
+    /* Odstęp pod białym wierszem. W em, a nie rem, bo tytuł jest skalowany
+       przez clamp() od 3 do 8.5 rem — stała wartość byłaby ledwie widoczna
+       na dużym ekranie i rozpychałaby nagłówek na telefonie.
+       Nie ruszamy line-height: ten dotyczy też wiersza „Koszalin”. */
+    margin-top: 0.07em;
+  }
   .hero__city {
     font-size: clamp(0.9rem, 2.2vw, 1.6rem);
     font-weight: 400;
