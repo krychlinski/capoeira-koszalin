@@ -1,0 +1,29 @@
+---
+import { getEntry, render } from 'astro:content';
+import Map from './Map.astro';
+
+// Ten sam blok stoi na stronie głównej i na Kontakcie — treść jest jedna,
+// w panelu pod „Blok »Gdzie trenujemy«”.
+const page = await getEntry('pages', 'gdzie-trenujemy');
+const Content = page ? (await render(page)).Content : null;
+---
+
+{page && (
+  <div class="venue">
+    <div class="venue__intro">
+      {page.data.eyebrow && <p class="eyebrow">{page.data.eyebrow}</p>}
+      {page.data.heading && <h2 class="venue__heading">{page.data.heading}</h2>}
+      {Content && <div class="prose venue__text"><Content /></div>}
+    </div>
+
+    <Map />
+  </div>
+)}
+
+<style>
+  /* Mapka idzie na pełną szerokość, a nie w kolumnę obok tekstu: jest kadrowana,
+     nie skalowana, więc węższy kontener oznacza mniej widocznej okolicy. */
+  .venue__intro { margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
+  .venue__heading { margin-top: 0.5rem; }
+  .venue__text { max-width: 62ch; margin-top: 1.25rem; }
+</style>

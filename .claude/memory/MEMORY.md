@@ -12,7 +12,10 @@
 - [Limit buildów Netlify](decision_netlify_limit.md) — 20 buildów/miesiąc; przenieść hosting zanim Michał dostanie panel
 
 ## Wzorce w kodzie
+- [Nazewnictwo](decision_nazewnictwo.md) — kod po angielsku, komentarze po polsku, adresy stron bez zmian
+- [Refaktor nazw](reference_refaktor_nazw.md) — jak go zweryfikowano i sześć pułapek, które wyszły
 - [Hosting po przeprowadzce](reference_hosting.md) — Pages + GitHub Actions, dlaczego `www`, pułapki z certyfikatami
+- [Mapka dojazdu](reference_mapka.md) — statyczny obrazek z kafelków OSM, adres Szymanowskiego 16B, sprawa wizytówki Google
 - [Znaki i SVG](reference_znaki_svg.md) — przycinanie viewBox, klasa `.znak` przy akapicie
 - [Formatowanie treści z FB](project_formatowanie_fb.md) — kiedy pobiera posty, wypunktowania, polskie cudzysłowy
 

@@ -70,6 +70,8 @@ const pages = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),
   schema: z.object({
     title: z.string(),
+    // Nadtytuł nad nagłówkiem — używa go blok „Gdzie trenujemy”.
+    eyebrow: z.string().optional(),
     heading: z.string().optional(),
     image: z.string().optional(),
     // Numerowane punkty — używa ich strona „Pierwszy trening”.

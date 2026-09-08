@@ -165,6 +165,20 @@ content:
           - { name: description, label: Opis, type: text, required: true }
       - { name: body, label: Dodatkowy tekst, type: rich-text, description: Nieobowiązkowy, pojawia się pod punktami. }
 
+  - name: strona-gdzie-trenujemy
+    label: Blok „Gdzie trenujemy”
+    type: file
+    path: src/content/pages/gdzie-trenujemy.md
+    format: yaml-frontmatter
+    fields:
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: eyebrow, label: Nadtytuł, type: string, description: 'Mała etykieta nad nagłówkiem, np. „Gdzie trenujemy”.' }
+      - { name: heading, label: Nagłówek, type: string }
+      - name: body
+        label: Treść
+        type: rich-text
+        description: Pokazuje się na stronie głównej i na Kontakcie, nad mapką. Pogrubienie: **tekst**.
+
   - name: strona-o-nas
     label: Strona „O nas”
     type: file
@@ -283,6 +297,10 @@ content:
       - { name: phone, label: Telefon, type: string }
       - { name: email, label: E-mail, type: string }
       - { name: address, label: Adres, type: text }
+      - name: mapUrl
+        label: Odnośnik do map
+        type: string
+        description: Adres z Map Google — otwiera się po kliknięciu w mapkę. Sama mapka jest obrazkiem w repozytorium, po zmianie adresu trzeba ją wyrenderować od nowa.
       - { name: facebook, label: Facebook, type: string, description: Pełny adres URL. }
       - { name: instagram, label: Instagram, type: string }
       - { name: youtube, label: YouTube, type: string }

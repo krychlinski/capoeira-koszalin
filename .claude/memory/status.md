@@ -55,6 +55,20 @@ co trzy godziny z GitHub Actions. Szczegóły i wszystkie pułapki: [[reference-
 Pilne przebudowanie na żądanie: zakładka **Actions** w repozytorium → workflow
 „Zbuduj i wdróż" → **Run workflow**. Tym miał być guzik dla Michała.
 
+## Nawigacja i stopka — poprawki 2026-09-08
+
+Panel menu na telefonie miał 97% krycia i rozmycie tła, więc przez menu i zza przycisku
+zamykania przebijała treść strony (hero z wielkim napisem). Teraz panel i nagłówek przy
+otwartym menu kryją w pełni; przezroczystość przy przewijaniu została, bo tam jest zamierzona.
+Panel jest zakotwiczony do dolnej krawędzi nagłówka (`top: 100%`), a nie do wpisanej na sztywno
+odległości 76 px — te dwie liczby musiały się zgadzać i to była druga, niezależna pułapka.
+
+Stopka **nigdy nie miała gradientu** — sprawdzone w całej historii pliku. Zielony poblask, który
+Kacper pamiętał z dołu strony, należał do bloku „Pierwszy trening nic nie kosztuje", stojącego
+tam do 2026-09-05. Po przeniesieniu go nad grafik dół strony zrobił się płaski, więc dołożyliśmy
+stopce własny, słabszy poblask (krycie 0,1 zamiast 0,16, źródło w lewym dolnym rogu — żeby nie
+konkurował z blokiem wyżej i nie wyglądał jak jego powtórzenie).
+
 ## Do posprzątania po przeprowadzce
 
 Zrobione: Netlify wyłączone i `netlify.toml` usunięty, Worker skasowany, jego token
@@ -71,8 +85,8 @@ a to pociągnie za sobą sprawę z wierzchołkiem, patrz [[reference-hosting]].
    Cloudflare Pages odpadło: nie pozwala założyć konta młodszego niż 7 dni (stan 2026-08-29).
    Gdyby ktoś do niego wracał — musi to być „Connect to Git", nigdy Direct Upload, bo projektu
    z bezpośredniego uploadu nie da się później połączyć z repo.
-2. **Zdobyć brakujące dane od właściciela** — patrz sekcja niżej. Najpilniejszy jest adres sali:
-   nie ma go w żadnym z materiałów, a bez niego nikt nie wie, gdzie przyjść na trening.
+2. **Zdobyć brakujące dane od właściciela** — patrz sekcja niżej. ~~Najpilniejszy jest adres
+   sali~~ — adres mamy od 2026-09-08, patrz wyżej. Zostaje e-mail i biogramy.
 3. **Dodać kolegę jako collaboratora** — czeka na jego login GitHub. Bez tego nie wejdzie do panelu.
 4. **Podmienić resztę treści oznaczonej `DO UZUPEŁNIENIA`** — biogram Michała, treść „O nas",
    szczegóły batizado. Grafik i dane kontaktowe są już prawdziwe.
@@ -87,15 +101,42 @@ a to pociągnie za sobą sprawę z wierzchołkiem, patrz [[reference-hosting]].
 Powiązane: [[decision-pages-cms]], [[decision-nie-wordpress]]
 
 
+## Adres i mapka — 2026-09-08
+
+**Adres Akademii jest znany:** Karola Szymanowskiego 16B. Malandro podał go linkiem do Map
+Google, potwierdzony w OpenStreetMap. Wpisany w `settings.json` (`address`, nowe `mapUrl`),
+wchodzi więc na Kontakt, do stopki i do treści komunikatu. Kod pocztowy niepewny — Google
+podaje 75-564, OSM 75-547, do potwierdzenia u Michała.
+
+Na Kontakcie stoi **statyczna mapka** z pinezką, klik prowadzi do Map Google. Jak ją odtworzyć
+i dlaczego nie ma tam iframe'a: [[reference-mapka]]. Tam też sprawa **wizytówki Google Business
+Profile** — to jedyny sposób, żeby naprawić zdjęcie pokazujące drugą stronę ulicy, i robota
+dla Michała.
+
+Nad mapką stoi blok **„Gdzie trenujemy"** — osobny wpis treści
+(`src/content/pages/gdzie-trenujemy.md` + `strona-gdzie-trenujemy` w `.pages.yml`), więc tekst
+zmienia się w panelu bez ruszania kodu. Ten sam komponent `Venue.astro` renderuje go na
+**stronie głównej** (zaraz po „Kiedy trenujemy", symetria Kiedy/Gdzie) i na **Kontakcie**.
+Kolekcja `pages` dostała przy tym opcjonalne pole `eyebrow`.
+
+**PO 15 WRZEŚNIA POPRAWIĆ TEKST** — teraz mówi „od 15 września trenujemy przy…" i „do tego
+czasu jeszcze w SP9". Po przeprowadzce oba zdania są nieprawdą. To zwykła edycja w panelu,
+nie zadanie programistyczne. Komunikat nad grafikiem wygasa sam, ten tekst nie.
+
+Do rozważenia: mapki nie ma jeszcze na „Zajęciach" ani „Pierwszym treningu".
+
 ## Sale treningowe — stan przejściowy
 
 Sezon 2026/2027 startuje **1 września w SP9**, ale tylko na dwa tygodnie. **Od 15 września**
 zajęcia przenoszą się do własnej Akademii, którą klub właśnie remontuje (opóźnienie przez
 konieczność położenia nowej posadzki — z posta na Facebooku z 27.08).
 
-Dlatego pola `miejsce` i `adres` w kolekcji `zajecia` są **celowo puste**. Zamiast nich działa
-komunikat z datą wygaśnięcia 2026-09-15 (`ustawienia.json` → `komunikat`). Adresy wpiszemy na
-stałe, gdy będzie znany adres nowej Akademii.
+Pola `venue` i `address` w kolekcji `classes` zostają **celowo puste**: wszystkie grupy trenują
+w jednym miejscu, więc adres stoi raz w `settings.json`, a nie siedem razy w grafiku. Te pola są
+od sytuacji, w której grupy się rozjadą po salach.
+
+Komunikat z datą wygaśnięcia 2026-09-15 (`settings.json` → `notice`) nazywa już nową salę
+z adresu. Po 15 września zniknie sam i zostanie sam adres.
 
 Komunikat wygasza skrypt w przeglądarce, nie build — strona jest statyczna i sam build by daty
 nie złapał. Mechanizm jest ogólny: służy też do odwołanych zajęć, ferii, zmiany sali.
@@ -104,7 +145,6 @@ nie złapał. Mechanizm jest ogólny: służy też do odwołanych zajęć, ferii
 
 Nie ma ich w materiałach źródłowych — nie wymyślaj ich:
 
-- **Adres nowej Akademii** — do wpisania po 15 września, patrz sekcja wyżej.
 - **Treść „O nas".** Plik `o nas.odt` zawiera wyłącznie tytuł, jest pusty.
 - **Biogram i stopień (corda) Michała „Malandro" Sawińskiego.** Znana jest tylko rola:
   kierownik sekcji.

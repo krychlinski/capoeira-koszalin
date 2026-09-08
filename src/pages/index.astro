@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Schedule from '../components/Schedule.astro';
 import Notice from '../components/Notice.astro';
+import Venue from '../components/Venue.astro';
 import PostCard from '../components/PostCard.astro';
 import settings from '../data/settings.json';
 import { resolveImage } from '../lib/media';
@@ -76,6 +77,12 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
           <a href="/cennik/" class="button button--outline">Cennik</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section section--tight" id="gdzie-trenujemy">
+    <div class="container">
+      <Venue />
     </div>
   </section>
 
