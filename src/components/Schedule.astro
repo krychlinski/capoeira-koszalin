@@ -2,35 +2,35 @@
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  classes: CollectionEntry<'zajecia'>[];
+  classes: CollectionEntry<'classes'>[];
 }
 const { classes } = Astro.props;
 ---
 
 {classes.length === 0 ? (
-  <p class="grafik__pusto">Grafik zajęć pojawi się tutaj po dodaniu grup w panelu.</p>
+  <p class="schedule__empty">Grafik zajęć pojawi się tutaj po dodaniu grup w panelu.</p>
 ) : (
-  <div class="grafik">
+  <div class="schedule">
     {classes.map((z) => (
-      <article class="grupa">
-        <header class="grupa__naglowek">
-          <h3 class="grupa__nazwa">{z.data.group}</h3>
-          {z.data.subtitle && <p class="grupa__podtytul">{z.data.subtitle}</p>}
+      <article class="group">
+        <header class="group__header">
+          <h3 class="group__name">{z.data.group}</h3>
+          {z.data.subtitle && <p class="group__subtitle">{z.data.subtitle}</p>}
         </header>
 
-        <ul class="terminy">
+        <ul class="sessions">
           {z.data.sessions.map((t) => (
-            <li class="termin">
-              <span class="termin__dzien">{t.day}</span>
-              <span class="termin__godzina">{t.from}{t.to ? `–${t.to}` : ''}</span>
+            <li class="session">
+              <span class="session__day">{t.day}</span>
+              <span class="session__time">{t.from}{t.to ? `–${t.to}` : ''}</span>
             </li>
           ))}
         </ul>
 
         {(z.data.venue || z.data.address) && (
-          <p class="grupa__miejsce">
+          <p class="group__venue">
             {z.data.venue}
-            {z.data.address && <span class="grupa__adres">{z.data.address}</span>}
+            {z.data.address && <span class="group__address">{z.data.address}</span>}
           </p>
         )}
       </article>
@@ -42,65 +42,65 @@ const { classes } = Astro.props;
   /* Linie rysują obramowania samych kart, a nie tło kontenera prześwitujące
      przez odstępy. Inaczej przy liczbie grup niepodzielnej przez liczbę kolumn
      puste komórki ostatniego rzędu zostawiają szary prostokąt. */
-  .grafik {
+  .schedule {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    border-top: 1px solid var(--linia);
-    border-left: 1px solid var(--linia);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
   }
-  .grupa {
-    background: var(--tlo-2);
-    border-right: 1px solid var(--linia);
-    border-bottom: 1px solid var(--linia);
+  .group {
+    background: var(--bg-2);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     padding: 1.75rem;
     display: flex;
     flex-direction: column;
   }
 
-  .grupa__naglowek { margin-bottom: 1.25rem; }
-  .grupa__nazwa { font-size: 1.25rem; margin: 0; }
-  .grupa__podtytul {
+  .group__header { margin-bottom: 1.25rem; }
+  .group__name { font-size: 1.25rem; margin: 0; }
+  .group__subtitle {
     font-family: var(--font-display);
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--akcent);
+    color: var(--accent);
     margin: 0.4rem 0 0;
   }
 
-  .terminy { list-style: none; margin: 0 0 1.25rem; padding: 0; }
-  .termin {
+  .sessions { list-style: none; margin: 0 0 1.25rem; padding: 0; }
+  .session {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: 1rem;
     padding: 0.6rem 0;
-    border-bottom: 1px solid var(--linia);
+    border-bottom: 1px solid var(--line);
   }
-  .termin:last-child { border-bottom: 0; }
-  .termin__dzien {
+  .session:last-child { border-bottom: 0; }
+  .session__day {
     font-family: var(--font-display);
     font-size: 0.875rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--tekst-2);
+    color: var(--text-2);
   }
-  .termin__godzina {
+  .session__time {
     font-family: var(--font-display);
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--tekst);
+    color: var(--text);
     font-variant-numeric: tabular-nums;
   }
 
-  .grupa__miejsce {
+  .group__venue {
     margin: auto 0 0;
     padding-top: 1rem;
-    border-top: 1px solid var(--linia);
+    border-top: 1px solid var(--line);
     font-size: 0.875rem;
-    color: var(--tekst-2);
+    color: var(--text-2);
   }
-  .grupa__adres { display: block; color: var(--tekst-3); }
+  .group__address { display: block; color: var(--text-3); }
 
-  .grafik__pusto { color: var(--tekst-3); }
+  .schedule__empty { color: var(--text-3); }
 </style>

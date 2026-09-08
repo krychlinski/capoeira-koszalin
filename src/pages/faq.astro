@@ -19,17 +19,17 @@ const withAnswers = await Promise.all(
     description="Jeśli czegoś tu brakuje, zadzwoń — chętnie odpowiemy."
   />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
-      <div class="lista">
+  <section class="section section--tight">
+    <div class="container">
+      <div class="list">
         {withAnswers.map(({ entry, Answer }, i) => (
-          <details class="pytanie">
-            <summary class="pytanie__naglowek">
-              <span class="pytanie__numer">{String(i + 1).padStart(2, '0')}</span>
-              <span class="pytanie__tresc">{entry.data.question}</span>
-              <span class="pytanie__znak" aria-hidden="true"></span>
+          <details class="question">
+            <summary class="question__header">
+              <span class="question__number">{String(i + 1).padStart(2, '0')}</span>
+              <span class="question__text">{entry.data.question}</span>
+              <span class="question__mark" aria-hidden="true"></span>
             </summary>
-            <div class="pytanie__odpowiedz proza"><Answer /></div>
+            <div class="question__answer prose"><Answer /></div>
           </details>
         ))}
       </div>
@@ -38,10 +38,10 @@ const withAnswers = await Promise.all(
 </Base>
 
 <style>
-  .lista { border-top: 1px solid var(--linia); }
-  .pytanie { border-bottom: 1px solid var(--linia); }
+  .list { border-top: 1px solid var(--line); }
+  .question { border-bottom: 1px solid var(--line); }
 
-  .pytanie__naglowek {
+  .question__header {
     display: flex;
     align-items: center;
     gap: 1.25rem;
@@ -50,17 +50,17 @@ const withAnswers = await Promise.all(
     list-style: none;
     transition: color 0.2s ease;
   }
-  .pytanie__naglowek::-webkit-details-marker { display: none; }
-  .pytanie__naglowek:hover { color: var(--akcent); }
+  .question__header::-webkit-details-marker { display: none; }
+  .question__header:hover { color: var(--accent); }
 
-  .pytanie__numer {
+  .question__number {
     font-family: var(--font-display);
     font-size: 0.8125rem;
     letter-spacing: 0.1em;
-    color: var(--akcent-scisz);
+    color: var(--accent-muted);
     flex: none;
   }
-  .pytanie__tresc {
+  .question__text {
     flex: 1;
     font-family: var(--font-display);
     font-size: clamp(1rem, 2vw, 1.25rem);
@@ -69,24 +69,24 @@ const withAnswers = await Promise.all(
     line-height: 1.2;
   }
 
-  .pytanie__znak {
+  .question__mark {
     flex: none;
     position: relative;
     width: 14px;
     height: 14px;
   }
-  .pytanie__znak::before,
-  .pytanie__znak::after {
+  .question__mark::before,
+  .question__mark::after {
     content: '';
     position: absolute;
     inset: 50% 0 auto;
     height: 1.5px;
-    background: var(--akcent);
+    background: var(--accent);
     transition: transform 0.25s ease;
   }
-  .pytanie__znak::after { transform: rotate(90deg); }
-  .pytanie[open] .pytanie__znak::after { transform: rotate(0deg); }
+  .question__mark::after { transform: rotate(90deg); }
+  .question[open] .question__mark::after { transform: rotate(0deg); }
 
-  .pytanie__odpowiedz { padding: 0 0 1.6rem calc(0.8125rem + 1.25rem); max-width: 70ch; }
-  @media (max-width: 600px) { .pytanie__odpowiedz { padding-left: 0; } }
+  .question__answer { padding: 0 0 1.6rem calc(0.8125rem + 1.25rem); max-width: 70ch; }
+  @media (max-width: 600px) { .question__answer { padding-left: 0; } }
 </style>

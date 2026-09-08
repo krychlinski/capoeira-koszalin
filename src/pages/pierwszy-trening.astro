@@ -19,16 +19,16 @@ const points = page?.data.points ?? [];
     description={page?.data.heading}
   />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
-      {page?.data.pointsEyebrow && <p class="nadtytul">{page.data.pointsEyebrow}</p>}
+  <section class="section section--tight">
+    <div class="container">
+      {page?.data.pointsEyebrow && <p class="eyebrow">{page.data.pointsEyebrow}</p>}
       {page?.data.pointsHeading && <h2>{page.data.pointsHeading}</h2>}
 
       {points.length > 0 && (
-        <div class="punkty">
+        <div class="points">
           {points.map((punkt, i) => (
-            <div class="punkt">
-              <span class="punkt__numer">{String(i + 1).padStart(2, '0')}</span>
+            <div class="point">
+              <span class="point__number">{String(i + 1).padStart(2, '0')}</span>
               <h3>{punkt.title}</h3>
               <p>{punkt.description}</p>
             </div>
@@ -36,39 +36,39 @@ const points = page?.data.points ?? [];
         </div>
       )}
 
-      {Content && <div class="proza proza--dopisek"><Content /></div>}
+      {Content && <div class="prose prose--note"><Content /></div>}
 
-      <div class="akcje">
-        <a href="/zajecia/" class="przycisk">Zobacz plan treningów</a>
+      <div class="actions">
+        <a href="/zajecia/" class="button">Zobacz plan treningów</a>
         {settings.phone && (
-          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="button button--outline">
             {settings.phone}
           </a>
         )}
-        <a href="/faq/" class="przycisk przycisk--obrys">Częste pytania</a>
+        <a href="/faq/" class="button button--outline">Częste pytania</a>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .punkty {
+  .points {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 2rem;
     margin-block: 2.5rem;
   }
-  .punkt h3 { margin-bottom: 0.5rem; }
-  .punkt p { color: var(--tekst-2); font-size: 0.9375rem; margin: 0; }
-  .punkt__numer {
+  .point h3 { margin-bottom: 0.5rem; }
+  .point p { color: var(--text-2); font-size: 0.9375rem; margin: 0; }
+  .point__number {
     display: block;
     font-family: var(--font-display);
     font-size: 2.5rem;
     line-height: 1;
-    color: var(--akcent-scisz);
+    color: var(--accent-muted);
     margin-bottom: 0.75rem;
   }
 
-  .proza--dopisek { margin-bottom: 2.5rem; }
-  .akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .prose--note { margin-bottom: 2.5rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 </style>

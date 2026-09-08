@@ -27,7 +27,7 @@ export interface NewsEntry {
  * jest dopiero w szczegółach.
  */
 export async function allNews(): Promise<NewsEntry[]> {
-  const written = (await getCollection('aktualnosci'))
+  const written = (await getCollection('news'))
     .filter((entry) => entry.data.published)
     .map((entry) => ({
       href: `/aktualnosci/${entry.id}/`,

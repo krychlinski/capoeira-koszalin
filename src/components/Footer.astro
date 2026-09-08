@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import logoPelne from '../assets/logo-pelne.png';
 import settings from '../data/settings.json';
 
-const rok = new Date().getFullYear();
+const year = new Date().getFullYear();
 const social = [
   { href: settings.facebook, text: 'Facebook' },
   { href: settings.instagram, text: 'Instagram' },
@@ -12,110 +12,114 @@ const social = [
 const telHref = settings.phone ? `tel:+48${settings.phone.replace(/\s/g, '')}` : null;
 ---
 
-<footer class="stopka">
-  <div class="kontener stopka__wnetrze">
-    <div class="stopka__marka">
-      <Image src={logoPelne} alt={settings.name} widths={[260, 520]} sizes="240px" loading="lazy" class="stopka__logo" />
-      {settings.group && <p class="stopka__grupa">{settings.group}</p>}
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <Image src={logoPelne} alt={settings.name} widths={[260, 520]} sizes="240px" loading="lazy" class="footer__logo" />
+      {settings.group && <p class="footer__group">{settings.group}</p>}
     </div>
 
-    <div class="stopka__kolumna">
-      <h4 class="stopka__tytul">Kontakt</h4>
-      {telHref && <a href={telHref} class="stopka__link">{settings.phone}</a>}
-      {settings.email && <a href={`mailto:${settings.email}`} class="stopka__link">{settings.email}</a>}
-      {settings.address && <p class="stopka__tekst">{settings.address}</p>}
+    <div class="footer__column">
+      <h4 class="footer__title">Kontakt</h4>
+      {telHref && <a href={telHref} class="footer__link">{settings.phone}</a>}
+      {settings.email && <a href={`mailto:${settings.email}`} class="footer__link">{settings.email}</a>}
+      {settings.address && <p class="footer__text">{settings.address}</p>}
     </div>
 
     {social.length > 0 && (
-      <div class="stopka__kolumna">
-        <h4 class="stopka__tytul">Znajdź nas</h4>
+      <div class="footer__column">
+        <h4 class="footer__title">Znajdź nas</h4>
         {social.map((s) => (
-          <a href={s.href} class="stopka__link" target="_blank" rel="noopener noreferrer">{s.text}</a>
+          <a href={s.href} class="footer__link" target="_blank" rel="noopener noreferrer">{s.text}</a>
         ))}
       </div>
     )}
 
-    <div class="stopka__kolumna">
-      <h4 class="stopka__tytul">Strona</h4>
-      <a href="/zajecia/" class="stopka__link">Grafik zajęć</a>
-      <a href="/cennik/" class="stopka__link">Cennik</a>
-      <a href="/faq/" class="stopka__link">Częste pytania</a>
-      <a href="/o-nas/" class="stopka__link">O nas</a>
-      <a href="/regulamin/" class="stopka__link">Regulamin</a>
-      <a href="/prywatnosc/" class="stopka__link">Prywatność</a>
+    <div class="footer__column">
+      <h4 class="footer__title">Strona</h4>
+      <a href="/zajecia/" class="footer__link">Grafik zajęć</a>
+      <a href="/cennik/" class="footer__link">Cennik</a>
+      <a href="/faq/" class="footer__link">Częste pytania</a>
+      <a href="/o-nas/" class="footer__link">O nas</a>
+      <a href="/regulamin/" class="footer__link">Regulamin</a>
+      <a href="/prywatnosc/" class="footer__link">Prywatność</a>
     </div>
   </div>
 
-  <div class="kontener stopka__dol">
-    <p>© {rok} {settings.name}</p>
-    <p class="stopka__axe">Axé!</p>
+  <div class="container footer__bottom">
+    <p>© {year} {settings.name}</p>
+    <p class="footer__axe">Axé!</p>
   </div>
 </footer>
 
 <style>
-  .stopka {
-    border-top: 1px solid var(--linia);
-    background: var(--tlo-2);
+  .footer {
+    border-top: 1px solid var(--line);
+    /* Poblask od dołu, słabszy niż w bloku wezwania do działania — ten stoi
+       wyżej na stronie i ma zostać mocniejszy. */
+    background:
+      radial-gradient(70% 100% at 15% 100%, rgba(var(--accent-rgb), 0.1), transparent 70%),
+      var(--bg-2);
     padding-top: clamp(3rem, 6vw, 5rem);
   }
-  .stopka__wnetrze {
+  .footer__inner {
     display: grid;
     grid-template-columns: 1.6fr repeat(3, 1fr);
     gap: 2.5rem;
     padding-bottom: 3rem;
   }
   @media (max-width: 820px) {
-    .stopka__wnetrze { grid-template-columns: 1fr 1fr; }
-    .stopka__marka { grid-column: 1 / -1; }
+    .footer__inner { grid-template-columns: 1fr 1fr; }
+    .footer__brand { grid-column: 1 / -1; }
   }
 
-  .stopka :global(.stopka__logo) {
+  .footer :global(.footer__logo) {
     width: 240px;
     max-width: 100%;
     height: auto;
     margin-bottom: 0.85rem;
   }
-  .stopka__grupa {
+  .footer__group {
     font-family: var(--font-display);
     font-size: 0.75rem;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--akcent);
+    color: var(--accent);
     margin: 0;
   }
 
-  .stopka__tytul {
+  .footer__title {
     font-size: 0.75rem;
     letter-spacing: 0.24em;
-    color: var(--tekst-3);
+    color: var(--text-3);
     margin-bottom: 1rem;
   }
-  .stopka__link,
-  .stopka__tekst {
+  .footer__link,
+  .footer__text {
     display: block;
-    color: var(--tekst-2);
+    color: var(--text-2);
     text-decoration: none;
     margin-bottom: 0.55rem;
     font-size: 0.9375rem;
     transition: color 0.2s ease;
   }
-  .stopka__link:hover { color: var(--akcent); }
+  .footer__link:hover { color: var(--accent); }
 
-  .stopka__dol {
+  .footer__bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    border-top: 1px solid var(--linia);
+    border-top: 1px solid var(--line);
     padding-block: 1.5rem;
     font-size: 0.8125rem;
-    color: var(--tekst-3);
+    color: var(--text-3);
   }
-  .stopka__dol p { margin: 0; }
-  .stopka__axe {
+  .footer__bottom p { margin: 0; }
+  .footer__axe {
     font-family: var(--font-display);
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--akcent-scisz);
+    color: var(--accent-muted);
   }
 </style>

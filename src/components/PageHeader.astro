@@ -7,29 +7,29 @@ interface Props {
 const { eyebrow, title, description } = Astro.props;
 ---
 
-<section class="naglowek">
-  <div class="kontener">
-    {eyebrow && <p class="nadtytul">{eyebrow}</p>}
+<section class="header">
+  <div class="container">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
     <h1>{title}</h1>
-    {description && <p class="naglowek__opis">{description}</p>}
+    {description && <p class="header__description">{description}</p>}
   </div>
 </section>
 
 <style>
-  .naglowek {
+  .header {
     padding-top: clamp(9rem, 16vw, 12rem);
     padding-bottom: clamp(2.5rem, 5vw, 4rem);
-    border-bottom: 1px solid var(--linia);
+    border-bottom: 1px solid var(--line);
     background:
-      radial-gradient(120% 80% at 15% 0%, rgba(var(--akcent-rgb), 0.13), transparent 60%),
-      var(--tlo);
+      radial-gradient(120% 80% at 15% 0%, rgba(var(--accent-rgb), 0.13), transparent 60%),
+      var(--bg);
   }
-  .naglowek__opis {
+  .header__description {
     /* 58ch łamało krótkie wprowadzenia o kilkadziesiąt pikseli, zostawiając
        pustą połowę kontenera. 68 znaków mieści się w czytelnym zakresie 45-75,
        a dłuższe teksty i tak zawijają się na sensownej szerokości. */
     max-width: 68ch;
-    color: var(--tekst-2);
+    color: var(--text-2);
     font-size: 1.125rem;
     margin: 0;
     text-wrap: pretty;

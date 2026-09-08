@@ -12,25 +12,25 @@ const albums = (await getCollection('gallery')).sort((a, b) => b.data.date.getTi
 <Base title="Galeria" description="Zdjęcia z treningów, batizado i rod Akademii Capoeira Koszalin.">
   <PageHeader eyebrow="Roda w obiektywie" title="Galeria" />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
+  <section class="section section--tight">
+    <div class="container">
       {albums.length === 0 ? (
-        <p class="pusto">Albumy pojawią się tu po dodaniu zdjęć w panelu.</p>
+        <p class="empty">Albumy pojawią się tu po dodaniu zdjęć w panelu.</p>
       ) : (
-        <div class="albumy">
+        <div class="albums">
           {albums.map((album) => {
             const cover = resolveImage(album.data.cover ?? album.data.images[0]);
             return (
               <a class="album" href={`/galeria/${album.id}/`}>
-                <div class="album__foto">
+                <div class="album__photo">
                   {cover ? (
                     <Image src={cover} alt="" widths={[500, 900]} sizes="(max-width: 700px) 100vw, 380px" loading="lazy" />
                   ) : (
-                    <div class="album__zastepnik" aria-hidden="true"></div>
+                    <div class="album__placeholder" aria-hidden="true"></div>
                   )}
                 </div>
-                <div class="album__opis">
-                  <h2 class="album__tytul">{album.data.title}</h2>
+                <div class="album__description">
+                  <h2 class="album__title">{album.data.title}</h2>
                   <p class="album__meta">
                     {formatDate(album.data.date)} · <span set:html={photoCount(album.data.images.length).replace(" ", "&nbsp;")} />
                   </p>
@@ -45,33 +45,33 @@ const albums = (await getCollection('gallery')).sort((a, b) => b.data.date.getTi
 </Base>
 
 <style>
-  .albumy { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+  .albums { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
   .album { text-decoration: none; display: block; }
-  .album__foto {
+  .album__photo {
     aspect-ratio: 4 / 3;
     overflow: hidden;
-    border: 1px solid var(--linia);
-    background: var(--tlo-3);
+    border: 1px solid var(--line);
+    background: var(--bg-3);
   }
-  .album__foto :global(img) {
+  .album__photo :global(img) {
     width: 100%; height: 100%; object-fit: cover;
     filter: grayscale(0.45);
     transition: transform 0.5s ease, filter 0.35s ease;
   }
-  .album:hover .album__foto :global(img) { transform: scale(1.05); filter: grayscale(0); }
-  .album__zastepnik {
+  .album:hover .album__photo :global(img) { transform: scale(1.05); filter: grayscale(0); }
+  .album__placeholder {
     width: 100%; height: 100%;
-    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--akcent-rgb), 0.16), transparent 70%), var(--tlo-3);
+    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--accent-rgb), 0.16), transparent 70%), var(--bg-3);
   }
-  .album__opis { padding-top: 1rem; }
-  .album__tytul { font-size: 1.25rem; margin: 0 0 0.35rem; }
+  .album__description { padding-top: 1rem; }
+  .album__title { font-size: 1.25rem; margin: 0 0 0.35rem; }
   .album__meta {
     font-family: var(--font-display);
     font-size: 0.75rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--tekst-3);
+    color: var(--text-3);
     margin: 0;
   }
-  .pusto { color: var(--tekst-3); }
+  .empty { color: var(--text-3); }
 </style>

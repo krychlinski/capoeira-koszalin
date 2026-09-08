@@ -4,12 +4,12 @@ heading: "Jesteśmy częścią międzynarodowej grupy União Internacional de Ca
 image: ""
 ---
 
-<img src="/unicar.svg" alt="União Internacional de Capoeira Regional" class="znak" width="140" height="140" loading="lazy" /> UNICAR powstała w 2003 roku. Naszymi bezpośrednimi mentorami są **Mestre Sem Memória**
+<img src="/unicar.svg" alt="União Internacional de Capoeira Regional" class="mark" width="140" height="140" loading="lazy" /> UNICAR powstała w 2003 roku. Naszymi bezpośrednimi mentorami są **Mestre Sem Memória**
 oraz **Mestre Secão**.
 
 ## Nasza historia
 
-<img src="/tkkf.svg" alt="Towarzystwo Krzewienia Kultury Fizycznej" class="znak" width="104" height="114" loading="lazy" /> Capoeira jest w Koszalinie **od 2005 roku**, a nasza obecna grupa działa **od 2006**.
+<img src="/tkkf.svg" alt="Towarzystwo Krzewienia Kultury Fizycznej" class="mark" width="104" height="114" loading="lazy" /> Capoeira jest w Koszalinie **od 2005 roku**, a nasza obecna grupa działa **od 2006**.
 Od 2008 współpracujemy z Koszalińskim Towarzystwem Krzewienia Kultury Fizycznej (KTKKF).
 
 W 2019 roku udało nam się stworzyć **Akademię Capoeira Koszalin** — miejsce, w którym można

@@ -25,16 +25,16 @@ const links = [
 const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
 ---
 
-<header class="nawigacja" data-nav>
-  <div class="nawigacja__wnetrze kontener">
-    <a class="marka" href="/">
+<header class="nav" data-nav>
+  <div class="nav__inner container">
+    <a class="brand" href="/">
       <Image
         src={logo}
         alt={settings.name}
         widths={[200, 400]}
         sizes="150px"
         loading="eager"
-        class="marka__logo"
+        class="brand__logo"
       />
     </a>
 
@@ -44,7 +44,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 
     <nav class="menu" data-menu>
       {links.map((l) => (
-        <a href={l.href} class:list={['menu__link', { 'menu__link--aktywny': isActive(l.href) }]}>
+        <a href={l.href} class:list={['menu__link', { 'menu__link--active': isActive(l.href) }]}>
           {l.text}
         </a>
       ))}
@@ -53,19 +53,27 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 </header>
 
 <style>
-  .nawigacja {
+  .nav {
     position: fixed;
     inset: 0 0 auto;
     z-index: 100;
     transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
     border-bottom: 1px solid transparent;
   }
-  .nawigacja[data-stuck] {
+  .nav[data-stuck] {
     background: rgba(11, 11, 12, 0.88);
     backdrop-filter: blur(14px);
-    border-bottom-color: var(--linia);
+    border-bottom-color: var(--line);
   }
-  .nawigacja__wnetrze {
+  /* Przy otwartym menu nagłówek kryje w pełni. Przezroczystość jest tu ładna
+     przy przewijaniu, ale za przyciskiem zamykania przebijała treść strony
+     i krzyżyk zlewał się z tym, co akurat było pod spodem. */
+  .nav:has(.menu[data-open]) {
+    background: var(--bg);
+    backdrop-filter: none;
+    border-bottom-color: var(--line);
+  }
+  .nav__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -73,14 +81,14 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     min-height: 76px;
   }
 
-  .marka { display: block; line-height: 0; }
-  .marka :global(.marka__logo) {
+  .brand { display: block; line-height: 0; }
+  .brand :global(.brand__logo) {
     width: 150px;
     height: auto;
     max-width: 100%;
   }
   @media (max-width: 480px) {
-    .marka :global(.marka__logo) { width: 122px; }
+    .brand :global(.brand__logo) { width: 122px; }
   }
 
   .menu { display: flex; align-items: center; gap: 1.35rem; }
@@ -90,15 +98,19 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--tekst-2);
+    color: var(--text-2);
     text-decoration: none;
     transition: color 0.2s ease;
   }
-  .menu__link:hover { color: var(--tekst); }
-  .menu__link--aktywny { color: var(--akcent); }
+  .menu__link:hover { color: var(--text); }
+  .menu__link--active { color: var(--accent); }
 
 
   .hamburger {
+    /* Nad panelem menu, który jest elementem pozycjonowanym i bez tego
+       rysowałby się na wierzchu. */
+    position: relative;
+    z-index: 1;
     display: none;
     flex-direction: column;
     gap: 5px;
@@ -111,7 +123,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     display: block;
     width: 24px;
     height: 2px;
-    background: var(--tekst);
+    background: var(--text);
     transition: transform 0.25s ease, opacity 0.25s ease;
   }
   .hamburger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -121,14 +133,20 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
   @media (max-width: 900px) {
     .hamburger { display: flex; }
     .menu {
-      position: fixed;
-      inset: 76px 0 auto;
+      /* Kotwiczymy do dolnej krawędzi nagłówka, a nie do stałej odległości od
+         góry ekranu. Wpisana na sztywno wartość rozjeżdżała się z wysokością
+         nagłówka, gdy ten urósł — panel wchodził wtedy pod przycisk zamykania. */
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
       flex-direction: column;
       align-items: flex-start;
       gap: 0;
-      background: rgba(11, 11, 12, 0.97);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--linia);
+      /* Pełne krycie, nie 97% — przez tę resztkę przebijał hero z wielkim
+         napisem i pieczęcią, a rozmycie tylko je rozmazywało. */
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
       padding: 1rem var(--gutter) 2rem;
       display: none;
     }

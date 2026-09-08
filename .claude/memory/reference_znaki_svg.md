@@ -30,3 +30,7 @@ wtedy osobną kolumną i tekst rozpada się na kawałki na każdym pogrubieniu �
 wyglądało to jak rozsypana tabela.
 
 Poniżej 560 px znak idzie nad tekst: obok zostawał wiersz szerokości 29 znaków.
+
+**Uwaga:** oba znaki są wstawione wprost w `src/content/pages/o-nas.md`, razem z `class="mark"`.
+Zmiana nazwy tej klasy w stylach wymaga zmiany także w treści — pliki `.md` bywają pomijane
+przy podmianach obejmujących `.astro` i `.css`. Patrz [[reference-refaktor-nazw]].

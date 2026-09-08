@@ -12,17 +12,17 @@ const entries = await allNews();
 <Base title="Aktualności" description="Co się dzieje w Akademii Capoeira Koszalin.">
   <PageHeader eyebrow="Z życia grupy" title="Aktualności" />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
+  <section class="section section--tight">
+    <div class="container">
       {entries.length === 0 ? (
-        <p class="pusto">
+        <p class="empty">
           Nie ma jeszcze żadnych wpisów.
           {settings.facebook && (
             <> Zajrzyj na <a href={settings.facebook} target="_blank" rel="noopener noreferrer">nasz Facebook</a>.</>
           )}
         </p>
       ) : (
-        <div class="siatka-kart">
+        <div class="card-grid">
           {entries.map((x) => (
             <PostCard
               href={x.href}
@@ -42,7 +42,7 @@ const entries = await allNews();
 </Base>
 
 <style>
-  .siatka-kart { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-  .pusto { color: var(--tekst-3); }
-  .pusto a { color: var(--akcent); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .empty { color: var(--text-3); }
+  .empty a { color: var(--accent); }
 </style>

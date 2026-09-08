@@ -8,10 +8,10 @@ const video = settings.heroYoutubeVideo?.trim();
 ---
 
 <section class="hero">
-  <div class="hero__tlo">
+  <div class="hero__background">
     {video ? (
       <iframe
-        class="hero__wideo"
+        class="hero__video"
         src={`https://www.youtube.com/embed/${video}?autoplay=1&mute=1&loop=1&playlist=${video}&controls=0&showinfo=0&modestbranding=1&playsinline=1&rel=0`}
         title="Capoeira"
         allow="autoplay; encrypted-media"
@@ -23,26 +23,26 @@ const video = settings.heroYoutubeVideo?.trim();
     ) : null}
   </div>
 
-  <div class="hero__zaslona"></div>
+  <div class="hero__scrim"></div>
 
-  <div class="kontener hero__tresc">
-    <p class="hero__grupa">
-      <img src="/unicar.svg" alt="" class="hero__pieczec" width="150" height="150" loading="eager" />
+  <div class="container hero__content">
+    <p class="hero__group">
+      <img src="/unicar.svg" alt="" class="hero__seal" width="150" height="150" loading="eager" />
       <span>{settings.group}</span>
     </p>
-    <h1 class="hero__tytul">
+    <h1 class="hero__title">
       <span>Akademia</span>
-      <span class="hero__tytul--akcent">Capoeira</span>
-      <span class="hero__miasto">Koszalin</span>
+      <span class="hero__title--accent">Capoeira</span>
+      <span class="hero__city">Koszalin</span>
     </h1>
-    <p class="hero__haslo">{settings.heroTagline}</p>
-    <div class="hero__akcje">
-      <a href="#kiedy-trenujemy" class="przycisk">Przyjdź na trening</a>
-      <a href="#czym-jest-capoeira" class="przycisk przycisk--obrys">Czym jest capoeira</a>
+    <p class="hero__tagline">{settings.heroTagline}</p>
+    <div class="hero__actions">
+      <a href="#kiedy-trenujemy" class="button">Przyjdź na trening</a>
+      <a href="#czym-jest-capoeira" class="button button--outline">Czym jest capoeira</a>
     </div>
   </div>
 
-  <a class="hero__strzalka" href="#dalej" aria-label="Przewiń w dół"><span></span></a>
+  <a class="hero__arrow" href="#dalej" aria-label="Przewiń w dół"><span></span></a>
 </section>
 <span id="dalej"></span>
 
@@ -58,20 +58,20 @@ const video = settings.heroYoutubeVideo?.trim();
     isolation: isolate;
   }
 
-  .hero__tlo {
+  .hero__background {
     position: absolute;
     inset: 0;
     z-index: -2;
     background: linear-gradient(160deg, #1a1512, #0b0b0c 60%);
   }
-  .hero__tlo :global(img) {
+  .hero__background :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     filter: grayscale(0.45) contrast(1.08);
   }
   /* Wideo z YouTube nie ma object-fit — skalujemy je ponad krawędzie, żeby wypełniło kadr. */
-  .hero__wideo {
+  .hero__video {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -85,20 +85,20 @@ const video = settings.heroYoutubeVideo?.trim();
     filter: grayscale(0.4) contrast(1.05);
   }
 
-  .hero__zaslona {
+  .hero__scrim {
     position: absolute;
     inset: 0;
     z-index: -1;
     background:
       linear-gradient(to top, rgba(11, 11, 12, 0.97) 8%, rgba(11, 11, 12, 0.55) 45%, rgba(11, 11, 12, 0.75) 100%),
-      radial-gradient(90% 60% at 20% 90%, rgba(var(--akcent-rgb), 0.18), transparent 70%);
+      radial-gradient(90% 60% at 20% 90%, rgba(var(--accent-rgb), 0.18), transparent 70%);
   }
 
-  .hero__tresc { position: relative; }
+  .hero__content { position: relative; }
 
-  .hero__grupa {
+  .hero__group {
     /* Pieczęć obok napisu, nie nad nim. Tekst zawija się we własnej kolumnie,
-       a znak zostaje przy nim wyśrodkowany w pionie — także gdy tekst ma
+       a mark zostaje przy nim wyśrodkowany w pionie — także gdy tekst ma
        dwa wiersze na wąskim ekranie. */
     display: flex;
     align-items: center;
@@ -107,61 +107,61 @@ const video = settings.heroYoutubeVideo?.trim();
     font-size: clamp(1.125rem, 2.1vw, 1.75rem);
     letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--akcent);
+    color: var(--accent);
     margin: 0 0 1rem;
   }
   /* Pieczęć ma drobny tekst po obwodzie i poniżej mniej więcej 45 px robi się
      nieczytelną plamką — dlatego jest wyraźnie wyższa niż wiersz podpisu. */
-  .hero__pieczec {
+  .hero__seal {
     width: clamp(96px, min(11vw, 15vh), 150px);
     height: auto;
     flex: none;
   }
 
-  .hero__tytul {
+  .hero__title {
     display: grid;
     font-size: clamp(3rem, 11vw, 8.5rem);
     line-height: 0.86;
     margin: 0 0 1.5rem;
   }
-  .hero__tytul span { display: block; }
-  .hero__tytul--akcent { color: var(--akcent); }
-  .hero__miasto {
+  .hero__title span { display: block; }
+  .hero__title--accent { color: var(--accent); }
+  .hero__city {
     font-size: clamp(0.9rem, 2.2vw, 1.6rem);
     font-weight: 400;
     letter-spacing: 0.52em;
-    color: var(--tekst-2);
+    color: var(--text-2);
     margin-top: 1.1rem;
   }
 
-  .hero__haslo {
+  .hero__tagline {
     max-width: 46ch;
     font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
-    color: var(--tekst-2);
+    color: var(--text-2);
     margin-bottom: 2rem;
   }
 
-  .hero__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 
-  .hero__strzalka {
+  .hero__arrow {
     position: absolute;
     bottom: 1.75rem;
     left: 50%;
     transform: translateX(-50%);
     width: 1px;
     height: 3rem;
-    background: var(--linia);
+    background: var(--line);
     overflow: hidden;
   }
-  .hero__strzalka span {
+  .hero__arrow span {
     position: absolute;
     inset: 0;
-    background: var(--akcent);
+    background: var(--accent);
     animation: spadaj 2.2s ease-in-out infinite;
   }
   @keyframes spadaj {
     0% { transform: translateY(-100%); }
     60%, 100% { transform: translateY(100%); }
   }
-  @media (max-width: 700px) { .hero__strzalka { display: none; } }
+  @media (max-width: 700px) { .hero__arrow { display: none; } }
 </style>

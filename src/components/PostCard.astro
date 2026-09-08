@@ -20,110 +20,110 @@ const { href, title, meta, excerpt, points, image, imageUrl, imageCount = 0 } = 
 const photo = resolveImage(image);
 ---
 
-<a class="karta" href={href}>
+<a class="card" href={href}>
   {(photo || imageUrl) && (
-    <div class="karta__foto">
+    <div class="card__photo">
       {photo ? (
         <Image src={photo} alt="" widths={[400, 800]} sizes="(max-width: 700px) 100vw, 380px" loading="lazy" />
       ) : (
         <img src={imageUrl} alt="" loading="lazy" decoding="async" />
       )}
-      {imageCount > 1 && <span class="karta__licznik">{photoCount(imageCount)}</span>}
+      {imageCount > 1 && <span class="card__counter">{photoCount(imageCount)}</span>}
     </div>
   )}
-  <div class="karta__tresc">
-    {meta && <p class="karta__meta">{meta}</p>}
-    <h3 class="karta__tytul">{title}</h3>
+  <div class="card__content">
+    {meta && <p class="card__meta">{meta}</p>}
+    <h3 class="card__title">{title}</h3>
     {points && points.length > 0 ? (
-      <ul class="karta__punkty">{points.map((x) => <li>{x}</li>)}</ul>
+      <ul class="card__points">{points.map((x) => <li>{x}</li>)}</ul>
     ) : (
-      excerpt && <p class="karta__zajawka">{excerpt}</p>
+      excerpt && <p class="card__excerpt">{excerpt}</p>
     )}
-    <span class="karta__wiecej">Czytaj dalej</span>
+    <span class="card__more">Czytaj dalej</span>
   </div>
 </a>
 
 <style>
-  .karta {
+  .card {
     display: flex;
     flex-direction: column;
-    background: var(--tlo-2);
-    border: 1px solid var(--linia);
+    background: var(--bg-2);
+    border: 1px solid var(--line);
     text-decoration: none;
     transition: border-color 0.25s ease, transform 0.25s ease;
   }
-  .karta:hover { border-color: var(--akcent-ciemny); transform: translateY(-4px); }
+  .card:hover { border-color: var(--accent-dark); transform: translateY(-4px); }
 
-  .karta__foto { aspect-ratio: 3 / 2; overflow: hidden; background: var(--tlo-3); position: relative; }
-  .karta__licznik {
+  .card__photo { aspect-ratio: 3 / 2; overflow: hidden; background: var(--bg-3); position: relative; }
+  .card__counter {
     position: absolute;
     right: 0.75rem;
     bottom: 0.75rem;
     background: rgba(11, 11, 12, 0.82);
-    color: var(--tekst);
+    color: var(--text);
     font-family: var(--font-display);
     font-size: 0.6875rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     padding: 0.3rem 0.6rem;
   }
-  .karta__foto :global(img) {
+  .card__photo :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     filter: grayscale(0.35);
     transition: transform 0.5s ease, filter 0.35s ease;
   }
-  .karta:hover .karta__foto :global(img) { transform: scale(1.05); filter: grayscale(0); }
+  .card:hover .card__photo :global(img) { transform: scale(1.05); filter: grayscale(0); }
 
-  .karta__zastepnik {
+  .card__placeholder {
     width: 100%;
     height: 100%;
     background:
-      radial-gradient(70% 70% at 30% 30%, rgba(var(--akcent-rgb), 0.16), transparent 70%),
-      var(--tlo-3);
+      radial-gradient(70% 70% at 30% 30%, rgba(var(--accent-rgb), 0.16), transparent 70%),
+      var(--bg-3);
   }
 
-  .karta__tresc { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+  .card__content { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
 
-  .karta__meta {
+  .card__meta {
     font-family: var(--font-display);
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--akcent);
+    color: var(--accent);
     margin: 0 0 0.6rem;
   }
-  .karta__tytul { font-size: 1.3rem; margin: 0 0 0.7rem; }
-  .karta__zajawka { color: var(--tekst-2); font-size: 0.9375rem; margin: 0 0 1.25rem; }
-  .karta__punkty {
+  .card__title { font-size: 1.3rem; margin: 0 0 0.7rem; }
+  .card__excerpt { color: var(--text-2); font-size: 0.9375rem; margin: 0 0 1.25rem; }
+  .card__points {
     list-style: none;
-    color: var(--tekst-2);
+    color: var(--text-2);
     font-size: 0.9375rem;
     margin: 0 0 1.25rem;
     padding: 0;
   }
-  .karta__punkty li {
+  .card__points li {
     position: relative;
     padding-left: 0.95rem;
     margin-bottom: 0.35rem;
   }
-  .karta__punkty li::before {
+  .card__points li::before {
     content: '';
     position: absolute;
     left: 0;
     top: 0.6em;
     width: 4px;
     height: 4px;
-    background: var(--akcent);
+    background: var(--accent);
   }
-  .karta__wiecej {
+  .card__more {
     margin-top: auto;
     font-family: var(--font-display);
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--tekst-3);
+    color: var(--text-3);
   }
-  .karta:hover .karta__wiecej { color: var(--akcent); }
+  .card:hover .card__more { color: var(--accent); }
 </style>

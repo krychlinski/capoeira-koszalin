@@ -1,26 +1,26 @@
 :root {
-  --tlo: #0b0b0c;
-  --tlo-2: #131315;
-  --tlo-3: #1b1b1e;
-  --linia: #2a2a2e;
-  --tekst: #f2efe9;
-  --tekst-2: #a8a49b;
-  --tekst-3: #6f6c65;
+  --bg: #0b0b0c;
+  --bg-2: #131315;
+  --bg-3: #1b1b1e;
+  --line: #2a2a2e;
+  --text: #f2efe9;
+  --text-2: #a8a49b;
+  --text-3: #6f6c65;
   /* Obie zielenie pochodzą wprost z logo: #005c2d (85% powierzchni znaku)
      i #72be44 (15%). Ciemna ma na czerni tylko 2.4:1, więc rolę akcentu
      przejmuje jasna — 8.6:1. Żadnego koloru nie wymyślamy. */
-  --akcent: #72be44;
-  --akcent-jasny: #8cca66;
-  --akcent-ciemny: #005c2d;
+  --accent: #72be44;
+  --accent-light: #8cca66;
+  --accent-dark: #005c2d;
   /* Przygaszony akcent do ozdobnych numerów i podpisów: widoczny (4.6:1),
-     ale ustępujący nagłówkom. NIE używaj do tego --akcent-ciemny. */
-  --akcent-scisz: #538734;
-  --akcent-rgb: 114, 190, 68;
+     ale ustępujący nagłówkom. NIE używaj do tego --accent-dark. */
+  --accent-muted: #538734;
+  --accent-rgb: 114, 190, 68;
 
   --font-display: 'Oswald', 'Helvetica Neue', Impact, sans-serif;
-  --font-tekst: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --szerokosc: 1180px;
+  --width: 1180px;
   --gutter: clamp(1.25rem, 4vw, 3rem);
 }
 
@@ -33,9 +33,9 @@ html {
 
 body {
   margin: 0;
-  background: var(--tlo);
-  color: var(--tekst);
-  font-family: var(--font-tekst);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
   font-size: 1.0625rem;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -74,43 +74,43 @@ h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
 p { margin: 0 0 1.25em; }
 p:last-child { margin-bottom: 0; }
 
-a { color: inherit; text-decoration-color: var(--akcent-ciemny); text-underline-offset: 3px; }
-a:hover { text-decoration-color: var(--akcent); }
+a { color: inherit; text-decoration-color: var(--accent-dark); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--accent); }
 
 img { max-width: 100%; height: auto; display: block; }
 
-.kontener {
+.container {
   width: 100%;
-  max-width: var(--szerokosc);
+  max-width: var(--width);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-.sekcja { padding-block: clamp(4rem, 10vw, 8rem); }
-.sekcja--ciasna { padding-block: clamp(3rem, 7vw, 5rem); }
+.section { padding-block: clamp(4rem, 10vw, 8rem); }
+.section--tight { padding-block: clamp(3rem, 7vw, 5rem); }
 
 /* Nadtytuł: mała, rozstrzelona etykieta nad nagłówkiem sekcji. */
-.nadtytul {
+.eyebrow {
   font-family: var(--font-display);
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--akcent);
+  color: var(--accent);
   margin: 0 0 1rem;
   display: flex;
   align-items: center;
   gap: 0.85rem;
 }
-.nadtytul::before {
+.eyebrow::before {
   content: '';
   width: 2.25rem;
   height: 1px;
-  background: var(--akcent);
+  background: var(--accent);
   flex: none;
 }
 
-.przycisk {
+.button {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -120,22 +120,22 @@ img { max-width: 100%; height: auto; display: block; }
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 0.95rem 1.9rem;
-  border: 1px solid var(--akcent);
-  background: var(--akcent);
+  border: 1px solid var(--accent);
+  background: var(--accent);
   color: #06130a;
   text-decoration: none;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
-.przycisk:hover { background: var(--akcent-jasny); transform: translateY(-2px); }
+.button:hover { background: var(--accent-light); transform: translateY(-2px); }
 
-.przycisk--obrys {
+.button--outline {
   background: transparent;
-  color: var(--tekst);
-  border-color: var(--linia);
+  color: var(--text);
+  border-color: var(--line);
 }
-.przycisk--obrys:hover { background: transparent; border-color: var(--akcent); color: var(--akcent); }
+.button--outline:hover { background: transparent; border-color: var(--accent); color: var(--accent); }
 
-.przycisk--obrys:hover, .przycisk:hover { text-decoration: none; }
+.button--outline:hover, .button:hover { text-decoration: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -143,50 +143,50 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* Treść renderowana z Markdown (wpisy, wydarzenia, strony statyczne). */
-.proza {
-  --znak-bok: clamp(72px, 11vw, 104px);
-  --znak-odstep: clamp(1.25rem, 3vw, 2rem);
+.prose {
+  --mark-size: clamp(72px, 11vw, 104px);
+  --mark-gap: clamp(1.25rem, 3vw, 2rem);
   max-width: 68ch;
-  color: var(--tekst-2);
+  color: var(--text-2);
   font-size: 1.0625rem;
 }
-.proza h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); margin-top: 2.5em; color: var(--tekst); }
-.proza h3 { margin-top: 2em; color: var(--tekst); }
-.proza a { color: var(--akcent); }
-.proza img { margin-block: 2rem; border: 1px solid var(--linia); }
+.prose h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); margin-top: 2.5em; color: var(--text); }
+.prose h3 { margin-top: 2em; color: var(--text); }
+.prose a { color: var(--accent); }
+.prose img { margin-block: 2rem; border: 1px solid var(--line); }
 /* Znak przynależności wyrównany w pionie do środka swojego akapitu. Kolumnę pod
    niego robi wcięcie akapitu, a sam obrazek jest z niego wyjęty — układ dwóch
    kolumn (flex, grid) rozbiłby tekst na osobne kawałki na każdym pogrubieniu. */
-.proza .znak {
+.prose .mark {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: var(--znak-bok);
+  width: var(--mark-size);
   height: auto;
   margin: 0;
   border: 0;
 }
-.proza p:has(.znak) {
+.prose p:has(.mark) {
   position: relative;
-  min-height: var(--znak-bok);
+  min-height: var(--mark-size);
   align-content: center;
-  padding-left: calc(var(--znak-bok) + var(--znak-odstep));
+  padding-left: calc(var(--mark-size) + var(--mark-gap));
 }
 /* Na telefonie kolumna obok znaku zwężałaby się do jakichś 29 znaków w wierszu,
-   czyli poniżej granicy wygodnego czytania — tam znak idzie nad tekst. */
+   czyli poniżej granicy wygodnego czytania — tam mark idzie nad tekst. */
 @media (max-width: 560px) {
-  .proza .znak { position: static; transform: none; display: block; margin-bottom: 1rem; }
-  .proza p:has(.znak) { padding-left: 0; min-height: 0; }
+  .prose .mark { position: static; transform: none; display: block; margin-bottom: 1rem; }
+  .prose p:has(.mark) { padding-left: 0; min-height: 0; }
 }
-.proza blockquote {
+.prose blockquote {
   margin: 2rem 0;
   padding-left: 1.5rem;
-  border-left: 2px solid var(--akcent);
+  border-left: 2px solid var(--accent);
   font-size: 1.1875rem;
-  color: var(--tekst);
+  color: var(--text);
   font-style: italic;
 }
-.proza ul, .proza ol { padding-left: 1.25rem; margin-bottom: 1.25em; }
-.proza li { margin-bottom: 0.4em; }
-.proza hr { border: 0; border-top: 1px solid var(--linia); margin-block: 2.5rem; }
+.prose ul, .prose ol { padding-left: 1.25rem; margin-bottom: 1.25em; }
+.prose li { margin-bottom: 0.4em; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin-block: 2.5rem; }

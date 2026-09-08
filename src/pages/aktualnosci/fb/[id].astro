@@ -21,16 +21,16 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
 
 <Base title={title.slice(0, 60)} description={stripMarkers(lines.slice(1).join('\n')).slice(0, 160) || title}>
   <article>
-    <header class="naglowek">
-      <div class="kontener">
-        <a href="/aktualnosci/" class="powrot">← Aktualności</a>
-        <time class="data" datetime={isoDate(post.date)}>{formatDate(post.date)}</time>
+    <header class="header">
+      <div class="container">
+        <a href="/aktualnosci/" class="back">← Aktualności</a>
+        <time class="date" datetime={isoDate(post.date)}>{formatDate(post.date)}</time>
         <h1>{title}</h1>
       </div>
     </header>
 
-    <div class="kontener tresc">
-      <div class="proza">
+    <div class="container content">
+      <div class="prose">
         {blocks.map((b) =>
           b.type === 'paragraph' ? (
             <p>{b.text}</p>
@@ -57,16 +57,16 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
       </div>
 
       {images.length > 0 && (
-        <div class="galeria">
+        <div class="gallery">
           {images.map((src, i) => (
-            <button class="kafel" data-index={i} aria-label={`Powiększ zdjęcie ${i + 1} z ${images.length}`}>
+            <button class="tile" data-index={i} aria-label={`Powiększ zdjęcie ${i + 1} z ${images.length}`}>
               <img src={src} alt="" loading="lazy" decoding="async" />
             </button>
           ))}
         </div>
       )}
 
-      <p class="zrodlo">
+      <p class="source">
         Wpis pochodzi z naszego Facebooka.
         <a href={post.permalink} target="_blank" rel="noopener noreferrer">Zobacz oryginał</a>
       </p>
@@ -75,80 +75,80 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
 
   {images.length > 0 && (
     <dialog class="lightbox" data-lightbox tabindex="-1">
-      <button class="lightbox__zamknij" data-close aria-label="Zamknij">×</button>
-      <button class="lightbox__nawigacja lightbox__nawigacja--wstecz" data-prev aria-label="Poprzednie">‹</button>
-      <img class="lightbox__foto" data-photo alt="" />
-      <span class="lightbox__licznik" data-counter></span>
-      <button class="lightbox__nawigacja lightbox__nawigacja--dalej" data-next aria-label="Następne">›</button>
+      <button class="lightbox__close" data-close aria-label="Zamknij">×</button>
+      <button class="lightbox__nav lightbox__nav--prev" data-prev aria-label="Poprzednie">‹</button>
+      <img class="lightbox__photo" data-photo alt="" />
+      <span class="lightbox__counter" data-counter></span>
+      <button class="lightbox__nav lightbox__nav--next" data-next aria-label="Następne">›</button>
     </dialog>
     <script type="application/json" id="post-images" set:html={JSON.stringify(images)} />
   )}
 </Base>
 
 <style>
-  .naglowek {
+  .header {
     padding-top: clamp(8rem, 14vw, 11rem);
     padding-bottom: 2.5rem;
-    background: radial-gradient(120% 80% at 15% 0%, rgba(var(--akcent-rgb), 0.13), transparent 60%), var(--tlo);
+    background: radial-gradient(120% 80% at 15% 0%, rgba(var(--accent-rgb), 0.13), transparent 60%), var(--bg);
   }
-  .powrot {
+  .back {
     display: inline-block;
     font-family: var(--font-display);
     font-size: 0.8125rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--tekst-3);
+    color: var(--text-3);
     text-decoration: none;
     margin-bottom: 1.75rem;
   }
-  .powrot:hover { color: var(--akcent); }
-  .data {
+  .back:hover { color: var(--accent); }
+  .date {
     display: block;
     font-family: var(--font-display);
     font-size: 0.8125rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--akcent);
+    color: var(--accent);
     margin-bottom: 0.9rem;
   }
-  .naglowek h1 { font-size: clamp(1.75rem, 4.5vw, 3.25rem); max-width: 24ch; }
+  .header h1 { font-size: clamp(1.75rem, 4.5vw, 3.25rem); max-width: 24ch; }
 
-  .tresc { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
+  .content { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
 
   /* Linie rysują obramowania kafli, nie tło kontenera prześwitujące przez odstępy —
      inaczej puste komórki ostatniego rzędu zostawiają szary prostokąt. */
-  .galeria {
+  .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    border-top: 1px solid var(--linia);
-    border-left: 1px solid var(--linia);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
     margin-top: 2.5rem;
   }
-  .kafel {
+  .tile {
     padding: 0;
     border: 0;
-    border-right: 1px solid var(--linia);
-    border-bottom: 1px solid var(--linia);
-    background: var(--tlo-3);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-3);
     cursor: zoom-in;
     aspect-ratio: 1;
     overflow: hidden;
   }
-  .kafel img {
+  .tile img {
     width: 100%; height: 100%; object-fit: cover;
     filter: grayscale(0.35);
     transition: transform 0.4s ease, filter 0.3s ease;
   }
-  .kafel:hover img { transform: scale(1.06); filter: grayscale(0); }
+  .tile:hover img { transform: scale(1.06); filter: grayscale(0); }
 
-  .zrodlo {
+  .source {
     margin-top: 2.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--linia);
-    color: var(--tekst-3);
+    border-top: 1px solid var(--line);
+    color: var(--text-3);
     font-size: 0.9375rem;
   }
-  .zrodlo a { color: var(--akcent); margin-left: 0.4rem; }
+  .source a { color: var(--accent); margin-left: 0.4rem; }
 
   .lightbox {
     position: fixed;
@@ -165,23 +165,23 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
   /* Zaznaczenie trafia na samo okno, nie na krzyżyk — inaczej po otwarciu
      przeglądarka rysuje wokół niego swoją niebieską obwódkę. */
   .lightbox:focus { outline: none; }
-  .lightbox button:focus-visible { outline: 2px solid var(--akcent); outline-offset: 4px; }
+  .lightbox button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
   .lightbox::backdrop { background: rgba(6, 6, 7, 0.94); }
   .lightbox[open] { display: flex; align-items: center; justify-content: center; }
-  .lightbox__foto { max-width: 92vw; max-height: 86vh; object-fit: contain; }
-  .lightbox__zamknij, .lightbox__nawigacja {
-    position: fixed; background: none; border: 0; color: var(--tekst-2);
+  .lightbox__photo { max-width: 92vw; max-height: 86vh; object-fit: contain; }
+  .lightbox__close, .lightbox__nav {
+    position: fixed; background: none; border: 0; color: var(--text-2);
     cursor: pointer; line-height: 1; transition: color 0.2s ease;
   }
-  .lightbox__zamknij:hover, .lightbox__nawigacja:hover { color: var(--akcent); }
-  .lightbox__zamknij { top: 1rem; right: 1.5rem; font-size: 2.75rem; }
-  .lightbox__nawigacja { top: 50%; transform: translateY(-50%); font-size: 4rem; padding: 0 1.25rem; }
-  .lightbox__nawigacja--wstecz { left: 0; }
-  .lightbox__nawigacja--dalej { right: 0; }
-  .lightbox__licznik {
+  .lightbox__close:hover, .lightbox__nav:hover { color: var(--accent); }
+  .lightbox__close { top: 1rem; right: 1.5rem; font-size: 2.75rem; }
+  .lightbox__nav { top: 50%; transform: translateY(-50%); font-size: 4rem; padding: 0 1.25rem; }
+  .lightbox__nav--prev { left: 0; }
+  .lightbox__nav--next { right: 0; }
+  .lightbox__counter {
     position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
     font-family: var(--font-display); font-size: 0.8125rem; letter-spacing: 0.2em;
-    color: var(--tekst-2);
+    color: var(--text-2);
   }
 </style>
 
@@ -200,7 +200,7 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
     if (counter) counter.textContent = `${current + 1} / ${images.length}`;
   };
 
-  document.querySelectorAll<HTMLButtonElement>('.kafel').forEach((tile) => {
+  document.querySelectorAll<HTMLButtonElement>('.tile').forEach((tile) => {
     tile.addEventListener('click', () => {
       show(Number(tile.dataset.index));
       lightbox?.showModal();

@@ -10,27 +10,27 @@ const Content = page ? (await render(page)).Content : null;
 <Base title="Regulamin" description="Regulamin uczestnictwa w treningach Akademii Capoeira Koszalin.">
   <PageHeader eyebrow="Formalności" title="Regulamin" description={page?.data.heading} />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
-      {Content ? <div class="proza proza--regulamin"><Content /></div> : <p class="pusto">Brak treści.</p>}
+  <section class="section section--tight">
+    <div class="container">
+      {Content ? <div class="prose prose--terms"><Content /></div> : <p class="empty">Brak treści.</p>}
     </div>
   </section>
 </Base>
 
 <style>
-  .proza--regulamin :global(h2) {
+  .prose--terms :global(h2) {
     font-size: clamp(1.125rem, 2.2vw, 1.5rem);
     margin-top: 3rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--linia);
+    border-top: 1px solid var(--line);
   }
-  .proza--regulamin :global(h3) {
+  .prose--terms :global(h3) {
     font-size: 0.875rem;
     letter-spacing: 0.18em;
-    color: var(--akcent);
+    color: var(--accent);
     margin-top: 2rem;
     margin-bottom: 0.5rem;
   }
-  .proza--regulamin { font-size: 1rem; }
-  .pusto { color: var(--tekst-3); }
+  .prose--terms { font-size: 1rem; }
+  .empty { color: var(--text-3); }
 </style>

@@ -29,13 +29,13 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
 <Base>
   <Hero />
 
-  <section class="sekcja intro" id="czym-jest-capoeira">
-    <div class="kontener intro__siatka">
+  <section class="section intro" id="czym-jest-capoeira">
+    <div class="container intro__grid">
       <div>
-        <p class="nadtytul">Czym jest capoeira</p>
+        <p class="eyebrow">Czym jest capoeira</p>
         <h2>Brazylijska sztuka,<br />która nie pyta o wiek</h2>
       </div>
-      <div class="intro__tekst">
+      <div class="intro__text">
         <p>
           Capoeira to jednocześnie sztuka walki, taniec, gra i muzyka. Powstała w Brazylii wśród
           zniewolonych mieszkańców Afryki, którzy ukryli trening walki pod postacią tańca. Dziś to
@@ -45,18 +45,18 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
           Na treningu uczysz się akrobatyki, kopnięć i uników, ale też gry na berimbau i śpiewu po
           portugalsku. Nie musisz być sprawny, młody ani muzykalny — wystarczy, że przyjdziesz.
         </p>
-        <a href="/o-nas/" class="przycisk przycisk--obrys">Poznaj naszą grupę</a>
+        <a href="/o-nas/" class="button button--outline">Poznaj naszą grupę</a>
       </div>
     </div>
   </section>
 
   <section class="cta">
-    <div class="kontener cta__wnetrze">
+    <div class="container cta__inner">
       <h2>Pierwszy trening<br /><span>nic nie kosztuje</span></h2>
-      <div class="cta__akcje">
-        <a href="/kontakt/" class="przycisk">Zapytaj o zajęcia</a>
+      <div class="cta__actions">
+        <a href="/kontakt/" class="button">Zapytaj o zajęcia</a>
         {settings.phone && (
-          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="button button--outline">
             {settings.phone}
           </a>
         )}
@@ -64,56 +64,56 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
     </div>
   </section>
 
-  <section class="sekcja sekcja--ciasna zajecia-blok" id="kiedy-trenujemy">
-    <div class="kontener">
-      <p class="nadtytul">Grafik</p>
+  <section class="section section--tight schedule-block" id="kiedy-trenujemy">
+    <div class="container">
+      <p class="eyebrow">Grafik</p>
       <h2>Kiedy trenujemy</h2>
       <Notice />
       <Schedule classes={classes} />
-      <div class="zajecia-blok__stopka">
+      <div class="schedule-block__footer">
         <p>Przyjdź w wygodnym ubraniu — resztę pokażemy na miejscu.</p>
-        <div class="zajecia-blok__akcje">
-          <a href="/cennik/" class="przycisk przycisk--obrys">Cennik</a>
+        <div class="schedule-block__actions">
+          <a href="/cennik/" class="button button--outline">Cennik</a>
         </div>
       </div>
     </div>
   </section>
 
   {nextEvent && (
-    <section class="sekcja wydarzenie">
-      <div class="kontener wydarzenie__siatka">
-        <div class="wydarzenie__foto">
+    <section class="section event">
+      <div class="container event__grid">
+        <div class="event__photo">
           {eventPhoto ? (
             <Image src={eventPhoto} alt="" widths={[600, 1000]} sizes="(max-width: 900px) 100vw, 520px" loading="lazy" />
           ) : (
-            <div class="wydarzenie__zastepnik" aria-hidden="true"></div>
+            <div class="event__placeholder" aria-hidden="true"></div>
           )}
         </div>
-        <div class="wydarzenie__tresc">
-          <p class="nadtytul">Najbliższe wydarzenie</p>
+        <div class="event__content">
+          <p class="eyebrow">Najbliższe wydarzenie</p>
           <h2>{nextEvent.data.title}</h2>
-          <p class="wydarzenie__data">
+          <p class="event__date">
             {formatDateRange(nextEvent.data.startDate, nextEvent.data.endDate)}
             {nextEvent.data.venue && <span> · {nextEvent.data.venue}</span>}
           </p>
-          {nextEvent.data.excerpt && <p class="wydarzenie__zajawka">{nextEvent.data.excerpt}</p>}
-          <a href={`/wydarzenia/${nextEvent.id}/`} class="przycisk">Szczegóły</a>
+          {nextEvent.data.excerpt && <p class="event__excerpt">{nextEvent.data.excerpt}</p>}
+          <a href={`/wydarzenia/${nextEvent.id}/`} class="button">Szczegóły</a>
         </div>
       </div>
     </section>
   )}
 
   {aktualnosci.length > 0 && (
-    <section class="sekcja sekcja--ciasna">
-      <div class="kontener">
-        <div class="naglowek-listy">
+    <section class="section section--tight">
+      <div class="container">
+        <div class="list-header">
           <div>
-            <p class="nadtytul">Z życia grupy</p>
+            <p class="eyebrow">Z życia grupy</p>
             <h2>Aktualności</h2>
           </div>
-          <a href="/aktualnosci/" class="przycisk przycisk--obrys">Wszystkie wpisy</a>
+          <a href="/aktualnosci/" class="button button--outline">Wszystkie wpisy</a>
         </div>
-        <div class="siatka-kart">
+        <div class="card-grid">
           {aktualnosci.map((x) => (
             <PostCard
               href={x.href}
@@ -132,21 +132,21 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
   )}
 
   {preview.length > 0 && (
-    <section class="sekcja sekcja--ciasna">
-      <div class="kontener">
-        <div class="naglowek-listy">
+    <section class="section section--tight">
+      <div class="container">
+        <div class="list-header">
           <div>
-            <p class="nadtytul">Roda w obiektywie</p>
+            <p class="eyebrow">Roda w obiektywie</p>
             <h2>Galeria</h2>
           </div>
-          <a href="/galeria/" class="przycisk przycisk--obrys">Zobacz albums</a>
+          <a href="/galeria/" class="button button--outline">Zobacz albums</a>
         </div>
       </div>
-      <div class="pasek">
+      <div class="strip">
         {preview.map((path) => {
           const photo = resolveImage(path);
           return photo ? (
-            <Image src={photo} alt="" widths={[400, 800]} sizes="320px" loading="lazy" class="pasek__foto" />
+            <Image src={photo} alt="" widths={[400, 800]} sizes="320px" loading="lazy" class="strip__photo" />
           ) : null;
         })}
       </div>
@@ -159,27 +159,27 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
   /* Pasek nawigacji jest przyklejony, więc cel skoku musi mieć zapas u góry. */
   .intro { scroll-margin-top: 5rem; }
 
-  .intro__siatka {
+  .intro__grid {
     display: grid;
     grid-template-columns: 1fr 1.15fr;
     gap: clamp(2rem, 6vw, 5rem);
     align-items: start;
   }
-  @media (max-width: 860px) { .intro__siatka { grid-template-columns: 1fr; } }
-  .intro__tekst { color: var(--tekst-2); font-size: 1.0625rem; }
-  .intro__tekst .przycisk { margin-top: 0.75rem; }
+  @media (max-width: 860px) { .intro__grid { grid-template-columns: 1fr; } }
+  .intro__text { color: var(--text-2); font-size: 1.0625rem; }
+  .intro__text .button { margin-top: 0.75rem; }
 
   /* Sekcje na przemian ciemne i jasne. Numeruje je przeglądarka, a nie ja, więc
      ukrycie wydarzenia albo galerii nie rozbija rytmu — kolejne przejmują numery.
      Hasło ma własne tło ze zdjęciem i nie bierze w tym udziału. */
-  section:not(.hero):nth-of-type(odd) { background-color: var(--tlo-2); }
-  section:not(.hero):nth-of-type(even) { background-color: var(--tlo); }
+  section:not(.hero):nth-of-type(odd) { background-color: var(--bg-2); }
+  section:not(.hero):nth-of-type(even) { background-color: var(--bg); }
 
-  .zajecia-blok {
-    border-block: 1px solid var(--linia);
+  .schedule-block {
+    border-block: 1px solid var(--line);
     scroll-margin-top: 5rem;
   }
-  .zajecia-blok__stopka {
+  .schedule-block__footer {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -187,32 +187,32 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
     gap: 1.5rem;
     margin-top: 2.25rem;
   }
-  .zajecia-blok__stopka p { margin: 0; color: var(--tekst-2); max-width: 46ch; }
-  .zajecia-blok__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .schedule-block__footer p { margin: 0; color: var(--text-2); max-width: 46ch; }
+  .schedule-block__actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 
-  .wydarzenie__siatka {
+  .event__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(2rem, 5vw, 4rem);
     align-items: center;
   }
-  @media (max-width: 900px) { .wydarzenie__siatka { grid-template-columns: 1fr; } }
-  .wydarzenie__foto { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--linia); }
-  .wydarzenie__foto :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .wydarzenie__zastepnik {
+  @media (max-width: 900px) { .event__grid { grid-template-columns: 1fr; } }
+  .event__photo { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line); }
+  .event__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .event__placeholder {
     width: 100%; height: 100%;
-    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--akcent-rgb), 0.18), transparent 70%), var(--tlo-3);
+    background: radial-gradient(70% 70% at 40% 30%, rgba(var(--accent-rgb), 0.18), transparent 70%), var(--bg-3);
   }
-  .wydarzenie__data {
+  .event__date {
     font-family: var(--font-display);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-size: 0.875rem;
-    color: var(--akcent);
+    color: var(--accent);
   }
-  .wydarzenie__zajawka { color: var(--tekst-2); max-width: 50ch; }
+  .event__excerpt { color: var(--text-2); max-width: 50ch; }
 
-  .naglowek-listy {
+  .list-header {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
@@ -220,23 +220,23 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
     gap: 1.5rem;
     margin-bottom: 2.5rem;
   }
-  .naglowek-listy h2 { margin: 0; }
+  .list-header h2 { margin: 0; }
 
-  .siatka-kart {
+  .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
   }
 
-  .pasek {
+  .strip {
     display: flex;
     gap: 1px;
     overflow-x: auto;
     padding-top: 2rem;
     scrollbar-width: none;
   }
-  .pasek::-webkit-scrollbar { display: none; }
-  .pasek :global(.pasek__foto) {
+  .strip::-webkit-scrollbar { display: none; }
+  .strip :global(.strip__photo) {
     flex: none;
     width: 320px;
     height: 240px;
@@ -244,14 +244,14 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
     filter: grayscale(0.4);
     transition: filter 0.3s ease;
   }
-  .pasek :global(.pasek__foto:hover) { filter: grayscale(0); }
+  .strip :global(.strip__photo:hover) { filter: grayscale(0); }
 
   .cta {
     padding-block: clamp(4rem, 10vw, 7rem);
-    background-image: radial-gradient(80% 120% at 80% 20%, rgba(var(--akcent-rgb), 0.16), transparent 65%);
-    border-block: 1px solid var(--linia);
+    background-image: radial-gradient(80% 120% at 80% 20%, rgba(var(--accent-rgb), 0.16), transparent 65%);
+    border-block: 1px solid var(--line);
   }
-  .cta__wnetrze {
+  .cta__inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -259,6 +259,6 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
     gap: 2rem;
   }
   .cta h2 { margin: 0; }
-  .cta h2 span { color: var(--akcent); }
-  .cta__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .cta h2 span { color: var(--accent); }
+  .cta__actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 </style>

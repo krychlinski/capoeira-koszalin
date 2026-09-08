@@ -15,33 +15,33 @@ const html = body.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 ---
 
 {visible && (
-  <aside class="komunikat" data-notice data-until={until || null}>
-    <span class="komunikat__znacznik" aria-hidden="true"></span>
-    <p class="komunikat__tresc" set:html={html} />
+  <aside class="notice" data-notice data-until={until || null}>
+    <span class="notice__marker" aria-hidden="true"></span>
+    <p class="notice__text" set:html={html} />
   </aside>
 )}
 
 <style>
-  .komunikat {
+  .notice {
     display: flex;
     align-items: flex-start;
     gap: 0.9rem;
     padding: 1rem 1.25rem;
     margin-bottom: 2rem;
-    background: color-mix(in srgb, var(--akcent) 10%, var(--tlo-2));
-    border: 1px solid color-mix(in srgb, var(--akcent) 35%, var(--linia));
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg-2));
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
   }
-  .komunikat__znacznik {
+  .notice__marker {
     flex: none;
     width: 8px;
     height: 8px;
     margin-top: 0.55rem;
     border-radius: 50%;
-    background: var(--akcent);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--akcent) 22%, transparent);
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
   }
-  .komunikat__tresc { margin: 0; color: var(--tekst); font-size: 0.9375rem; }
-  .komunikat__tresc :global(strong) { color: var(--akcent); font-weight: 600; }
+  .notice__text { margin: 0; color: var(--text); font-size: 0.9375rem; }
+  .notice__text :global(strong) { color: var(--accent); font-weight: 600; }
 </style>
 
 <script>

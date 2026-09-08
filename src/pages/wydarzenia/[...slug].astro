@@ -17,50 +17,50 @@ const past = (entry.data.endDate ?? entry.data.startDate) < new Date();
 ---
 
 <Base title={entry.data.title} description={entry.data.excerpt}>
-  <article class="wpis">
-    <header class="wpis__naglowek">
-      <div class="kontener">
-        <a href="/wydarzenia/" class="wpis__powrot">← Wydarzenia</a>
-        <p class="wpis__data">
+  <article class="post">
+    <header class="post__header">
+      <div class="container">
+        <a href="/wydarzenia/" class="post__back">← Wydarzenia</a>
+        <p class="post__date">
           <time datetime={isoDate(entry.data.startDate)}>{formatDateRange(entry.data.startDate, entry.data.endDate)}</time>
-          {past && <span class="wpis__znacznik">Za nami</span>}
+          {past && <span class="post__marker">Za nami</span>}
         </p>
         <h1>{entry.data.title}</h1>
-        {entry.data.venue && <p class="wpis__miejsce">{entry.data.venue}</p>}
-        {entry.data.excerpt && <p class="wpis__zajawka">{entry.data.excerpt}</p>}
+        {entry.data.venue && <p class="post__venue">{entry.data.venue}</p>}
+        {entry.data.excerpt && <p class="post__excerpt">{entry.data.excerpt}</p>}
       </div>
     </header>
 
     {photo && (
-      <div class="kontener">
-        <Image src={photo} alt="" widths={[800, 1200, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" class="wpis__foto" />
+      <div class="container">
+        <Image src={photo} alt="" widths={[800, 1200, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" class="post__photo" />
       </div>
     )}
 
-    <div class="kontener wpis__tresc">
-      <div class="proza"><Content /></div>
+    <div class="container post__content">
+      <div class="prose"><Content /></div>
     </div>
   </article>
 </Base>
 
 <style>
-  .wpis__naglowek {
+  .post__header {
     padding-top: clamp(8rem, 14vw, 11rem);
     padding-bottom: 2.5rem;
-    background: radial-gradient(120% 80% at 15% 0%, rgba(var(--akcent-rgb), 0.13), transparent 60%), var(--tlo);
+    background: radial-gradient(120% 80% at 15% 0%, rgba(var(--accent-rgb), 0.13), transparent 60%), var(--bg);
   }
-  .wpis__powrot {
+  .post__back {
     display: inline-block;
     font-family: var(--font-display);
     font-size: 0.8125rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--tekst-3);
+    color: var(--text-3);
     text-decoration: none;
     margin-bottom: 1.75rem;
   }
-  .wpis__powrot:hover { color: var(--akcent); }
-  .wpis__data {
+  .post__back:hover { color: var(--accent); }
+  .post__date {
     display: flex;
     align-items: center;
     gap: 0.9rem;
@@ -68,18 +68,18 @@ const past = (entry.data.endDate ?? entry.data.startDate) < new Date();
     font-size: 0.8125rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--akcent);
+    color: var(--accent);
     margin-bottom: 0.9rem;
   }
-  .wpis__znacznik {
-    border: 1px solid var(--linia);
-    color: var(--tekst-3);
+  .post__marker {
+    border: 1px solid var(--line);
+    color: var(--text-3);
     padding: 0.2rem 0.6rem;
     letter-spacing: 0.12em;
   }
-  .wpis__naglowek h1 { font-size: clamp(2.25rem, 6vw, 4.25rem); max-width: 20ch; }
-  .wpis__miejsce { color: var(--tekst-2); margin-bottom: 0.5rem; }
-  .wpis__zajawka { max-width: 58ch; color: var(--tekst-2); font-size: 1.1875rem; margin: 0; }
-  :global(.wpis__foto) { width: 100%; max-height: 32rem; object-fit: cover; border: 1px solid var(--linia); }
-  .wpis__tresc { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
+  .post__header h1 { font-size: clamp(2.25rem, 6vw, 4.25rem); max-width: 20ch; }
+  .post__venue { color: var(--text-2); margin-bottom: 0.5rem; }
+  .post__excerpt { max-width: 58ch; color: var(--text-2); font-size: 1.1875rem; margin: 0; }
+  :global(.post__photo) { width: 100%; max-height: 32rem; object-fit: cover; border: 1px solid var(--line); }
+  .post__content { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
 </style>

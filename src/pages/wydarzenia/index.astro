@@ -6,15 +6,15 @@ import PostCard from '../../components/PostCard.astro';
 import { formatDateRange } from '../../lib/format';
 
 const now = new Date();
-const wszystkie = (await getCollection('events'));
-const upcoming = wszystkie
+const all = (await getCollection('events'));
+const upcoming = all
   .filter((w) => (w.data.endDate ?? w.data.startDate) >= now)
   .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime());
-const past = wszystkie
+const past = all
   .filter((w) => (w.data.endDate ?? w.data.startDate) < now)
   .sort((a, b) => b.data.startDate.getTime() - a.data.startDate.getTime());
 
-const meta = (w: (typeof wszystkie)[number]) =>
+const meta = (w: (typeof all)[number]) =>
   [formatDateRange(w.data.startDate, w.data.endDate), w.data.venue].filter(Boolean).join(' · ');
 ---
 
@@ -25,13 +25,13 @@ const meta = (w: (typeof wszystkie)[number]) =>
     description="Batizado, warsztaty z mistrzami, rody i wyjazdy. Wszystko, co dzieje się poza zwykłym treningiem."
   />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
-      <h2 class="tytul-listy">Nadchodzące</h2>
+  <section class="section section--tight">
+    <div class="container">
+      <h2 class="list-title">Nadchodzące</h2>
       {upcoming.length === 0 ? (
-        <p class="pusto">Nie ma zaplanowanych wydarzeń. Zajrzyj tu za jakiś czas.</p>
+        <p class="empty">Nie ma zaplanowanych wydarzeń. Zajrzyj tu za jakiś czas.</p>
       ) : (
-        <div class="siatka-kart">
+        <div class="card-grid">
           {upcoming.map((w) => (
             <PostCard href={`/wydarzenia/${w.id}/`} title={w.data.title} meta={meta(w)} excerpt={w.data.excerpt} image={w.data.image} />
           ))}
@@ -41,10 +41,10 @@ const meta = (w: (typeof wszystkie)[number]) =>
   </section>
 
   {past.length > 0 && (
-    <section class="sekcja sekcja--ciasna minione">
-      <div class="kontener">
-        <h2 class="tytul-listy">Za nami</h2>
-        <div class="siatka-kart">
+    <section class="section section--tight past">
+      <div class="container">
+        <h2 class="list-title">Za nami</h2>
+        <div class="card-grid">
           {past.map((w) => (
             <PostCard href={`/wydarzenia/${w.id}/`} title={w.data.title} meta={meta(w)} excerpt={w.data.excerpt} image={w.data.image} />
           ))}
@@ -55,8 +55,8 @@ const meta = (w: (typeof wszystkie)[number]) =>
 </Base>
 
 <style>
-  .tytul-listy { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 2rem; color: var(--tekst-2); }
-  .siatka-kart { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-  .minione { background: var(--tlo-2); border-top: 1px solid var(--linia); }
-  .pusto { color: var(--tekst-3); }
+  .list-title { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 2rem; color: var(--text-2); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .past { background: var(--bg-2); border-top: 1px solid var(--line); }
+  .empty { color: var(--text-3); }
 </style>

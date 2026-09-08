@@ -21,17 +21,17 @@ const Offer = offer ? (await render(offer)).Content : null;
     description="Trenujemy przez cały rok szkolny. Pierwszy trening jest bezpłatny i niezobowiązujący."
   />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
+  <section class="section section--tight">
+    <div class="container">
       <Notice />
       <Schedule classes={classes} />
-      <div class="pod-grafikiem">
+      <div class="under-schedule">
         <p>Nie wiesz, do której grupy pasujesz? Zadzwoń — dobierzemy ją razem.</p>
-        <div class="pod-grafikiem__akcje">
-          <a href="/pierwszy-trening/" class="przycisk przycisk--obrys">Przychodzisz pierwszy raz?</a>
-          <a href="/cennik/" class="przycisk przycisk--obrys">Zobacz cennik</a>
+        <div class="under-schedule__actions">
+          <a href="/pierwszy-trening/" class="button button--outline">Przychodzisz pierwszy raz?</a>
+          <a href="/cennik/" class="button button--outline">Zobacz cennik</a>
           {settings.phone && (
-            <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk">
+            <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="button">
               {settings.phone}
             </a>
           )}
@@ -41,11 +41,11 @@ const Offer = offer ? (await render(offer)).Content : null;
   </section>
 
   {Offer && (
-    <section class="sekcja sekcja--ciasna oferta">
-      <div class="kontener">
-        <p class="nadtytul">Co robimy</p>
+    <section class="section section--tight offer">
+      <div class="container">
+        <p class="eyebrow">Co robimy</p>
         <h2>Oferta</h2>
-        <div class="proza proza--oferta"><Offer /></div>
+        <div class="prose prose--offer"><Offer /></div>
       </div>
     </section>
   )}
@@ -53,7 +53,7 @@ const Offer = offer ? (await render(offer)).Content : null;
 </Base>
 
 <style>
-  .pod-grafikiem {
+  .under-schedule {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -61,15 +61,15 @@ const Offer = offer ? (await render(offer)).Content : null;
     gap: 1.5rem;
     margin-top: 2.25rem;
   }
-  .pod-grafikiem p { margin: 0; color: var(--tekst-2); max-width: 42ch; }
-  .pod-grafikiem__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .under-schedule p { margin: 0; color: var(--text-2); max-width: 42ch; }
+  .under-schedule__actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 
-  .oferta { background: var(--tlo-2); border-block: 1px solid var(--linia); }
-  .proza--oferta { max-width: 74ch; margin-top: 2rem; }
-  .proza--oferta :global(h3) {
+  .offer { background: var(--bg-2); border-block: 1px solid var(--line); }
+  .prose--offer { max-width: 74ch; margin-top: 2rem; }
+  .prose--offer :global(h3) {
     font-size: 1.125rem;
     margin-top: 2.25rem;
-    color: var(--akcent);
+    color: var(--accent);
     letter-spacing: 0.04em;
   }
 

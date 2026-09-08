@@ -4,9 +4,9 @@ import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import settings from '../data/settings.json';
 
-const wszystkie = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
-const monthly = wszystkie.filter((p) => p.data.category === 'monthly');
-const extra = wszystkie.filter((p) => p.data.category === 'extra');
+const all = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
+const monthly = all.filter((p) => p.data.category === 'monthly');
+const extra = all.filter((p) => p.data.category === 'extra');
 ---
 
 <Base title="Cennik" description="Karnety i opłaty w Akademii Capoeira Koszalin. Pierwszy trening jest bezpłatny.">
@@ -16,50 +16,50 @@ const extra = wszystkie.filter((p) => p.data.category === 'extra');
     description="Pierwszy trening zapoznawczy jest bezpłatny i do niczego nie zobowiązuje."
   />
 
-  <section class="sekcja sekcja--ciasna">
-    <div class="kontener">
-      <h2 class="tytul-grupy">Karnety miesięczne</h2>
-      <div class="pozycje">
+  <section class="section section--tight">
+    <div class="container">
+      <h2 class="group-title">Karnety miesięczne</h2>
+      <div class="items">
         {monthly.map((p) => (
-          <div class="pozycja">
-            <div class="pozycja__opis">
-              <h3 class="pozycja__nazwa">{p.data.name}</h3>
-              {p.data.description && <p class="pozycja__szczegol">{p.data.description}</p>}
+          <div class="item">
+            <div class="item__description">
+              <h3 class="item__name">{p.data.name}</h3>
+              {p.data.description && <p class="item__detail">{p.data.description}</p>}
             </div>
-            <p class="pozycja__cena">{p.data.price}</p>
+            <p class="item__price">{p.data.price}</p>
           </div>
         ))}
       </div>
 
-      <p class="uwaga">
+      <p class="note">
         Wszystkie opłaty miesięczne są płatne z góry, do 10. dnia miesiąca.
       </p>
 
-      <h2 class="tytul-grupy tytul-grupy--drugi">Opłaty dodatkowe</h2>
-      <div class="pozycje">
+      <h2 class="group-title group-title--second">Opłaty dodatkowe</h2>
+      <div class="items">
         {extra.map((p) => (
-          <div class="pozycja">
-            <div class="pozycja__opis">
-              <h3 class="pozycja__nazwa">{p.data.name}</h3>
-              {p.data.description && <p class="pozycja__szczegol">{p.data.description}</p>}
+          <div class="item">
+            <div class="item__description">
+              <h3 class="item__name">{p.data.name}</h3>
+              {p.data.description && <p class="item__detail">{p.data.description}</p>}
             </div>
-            <p class="pozycja__cena">{p.data.price}</p>
+            <p class="item__price">{p.data.price}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="sekcja sekcja--ciasna zacheta">
-    <div class="kontener zacheta__wnetrze">
+  <section class="section section--tight promo">
+    <div class="container promo__inner">
       <div>
-        <p class="nadtytul">Zanim zapłacisz</p>
+        <p class="eyebrow">Zanim zapłacisz</p>
         <h2>Przyjdź najpierw<br /><span>na darmowy trening</span></h2>
       </div>
-      <div class="zacheta__akcje">
-        <a href="/zajecia/" class="przycisk">Sprawdź grafik</a>
+      <div class="promo__actions">
+        <a href="/zajecia/" class="button">Sprawdź grafik</a>
         {settings.phone && (
-          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="przycisk przycisk--obrys">
+          <a href={`tel:+48${settings.phone.replace(/\s/g, '')}`} class="button button--outline">
             {settings.phone}
           </a>
         )}
@@ -69,48 +69,48 @@ const extra = wszystkie.filter((p) => p.data.category === 'extra');
 </Base>
 
 <style>
-  .tytul-grupy { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 1.75rem; color: var(--tekst-2); }
-  .tytul-grupy--drugi { margin-top: 4rem; }
+  .group-title { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: 1.75rem; color: var(--text-2); }
+  .group-title--second { margin-top: 4rem; }
 
-  .pozycje { border-top: 1px solid var(--linia); }
-  .pozycja {
+  .items { border-top: 1px solid var(--line); }
+  .item {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 1.5rem;
     padding: 1.4rem 0;
-    border-bottom: 1px solid var(--linia);
+    border-bottom: 1px solid var(--line);
   }
-  .pozycja__opis { flex: 1; }
-  .pozycja__nazwa { font-size: 1.125rem; margin: 0 0 0.25rem; }
-  .pozycja__szczegol { color: var(--tekst-3); font-size: 0.9375rem; margin: 0; }
-  .pozycja__cena {
+  .item__description { flex: 1; }
+  .item__name { font-size: 1.125rem; margin: 0 0 0.25rem; }
+  .item__detail { color: var(--text-3); font-size: 0.9375rem; margin: 0; }
+  .item__price {
     font-family: var(--font-display);
     font-size: clamp(1.375rem, 3vw, 1.875rem);
     font-weight: 600;
-    color: var(--akcent);
+    color: var(--accent);
     white-space: nowrap;
     margin: 0;
     font-variant-numeric: tabular-nums;
   }
 
-  .uwaga {
+  .note {
     margin-top: 1.5rem;
     padding: 1rem 1.25rem;
-    border-left: 2px solid var(--akcent);
-    background: var(--tlo-2);
-    color: var(--tekst-2);
+    border-left: 2px solid var(--accent);
+    background: var(--bg-2);
+    color: var(--text-2);
     font-size: 0.9375rem;
   }
 
-  .zacheta__wnetrze {
+  .promo__inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
   }
-  .zacheta__wnetrze h2 { margin: 0; }
-  .zacheta__wnetrze h2 span { color: var(--akcent); }
-  .zacheta__akcje { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .promo__inner h2 { margin: 0; }
+  .promo__inner h2 span { color: var(--accent); }
+  .promo__actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
 </style>
