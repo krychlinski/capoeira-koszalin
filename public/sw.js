@@ -21,31 +21,58 @@ const FALLBACK = {
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
+/* Najnowszy wpis z produkcji, z kilkoma podejściami.
+ *
+ * Zaobserwowane 2026-09-11 na Androidzie: powiadomienie przyszło z treścią
+ * zapasową, choć latest.json był w porządku, a iPhone i Mac dostały tytuł.
+ * Chrome budzony w tle przez uśpiony telefon potrafi przez pierwsze chwile nie
+ * mieć sieci — pierwsze żądanie pada, a to samo sekundę później by przeszło.
+ * Pojedyncze podejście zamieniało więc chwilową przeszkodę w pustą treść.
+ *
+ * Łącznie najwyżej kilkanaście sekund: przeglądarka daje zdarzeniu push
+ * ograniczony czas, a powiadomienie ogólne jest lepsze niż żadne. */
+async function latestPost() {
+  const przerwy = [0, 1500, 3500];
+  for (const przerwa of przerwy) {
+    if (przerwa) await new Promise((r) => setTimeout(r, przerwa));
+    try {
+      // Doklejony znacznik czasu, a nie sam { cache: 'no-store' }. Zaobserwowane
+      // 2026-09-08: brzeg Cloudflare potrafi przez kilka minut po wdrożeniu
+      // podawać starą treść mimo Cache-Control: no-cache, a żądanie z dodatkowym
+      // parametrem dostawało świeżą. Bez tego powiadomienie o nowym wpisie
+      // pokazywałoby czasem tytuł POPRZEDNIEGO — losowo i bez śladu w logach,
+      // bo każdy węzeł brzegowy odświeża się osobno.
+      const res = await fetch('/aktualnosci/latest.json?t=' + Date.now(), {
+        cache: 'no-store',
+        // Zawieszone żądanie bez sieci potrafi wisieć dłużej niż całe zdarzenie.
+        signal: AbortSignal.timeout(4000),
+      });
+      if (!res.ok) continue;
+      const { latest } = await res.json();
+      if (latest?.title) return { body: latest.title, url: latest.url };
+    } catch {
+      // Brak sieci, przekroczony czas albo zły plik — próbujemy jeszcze raz.
+    }
+  }
+  return null;
+}
+
 self.addEventListener('push', (event) => {
   // Powiadomienie przychodzi PUSTE — treść dociągamy sami. Dzięki temu Worker
   // nie musi szyfrować ładunku, co jest najbardziej zawiłą częścią web push.
   event.waitUntil(
     (async () => {
-      let data = FALLBACK;
-      try {
-        // Doklejony znacznik czasu, a nie sam { cache: 'no-store' }. Zaobserwowane
-        // 2026-09-08: brzeg Cloudflare potrafi przez kilka minut po wdrożeniu
-        // podawać starą treść mimo Cache-Control: no-cache, a żądanie z dodatkowym
-        // parametrem dostawało świeżą. Bez tego powiadomienie o nowym wpisie
-        // pokazywałoby czasem tytuł POPRZEDNIEGO — losowo i bez śladu w logach,
-        // bo każdy węzeł brzegowy odświeża się osobno.
-        const res = await fetch('/aktualnosci/latest.json?t=' + Date.now(), { cache: 'no-store' });
-        const { latest } = await res.json();
-        if (latest?.title) data = { body: latest.title, url: latest.url };
-      } catch {
-        // Brak sieci albo zły plik — pokazujemy powiadomienie ogólne. Milczenie
-        // byłoby gorsze: przeglądarka i tak wymaga, żeby po pushu coś się pojawiło.
-      }
+      // Gdy wszystkie podejścia zawiodą — powiadomienie ogólne. Milczenie byłoby
+      // gorsze: przeglądarka i tak wymaga, żeby po pushu coś się pojawiło.
+      const data = (await latestPost()) ?? FALLBACK;
 
       await self.registration.showNotification(TITLE, {
         body: data.body,
         icon: '/favicon.png',
-        badge: '/favicon.png',
+        // Odznaka na pasku stanu Androida. System bierze z niej WYŁĄCZNIE kanał
+        // przezroczystości, więc favicon z nieprzezroczystym tłem rysował pusty
+        // kwadrat. Tu jest sam znak, biały na przezroczystym.
+        badge: '/odznaka-96.png',
         // Ten sam tag zastępuje poprzednie powiadomienie zamiast dokładać kolejne.
         tag: 'aktualnosci',
         data: { url: data.url },

@@ -214,6 +214,21 @@ w `localStorage`. Nie da się tego zrobić lepiej, dopóki Apple nie doda odpowi
 - **iPhone: tylko po dodaniu do ekranu głównego.** Safari nie dostarcza push w zwykłej karcie.
   Stąd `public/site.webmanifest` i `display: standalone` — bez manifestu nie da się tego nawet
   spróbować. Dzwoneczek wykrywa ten przypadek i zamiast znikać, tłumaczy, co zrobić.
+- **Android: `Urgency: high`, nie `normal`.** 2026-09-11 wpis rozesłano o 9:14, Google przyjął
+  wszystkie trzy wiadomości (`{"ok":6}` razem z Apple), a kolega z Androidem dostał powiadomienie
+  „dużo później". Android w uśpieniu odkłada zwykłe wiadomości do własnego okna wybudzenia; Apple
+  dostarczało od razu. Wysoki priorytet budzi telefon i daje sieć na dociągnięcie `latest.json`.
+  Google karze go tylko przy wiadomościach bez powiadomienia — u nas zawsze jest powiadomienie.
+  Odpowiedź `ok` od serwera push znaczy tylko „przyjęte", nie „pokazane na ekranie".
+- **Ten sam Android pokazał treść ZAPASOWĄ** („Otwórz, żeby zobaczyć…"), choć `latest.json` był
+  poprawny — service worker obudzony w tle nie dostał sieci. To słaby punkt pustych powiadomień.
+  Zrobione: `Urgency: high` (daje sieć w uśpieniu) plus trzy podejścia do pobrania w `sw.js`.
+  **Jeśli po tym Android dalej pokazuje treść zapasową**, zostaje szyfrowany ładunek (RFC 8291) —
+  wymaga zapisywania kluczy `p256dh`/`auth` i poprawienia `/prywatnosc/`.
+- **Odznaka (`badge`) musi być biała na przezroczystym** (`public/odznaka-96.png`). Android bierze
+  z niej sam kanał alfa; favicon z ciemnym tłem rysował pusty kwadrat w rogu powiadomienia.
+- **„Zainstaluj aplikację" na Androidzie to propozycja Chrome** wywołana manifestem (dodanym dla
+  iOS). Do powiadomień niepotrzebna — działają w zwykłej karcie Chrome.
 - **Opóźnienie do godziny w dzień, do trzech w nocy.** Harmonogram: `7 4-20 * * *`
   i `7 23,2 * * *` (UTC), czyli co godzinę 6:07–22:07 czasu polskiego i dwa razy w nocy.
   Minuta 7, bo o pełnej godzinie zaplanowane workflow czekają u GitHuba w kolejce najdłużej.

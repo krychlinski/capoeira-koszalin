@@ -174,7 +174,15 @@ async function notify(request, env) {
           headers: {
             Authorization: await vapidHeader(endpoint, env),
             TTL: String(TTL),
-            Urgency: 'normal',
+            // Wysoki, nie normalny. Zaobserwowane 2026-09-11: przy 'normal' Google
+            // przyjął wiadomość od razu, a telefon z Androidem pokazał ją dopiero
+            // po długim czasie — Android w uśpieniu odkłada zwykłe wiadomości do
+            // okna, w którym sam się wybudzi. Apple dostarczało od razu mimo to.
+            // Wysoki priorytet budzi telefon i daje mu na chwilę sieć, więc service
+            // worker zdąży też dociągnąć latest.json. Google karze nadużywanie go
+            // tylko wtedy, gdy wiadomość nie kończy się powiadomieniem, a u nas
+            // kończy się zawsze.
+            Urgency: 'high',
             // Powiadomienie bez treści — żadnego Content-Encoding ani ciała.
             'Content-Length': '0',
           },
