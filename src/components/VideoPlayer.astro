@@ -69,6 +69,7 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
     const play = (time?: number) => {
       start.hidden = true;
       video.controls = true;
+      player.dataset.started = '';
       if (time !== undefined) {
         // Przy preload="none" film nie zna jeszcze swojej długości i przewinięcie
         // przed wczytaniem metadanych bywa ignorowane — czekamy na nie.
@@ -80,6 +81,13 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
     };
 
     start.addEventListener('click', () => play());
+
+    // Po pauzie (i po końcu filmu) wraca duży przycisk — mały w kontrolkach łatwo przeoczyć.
+    // Przewijanie paskiem nie wywołuje pauzy, więc przycisk nie mignie przy szukaniu fragmentu.
+    video.addEventListener('pause', () => {
+      if ('started' in player.dataset) start.hidden = false;
+    });
+    video.addEventListener('play', () => (start.hidden = true));
     chapters.forEach((c) => c.addEventListener('click', () => play(Number(c.dataset.time))));
 
     // Podświetla fragment, który właśnie leci.
@@ -134,6 +142,16 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
      kadrów zostają widoczne mimo ukrycia w skrypcie. */
   .player__start[hidden],
   .player__chapters[hidden] { display: none; }
+
+  /* Po starcie przycisk wraca przy pauzie, ale nie może zasłonić kontrolek:
+     plansza przepuszcza kliknięcia do filmu, łapie je tylko samo kółko.
+     Bez podpisu i ciemnego tła — to już tylko „wznów”, nie zaproszenie. */
+  .player[data-started] .player__start {
+    pointer-events: none;
+    background: none;
+  }
+  .player[data-started] .player__icon { pointer-events: auto; }
+  .player[data-started] .player__label { display: none; }
 
   .player__icon {
     position: relative;
