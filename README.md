@@ -23,7 +23,7 @@ Strona: <http://localhost:4321>
 
 ```
 src/content/       treść edytowana przez CMS (markdown)
-src/data/          ustawienia.json — dane kontaktowe, hero, social
+src/data/          settings.json — dane kontaktowe, hero, social
 src/assets/media/  zdjęcia (optymalizowane przy budowaniu)
 .pages.yml         konfiguracja panelu Pages CMS
 ```
@@ -33,7 +33,7 @@ src/assets/media/  zdjęcia (optymalizowane przy budowaniu)
 Panel: <https://app.pagescms.org/krychlinski/capoeira-koszalin/main>
 
 Logowanie kontem GitHub — redaktor musi być collaboratorem w tym repozytorium. Zapis w panelu
-tworzy commit, a Cloudflare Pages przebudowuje stronę automatycznie. Zmiana jest widoczna
-po około minucie.
+tworzy commit, a GitHub Actions (`.github/workflows/wdroz.yml`) buduje stronę i wdraża ją
+na Cloudflare Pages. Zmiana jest widoczna po kilku minutach — postęp widać w zakładce **Actions**.
 
 Pola panelu opisuje `.pages.yml`. Muszą się zgadzać ze schematem w `src/content.config.ts`.

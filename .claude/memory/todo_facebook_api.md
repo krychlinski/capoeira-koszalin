@@ -31,9 +31,12 @@ Przy odtwarzaniu tokenu w przyszłości: to jest ten krok, na którym się potkn
 
 - `src/lib/facebook.ts` — pobiera posty z Graph API przy budowaniu. Domyślnie `v26.0`
   (tyle pokazuje Graph API Explorer), okno 31 dni, limit 25 postów.
-- `src/components/PostyFb.astro` — renderuje je w kolorach strony, wpięte na `/aktualnosci/`.
-  Dłuższe wpisy ucinane po ~320 znakach z odnośnikiem na Facebooka.
+- `src/lib/news.ts` — łączy ręczne wpisy z kolekcji `news` z postami z Facebooka w jeden
+  strumień; na liście renderuje je `PostCard.astro`, każdy post ma podstronę
+  `src/pages/aktualnosci/fb/[id].astro`. Skróty na liście przez `truncate()` (domyślnie 320 znaków).
   Zastępuje usuniętą wtyczkę Mety — to jedyny mechanizm pokazywania postów na stronie.
+- `integrations/facebook-images.mjs` — pobiera zdjęcia z postów przy budowaniu do
+  `public/media/fb/` (w `.gitignore`). Wyjątek od zasady „media w `src/assets`”.
 - `FACEBOOK.md` — instrukcja konfiguracji krok po kroku.
 - `.env` dopisane do `.gitignore`.
 
@@ -58,21 +61,22 @@ Przez pewien czas `me/accounts` zwracało pustą tablicę, bo konto Kacpra nie m
 fanpage'u — Meta wymaga formalnej roli przypisanej w ustawieniach strony, samo bycie
 instruktorem nie wystarcza. Michał nadał uprawnienia i token strony został wygenerowany.
 
-`FB_TOKEN` jest w Netlify jako **zmienna oznaczona jako sekret** — nie da się jej odczytać
-w panelu. Gdyby kiedyś przestała działać, trzeba wygenerować token od nowa w Graph API
+`FB_TOKEN` jest od 2026-09-05 **sekretem repozytorium na GitHubie** (Settings → Secrets and
+variables → Actions), bo stronę buduje GitHub Actions — patrz [[reference-hosting]]. Sekretu
+nie da się odczytać. Gdyby token przestał działać, trzeba go wygenerować od nowa w Graph API
 Explorerze, a nie szukać starego.
 
-## Gdy token już będzie
+## Podmiana tokenu
 
-Wklejany **wyłącznie** do Netlify jako zmienna `FB_TOKEN`
-(`Project configuration → Environment variables`), potem `Trigger deploy`.
+Wklejany **wyłącznie** jako sekret `FB_TOKEN` na GitHubie, potem Actions → „Zbuduj i wdróż”
+→ Run workflow.
 **Nigdy nie przyjmuj tokenu w czacie i nie zapisuj go w repo — repozytorium jest publiczne.**
 
 ## Świadome ograniczenia v1
 
-- **Tylko tekst, bez zdjęć.** Adresy obrazków z FB są podpisane i wygasają, więc wymagają
-  pobierania przy budowaniu. Do zrobienia w drugim kroku.
-- Posty odświeżają się **przy budowaniu**, nie na żywo. Dla automatu trzeba dołożyć cykliczny
-  build w Netlify (Build hooks + cron albo Scheduled Functions).
+- ~~Tylko tekst, bez zdjęć~~ — zdjęcia są już pobierane przy budowaniu (adresy z FB są
+  podpisane i wygasają, dlatego nie linkujemy ich wprost).
+- Posty odświeżają się **przy budowaniu**, nie na żywo. Cykliczne budowanie robi harmonogram
+  w `.github/workflows/wdroz.yml`.
 
 Powiązane: [[decision-pages-cms]], [[status]]

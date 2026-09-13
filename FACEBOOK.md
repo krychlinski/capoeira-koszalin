@@ -11,7 +11,7 @@ nie pada z tego powodu**.
 ## Co trzeba zrobić raz
 
 Wszystkie kroki wykonuje administrator strony na Facebooku. **Tokenu nie przekazuj nikomu
-w czacie ani mailem** — wklejasz go wyłącznie w panelu Netlify.
+w czacie ani mailem** — wklejasz go wyłącznie jako sekret repozytorium na GitHubie.
 
 1. Wejdź na <https://developers.facebook.com/apps> i utwórz aplikację typu **Business**.
    Aplikacja zostaje w trybie deweloperskim — App Review nie jest potrzebne, bo czytasz
@@ -20,13 +20,19 @@ w czacie ani mailem** — wklejasz go wyłącznie w panelu Netlify.
    `pages_read_engagement` oraz `pages_read_user_content`.
 3. Wygeneruj **User Access Token**, zamień go na **długożyciowy**, a z niego wygeneruj
    **Page Access Token**. Ten ostatni nie wygasa.
-4. W Netlify: **Project configuration → Environment variables → Add a variable**
+4. W repozytorium na GitHubie: **Settings → Secrets and variables → Actions → New repository secret**
 
-   | Zmienna | Wartość |
+   | Sekret | Wartość |
    |---|---|
    | `FB_TOKEN` | wygenerowany Page Access Token |
 
-5. Uruchom ponowny deploy (**Deploys → Trigger deploy**).
+   W panelu Cloudflare nic nie ustawiasz — stronę buduje GitHub Actions, Cloudflare dostaje
+   gotowe pliki.
+
+5. Uruchom budowanie ręcznie: zakładka **Actions → Zbuduj i wdróż → Run workflow**.
+
+Zmienne opcjonalne poniżej trzeba by dopisać do sekcji `env` kroku „Zbuduj stronę”
+w `.github/workflows/wdroz.yml`.
 
 ## Zmienne opcjonalne
 
@@ -39,9 +45,9 @@ w czacie ani mailem** — wklejasz go wyłącznie w panelu Netlify.
 ## Świeżość
 
 Strona jest statyczna, więc posty odświeżają się **przy każdym budowaniu**: po zapisie
-w panelu CMS albo po zmianie w repozytorium. Żeby zaciągały się same, ustaw w Netlify
-cykliczny build (**Build & deploy → Build hooks** plus zewnętrzny cron, albo Scheduled
-Functions).
+w panelu CMS albo po zmianie w repozytorium. Poza tym workflow `wdroz.yml` buduje stronę
+z harmonogramu — co godzinę w dzień i dwa razy w nocy — a wdraża ją tylko wtedy, gdy
+aktualności faktycznie się zmieniły.
 
 ## Lokalnie
 
@@ -53,6 +59,7 @@ FB_TOKEN=twoj-token
 
 ## Gdy przestanie działać
 
-Zajrzyj do logu builda w Netlify i poszukaj linii `[facebook]`. Zawiera dokładny komunikat
+Zajrzyj do logu ostatniego uruchomienia w zakładce **Actions** na GitHubie (krok „Zbuduj
+stronę”) i poszukaj linii `[facebook]`. Zawiera dokładny komunikat
 od Mety — najczęściej wygasły albo unieważniony token (kod 190) i wtedy trzeba wygenerować
 nowy.

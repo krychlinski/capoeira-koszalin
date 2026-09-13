@@ -1,6 +1,6 @@
 ---
 name: decision-netlify-limit
-description: Zapis w panelu = commit = build = 15 kredytów; przenieść hosting ZANIM Michał dostanie dostęp
+description: HISTORIA — limit kredytów Netlify był powodem przeprowadzki na Cloudflare Pages (zrobione 2026-09-05)
 metadata:
   type: project
 ---
@@ -19,10 +19,8 @@ samego powodu odświeżanie postów z Facebooka dwa razy dziennie jest na Netlif
 60 buildów miesięcznie to trzykrotność całego limitu.
 
 **NIEAKTUALNE od 2026-09-05 — przeprowadzka wykonana.** Strona stoi na Cloudflare Pages,
-patrz [[reference-hosting]]. Notatkę zostawiam z jednego powodu: projekt na Netlify nadal
-istnieje i buduje przy każdym wypchnięciu, dopóki się go nie wyłączy. Kredyty idą w powietrze,
-a przy wyczerpaniu limitu Netlify potrafi przysłać alarmujące maile o wstrzymaniu strony —
-która i tak jest już gdzie indziej.
+patrz [[reference-hosting]]. Projekt na Netlify ma wyłączone budowanie, `netlify.toml` usunięty.
+Ewentualne maile od Netlify o limitach czy wstrzymaniu strony nie dotyczą już działającej strony.
 
 **Korekta z tego samego dnia:** Michał NIE dostanie panelu — zmiany podsyła Kacprowi
 [[decision-tryb-pracy]]. Scenariusz „wieczór klikania gasi stronę" odpada, kredyty zjada tylko

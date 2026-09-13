@@ -1,7 +1,8 @@
 name: Zbuduj i wdróż
 
 # Jedno miejsce, w którym powstaje strona. Uruchamia się przy zmianie w gałęzi
-# main, co trzy godziny po nowe posty z Facebooka oraz ręcznie przyciskiem.
+# main, z harmonogramu po nowe posty z Facebooka (co godzinę w dzień, dwa razy
+# w nocy) oraz ręcznie przyciskiem.
 #
 # Dlaczego tutaj, a nie w Cloudflare: projekt Pages został założony z linii
 # poleceń, a takiego nie da się już połączyć z repozytorium — Cloudflare buduje

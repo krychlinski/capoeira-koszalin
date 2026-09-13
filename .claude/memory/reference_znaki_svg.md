@@ -20,7 +20,7 @@ Wartości po przycięciu: `unicar.svg` → `241.31 62.89 541.47 541.47` (kwadrat
 berimbau wystające w prawy górny róg — sama pieczęć to okrąg 425×425, ale obcięcie berimbau
 to zmiana cudzego znaku, nie robić bez zgody). `tkkf.svg` → `0.93 94.72 593.40 652.45`.
 
-## Znak przy akapicie w treści — klasa `.znak`
+## Znak przy akapicie w treści — klasa `.mark`
 
 W `global.css`. Znak jest wyjęty z akapitu (`position: absolute`), akapit ma wcięcie z lewej
 i `align-content: center`, przez co znak i tekst mają wspólną oś w pionie.

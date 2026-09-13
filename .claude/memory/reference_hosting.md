@@ -38,8 +38,12 @@ kiedyś certyfikat nie chciał się wystawić, to jest pierwsze miejsce do spraw
 Projekt Pages powstał z linii poleceń (`wrangler pages project create`), bo w panelu nie ma już
 takiej opcji. **Takiego projektu Cloudflare nie pozwala połączyć z repozytorium** — buduje
 tylko te podpięte do gita od początku. Dlatego buduje GitHub Actions
-(`.github/workflows/wdroz.yml`): przy zmianie w `main`, co trzy godziny i ręcznie przyciskiem.
+(`.github/workflows/wdroz.yml`): przy zmianie w `main`, z harmonogramu (co godzinę w dzień, dwa
+razy w nocy, wdraża tylko przy zmianie aktualności) i ręcznie przyciskiem.
 Cloudflare nic nie buduje, przyjmuje gotowe pliki.
+
+**Limit Cloudflare Pages: 25 MiB na pojedynczy plik.** Większy plik w `dist` wywala wdrożenie —
+dotyczy wideo prosto z aparatu (promo w `MATERIAŁY/Filmy promo` ma 89 i 31 MB).
 
 Sekrety w repozytorium: `FB_TOKEN` i `CLOUDFLARE_API_TOKEN` (uprawnienie Cloudflare Pages: Edit,
 token `github-pages-capoeira`). Identyfikator konta jest wpisany wprost w workflow.

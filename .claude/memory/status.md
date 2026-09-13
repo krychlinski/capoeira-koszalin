@@ -10,11 +10,13 @@ Stan na 2026-09-05, po przeprowadzce hostingu.
 ## Zrobione
 
 - Repo `krychlinski/capoeira-koszalin` (publiczne), gałąź `main`, dwa commity.
-- Astro 7, 11 stron, ciemna kinowa szata (czerń `#0b0b0c`, bursztyn `#e08a2b`, Oswald + Barlow).
+- Astro 7, 11 stron, ciemna kinowa szata (czerń `#0b0b0c`, zieleń z logo `#72BE44`, Oswald + Barlow;
+  pierwotny bursztyn `#e08a2b` wymieniony — patrz sekcja „Paleta”).
 - `.pages.yml` — panel Pages CMS, pola zgodne ze schematem Zod, zweryfikowane parserem.
 - Czysty build z klona przechodzi (`npm ci && npm run build`), `dist` waży 132 KB.
 - Node 22 i `gh` doinstalowane na maszynie właściciela — wcześniej nie było ich wcale.
-- **Strona żyje pod https://capoeira-koszalin.netlify.app** — hosting Netlify, build po każdym commicie.
+- **Strona żyje pod https://www.capoeira.koszalin.pl** — Cloudflare Pages, buduje GitHub Actions
+  (do 2026-09-05 była na Netlify).
 - Treść z ODT-ów właściciela przeniesiona: prawdziwy grafik 7 grup, cennik (8 pozycji),
   FAQ (14 pytań), regulamin (20 paragrafów), oferta, telefon i Instagram.
 - Menu: Zajęcia · Cennik · FAQ · Wydarzenia · Aktualności · Galeria · O nas + przycisk Kontakt.
@@ -33,7 +35,7 @@ Stan na 2026-09-05, po przeprowadzce hostingu.
 - **Znaki przynależności** na „O nas": pieczęć UNICAR i logo TKKF przy odpowiednich akapitach —
   [[reference-znaki-svg]].
 - **Strona „Pierwszy trening"** jako pierwsza zakładka w menu. Cała treść w panelu
-  (`strony/pierwszy-trening.md` + wpis `strona-pierwszy-trening` w `.pages.yml`), w kodzie
+  (`pages/pierwszy-trening.md` + wpis `strona-pierwszy-trening` w `.pages.yml`), w kodzie
   zostały tylko trzy przyciski nawigacyjne.
 - FAQ startuje ze wszystkimi pytaniami zwiniętymi — plus przy każdym wierszu wystarcza za
   podpowiedź, że się rozwijają.
@@ -50,7 +52,7 @@ Stan na 2026-09-05, po przeprowadzce hostingu.
 ## Przeprowadzka hostingu — ZROBIONA 2026-09-05
 
 Strona żyje pod **https://www.capoeira.koszalin.pl** na Cloudflare Pages, buduje się sama
-co trzy godziny z GitHub Actions. Szczegóły i wszystkie pułapki: [[reference-hosting]].
+z GitHub Actions (co godzinę w dzień, dwa razy w nocy; wdraża tylko przy zmianie). Szczegóły i wszystkie pułapki: [[reference-hosting]].
 
 Pilne przebudowanie na żądanie: zakładka **Actions** w repozytorium → workflow
 „Zbuduj i wdróż" → **Run workflow**. Tym miał być guzik dla Michała.
@@ -80,23 +82,18 @@ a to pociągnie za sobą sprawę z wierzchołkiem, patrz [[reference-hosting]].
 
 ## Do zrobienia
 
-1. ~~**Podpiąć repo w Netlify**~~ — tylko właściciel, wymaga autoryzacji aplikacji GitHubowej.
-   Ustawień nie trzeba wpisywać, są w `netlify.toml`.
-   Cloudflare Pages odpadło: nie pozwala założyć konta młodszego niż 7 dni (stan 2026-08-29).
-   Gdyby ktoś do niego wracał — musi to być „Connect to Git", nigdy Direct Upload, bo projektu
-   z bezpośredniego uploadu nie da się później połączyć z repo.
+1. ~~**Hosting**~~ — zamknięte, strona na Cloudflare Pages, patrz [[reference-hosting]].
 2. **Zdobyć brakujące dane od właściciela** — patrz sekcja niżej. ~~Najpilniejszy jest adres
    sali~~ — adres mamy od 2026-09-08, patrz wyżej. Zostaje e-mail i biogramy.
 3. **Dodać kolegę jako collaboratora** — czeka na jego login GitHub. Bez tego nie wejdzie do panelu.
-4. **Podmienić resztę treści oznaczonej `DO UZUPEŁNIENIA`** — biogram Michała, treść „O nas",
-   szczegóły batizado. Grafik i dane kontaktowe są już prawdziwe.
-5. ~~**Przełączyć domenę** `capoeira.koszalin.pl`~~ — zrobione, patrz wyżej. Historycznie: — to subdomena, więc wystarczy CNAME
-   na adres Netlify plus dodanie domeny w panelu hostingu. Przed przełączeniem sprawdzić
-   rekordy CAA na `koszalin.pl`, bo mogą zablokować wystawienie certyfikatu.
+4. **Uzupełnić brakującą treść** — biogramy, treść „O nas", szczegóły batizado (lista w sekcji
+   „Brakujące dane”). Znaczników `DO UZUPEŁNIENIA` w kodzie i treści już nie ma (sprawdzone
+   2026-09-13); grafik i dane kontaktowe są prawdziwe.
+5. ~~**Przełączyć domenę** `capoeira.koszalin.pl`~~ — zrobione, patrz [[reference-hosting]].
 
 ## Znane drobiazgi
 
-- Build wypisuje ostrzeżenie o pustej kolekcji `galeria`. Zniknie po dodaniu pierwszego albumu.
+- Build wypisuje ostrzeżenie o pustej kolekcji `gallery`. Zniknie po dodaniu pierwszego albumu.
 
 Powiązane: [[decision-pages-cms]], [[decision-nie-wordpress]]
 
@@ -186,15 +183,15 @@ otrzymania pliku logo i została w całości usunięta.
 
 | Zmienna | Wartość | Kontrast | Rola |
 |---|---|---|---|
-| `--akcent` | `#72BE44` | 8,6:1 | napisy, przyciski, aktywne linki — **dokładnie z logo** |
-| `--akcent-jasny` | `#8CCA66` | 10,1:1 | podświetlenie przycisku, pochodna odcienia 97° |
-| `--akcent-scisz` | `#538734` | 4,6:1 | ozdobne numery, „Axé!" — pochodna odcienia 98° |
-| `--akcent-ciemny` | `#005C2D` | 2,4:1 | wyłącznie obramowania — **dokładnie z logo** |
+| `--accent` | `#72BE44` | 8,6:1 | napisy, przyciski, aktywne linki — **dokładnie z logo** |
+| `--accent-light` | `#8CCA66` | 10,1:1 | podświetlenie przycisku, pochodna odcienia 97° |
+| `--accent-muted` | `#538734` | 4,6:1 | ozdobne numery, „Axé!" — pochodna odcienia 98° |
+| `--accent-dark` | `#005C2D` | 2,4:1 | wyłącznie obramowania — **dokładnie z logo** |
 
-**Nie używaj `--akcent-ciemny` do tekstu.** Dokładnie ten błąd wyszedł przy numerach 01/02/03 na
-stronie zajęć — zgasły do niewidoczności. Od tego jest `--akcent-scisz`.
+**Nie używaj `--accent-dark` do tekstu.** Dokładnie ten błąd wyszedł przy numerach 01/02/03 na
+stronie zajęć — zgasły do niewidoczności. Od tego jest `--accent-muted`.
 
-Kolor akcentu ma też postać `--akcent-rgb` do `rgba()` w gradientach, żeby zmiana odcienia była
+Kolor akcentu ma też postać `--accent-rgb` do `rgba()` w gradientach, żeby zmiana odcienia była
 w jednym miejscu, a nie w dziewięciu plikach.
 
 Logo jest przemalowywane do koloru akcentu — w oryginalnej ciemnej zieleni byłoby na czarnym tle
@@ -263,10 +260,10 @@ tego zagwarantować doborem liczby elementów.
 **Zawsze rysuj linie obramowaniami elementów:** kontener dostaje `border-top` i `border-left`,
 każdy element `border-right` i `border-bottom`. Efekt identyczny, puste komórki nic nie pokazują.
 
-Poprawione w: grafiku zajęć (`Grafik.astro`), galerii albumów (`galeria/[...slug].astro`),
+Poprawione w: grafiku zajęć (`Schedule.astro`), galerii albumów (`galeria/[...slug].astro`),
 galerii pod postem z Facebooka (`aktualnosci/fb/[id].astro`).
 
-Wyjątek: `.pasek` na stronie głównej używa `gap: 1px`, ale to kontener elastyczny bez tła —
+Wyjątek: `.strip` na stronie głównej używa `gap: 1px`, ale to kontener elastyczny bez tła —
 nie ma pustych komórek ani czego prześwitywać. Zostawić.
 
 

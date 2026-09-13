@@ -13,8 +13,8 @@ Kroki:
 3. Nazwij pliki `<slug-albumu>-01.webp`, `<slug-albumu>-02.webp`, … — bez spacji, polskich znaków
    i wielkich liter. Nazwa pliku jest kluczem, po którym `src/lib/media.ts` odnajduje obraz.
 4. Skopiuj wynik do `src/assets/media/`.
-5. Utwórz wpis albumu w `src/content/galeria/<slug>.md` z polami `tytul`, `data`, `okladka`
-   i listą `zdjecia` w formacie `/media/<nazwa>.webp`.
+5. Utwórz wpis albumu w `src/content/gallery/<slug>.md` z polami `title`, `date`, `cover`
+   i listą `images` w formacie `/media/<nazwa>.webp` (nazwy pól jak w `src/content.config.ts`).
 6. Uruchom `npm run build` i zgłoś, ile zdjęć doszło oraz ile waży teraz katalog `src/assets/media`.
 
 Nie commituj — pokaż wynik i poczekaj na decyzję.

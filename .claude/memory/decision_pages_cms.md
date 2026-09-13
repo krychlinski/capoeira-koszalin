@@ -23,10 +23,11 @@ projektu. Adres: https://app.pagescms.org, logowanie kontem GitHub, po zalogowan
 repozytorium `krychlinski/capoeira-koszalin`.
 
 **Zapis w panelu to commit.** Panel zmienia plik `.md` i wypycha go do gałęzi w imieniu
-zalogowanej osoby — w historii wygląda jak zwykły commit z jej nazwiskiem. Netlify obserwuje
-gałąź, więc commit uruchamia budowanie i po kilku minutach zmiana jest na stronie. Żadnej bazy
-danych nie ma: cała treść to pliki w repozytorium, a `.pages.yml` opisuje tylko, jakie pola
-pokazać. Konsekwencja kredytowa: [[decision-netlify-limit]].
+zalogowanej osoby — w historii wygląda jak zwykły commit z jej nazwiskiem. Push do `main`
+uruchamia GitHub Actions, które budują stronę i wdrażają ją na Cloudflare Pages — po kilku
+minutach zmiana jest na stronie. Żadnej bazy danych nie ma: cała treść to pliki w repozytorium,
+a `.pages.yml` opisuje tylko, jakie pola pokazać. Za czasów Netlify każdy zapis zjadał kredyty:
+[[decision-netlify-limit]].
 
 **Jak stosować:** zmiana pola w `.pages.yml` musi iść w parze ze zmianą w `src/content.config.ts`.
 Po dodaniu pliku treści albo zmianie schematu serwer deweloperski pokazuje stan sprzed zmiany,

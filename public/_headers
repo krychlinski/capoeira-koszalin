@@ -1,5 +1,4 @@
-# Nagłówki dla Cloudflare Pages i Netlify — odpowiednik sekcji [[headers]]
-# z netlify.toml, żeby przeprowadzka nie wymagała przepisywania konfiguracji.
+# Nagłówki dla Cloudflare Pages, czytane z katalogu wynikowego.
 
 # Zasoby z hashem w nazwie nigdy nie zmieniają treści pod tym samym adresem.
 /_astro/*

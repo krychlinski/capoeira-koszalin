@@ -8,39 +8,59 @@ WordPressa pod `capoeira.koszalin.pl`.
 - **Astro 7**, statyczny build (`output: static`). Bez frameworka UI, bez Tailwinda — czysty CSS
   ze zmiennymi w `src/styles/global.css`.
 - **Pages CMS** (app.pagescms.org) — panel dla nietechnicznego edytora, konfiguracja w `.pages.yml`.
-  Zapis w panelu tworzy commit w repo, hosting przebudowuje stronę.
-- **Netlify** — hosting statyczny, darmowy, konfiguracja w `netlify.toml`. Zero serwera,
-  zero bazy, zero łatania; to był główny powód odejścia od WordPressa.
-  Cloudflare Pages odpadło: blokuje zakładanie kont młodszych niż 7 dni.
+  Zapis w panelu tworzy commit w repo, a commit uruchamia budowanie i wdrożenie.
+- **Cloudflare Pages** — hosting statyczny, darmowy, projekt `capoeira-koszalin` (`wrangler.jsonc`).
+  Zero serwera, zero bazy, zero łatania; to był główny powód odejścia od WordPressa.
+  Nagłówki i przekierowania w `public/_headers` i `public/_redirects`.
+- **Buduje GitHub Actions, nie Cloudflare** — `.github/workflows/wdroz.yml`: przy pushu do `main`,
+  z harmonogramu (posty z Facebooka) i ręcznie. Projekt Pages założono z linii poleceń, więc
+  nie da się go podpiąć pod repo. Sekrety (`FB_TOKEN`, `CLOUDFLARE_API_TOKEN`, `NOTIFY_SECRET`)
+  siedzą w GitHubie, nie w panelu Cloudflare.
+- **Limit Cloudflare Pages: 25 MiB na plik.** Większy plik w `dist` wywala wdrożenie — dotyczy
+  zwłaszcza wideo.
+- Netlify to przeszłość (do 2026-09-05): projekt wyłączony, `netlify.toml` usunięty.
+  Historia przeprowadzki w `PRZEPROWADZKA.md`.
 
 ## Zasady, które łatwo złamać
 
-- **Cały interfejs i nazwy pól są po polsku.** Kolekcje, pola frontmattera i klasy CSS też
-  (`aktualnosci`, `zajecia`, `tytul`, `.nadtytul`). Nie mieszaj z angielskim.
+- **Nazwy w kodzie po angielsku, wszystko, co widzi człowiek, po polsku.** Kolekcje, pola
+  frontmattera, pliki, komponenty, klasy i zmienne CSS po angielsku (`news`, `classes`, `title`,
+  `.eyebrow`, `--accent`). Po polsku zostają: komentarze, interfejs strony, adresy stron
+  i nazwy plików w `src/pages/` (`/aktualnosci/`, `/o-nas/`), nazwy plików treści (wchodzą
+  w adresy), etykiety `label:` w `.pages.yml`. Terminy capoeiry (`apelido`, `corda`) bez
+  tłumaczenia. Szczegóły: `.claude/memory/decision_nazewnictwo.md`.
 - **Schemat treści musi się zgadzać w dwóch miejscach naraz:** `src/content.config.ts` (Zod)
   i `.pages.yml` (Pages CMS). Zmiana pola w jednym bez drugiego wywala build albo psuje panel.
 - **Zdjęcia leżą w `src/assets/media/`, nie w `public/`** — dzięki temu Astro je optymalizuje.
   CMS zapisuje ścieżkę jako `/media/plik.jpg`, a `src/lib/media.ts` mapuje ją po nazwie pliku.
   Nie przenoś mediów do `public/`, bo strona zacznie serwować oryginały z aparatu.
+  Jedyny wyjątek: zdjęcia z postów na Facebooku pobiera przy budowaniu
+  `integrations/facebook-images.mjs` do `public/media/fb/` (w `.gitignore`).
 - Puste katalogi kolekcji trzymają `.gitkeep`. Bez nich git je gubi i CMS nie ma gdzie pisać.
-- Wersję Node ustala `.nvmrc` i `NODE_VERSION` w `netlify.toml` — Astro 7 nie zbuduje się
-  na starszym niż 22.
+- Wersję Node ustala `.nvmrc` (czyta go workflow) i `engines` w `package.json` — Astro 7
+  nie zbuduje się na starszym niż 22.
 
 ## Model treści
 
 | Kolekcja | Katalog | Uwagi |
 |---|---|---|
-| `aktualnosci` | `src/content/aktualnosci` | pole `opublikowany` filtruje wpisy |
-| `wydarzenia` | `src/content/wydarzenia` | dzielone na nadchodzące/minione po `dataDo ?? dataOd` |
-| `zajecia` | `src/content/zajecia` | jedna grupa = jeden plik, `terminy` to lista |
-| `instruktorzy` | `src/content/instruktorzy` | sortowane po `kolejnosc` |
-| `galeria` | `src/content/galeria` | `zdjecia` to płaska lista ścieżek |
-| `strony` | `src/content/strony` | tylko `o-nas` i `kontakt`, stałe pliki |
-| ustawienia | `src/data/ustawienia.json` | dane kontaktowe, hero, social |
+| `news` | `src/content/news` | pole `published` filtruje wpisy; posty z Facebooka dochodzą przy budowaniu |
+| `events` | `src/content/events` | dzielone na nadchodzące/minione po `endDate ?? startDate` |
+| `classes` | `src/content/classes` | jedna grupa = jeden plik, `sessions` to lista, sortowane po `order` |
+| `instructors` | `src/content/instructors` | sortowane po `order` |
+| `gallery` | `src/content/gallery` | `images` to płaska lista ścieżek, `cover` okładka |
+| `pages` | `src/content/pages` | stałe pliki: `o-nas`, `kontakt`, `oferta`, `pierwszy-trening`, `gdzie-trenujemy`, `regulamin`; w panelu każdy to osobny wpis `strona-*` (regulaminu w panelu nie ma) |
+| `pricing` | `src/content/pricing` | `category`: `monthly` albo `extra`, sortowane po `order` |
+| `faq` | `src/content/faq` | `question` we frontmatterze, odpowiedź w treści, sortowane po `order` |
+| ustawienia | `src/data/settings.json` | dane kontaktowe, hero, komunikat (`notice`), social |
 
 ## Stan
 
-- Domena `capoeira.koszalin.pl` jest w całości pod kontrolą właściciela — przełączenie DNS na końcu.
-  Do tego czasu `site` w `astro.config.mjs` wskazuje na adres `.netlify.app`.
-- Treść startowa zawiera znaczniki `DO UZUPEŁNIENIA` (godziny zajęć, sale, adresy, biogram).
-  To placeholdery, nie fakty — nie traktuj ich jak prawdziwych danych.
+- Strona żyje pod **https://www.capoeira.koszalin.pl** (CNAME `www` → `capoeira-koszalin.pages.dev`).
+  Goły `capoeira.koszalin.pl` to wierzchołek delegowanej strefy w 42.pl — CNAME-u mieć nie może,
+  więc przekierowuje go 301 Apache na VPS-ie OVH. Wyłączenie VPS-a zabije adres bez `www`.
+- Przy zmianie adresu poprawiaj **dwa** miejsca: `site` w `astro.config.mjs` i `Sitemap:`
+  w `public/robots.txt`.
+- Grafik, cennik, FAQ, regulamin, adres sali i telefon są prawdziwe. Wciąż brakuje m.in.
+  biogramów instruktorów i adresu e-mail — lista w sekcji „Brakujące dane” w
+  `.claude/memory/status.md`. Tych danych nie wymyślaj; puste pole zostaw puste.

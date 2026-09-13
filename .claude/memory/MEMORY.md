@@ -10,14 +10,14 @@
 ## Decyzje
 - [Dlaczego nie WordPress](decision_nie_wordpress.md) — powód migracji i odrzucone alternatywy
 - [Panel to Pages CMS](decision_pages_cms.md) — brak adresu na localhost, zapis = commit, brak bazy danych
-- [Limit buildów Netlify](decision_netlify_limit.md) — 20 buildów/miesiąc; przenieść hosting zanim Michał dostanie panel
+- [Limit buildów Netlify](decision_netlify_limit.md) — HISTORIA: powód przeprowadzki na Cloudflare Pages (2026-09-05)
 
 ## Wzorce w kodzie
 - [Nazewnictwo](decision_nazewnictwo.md) — kod po angielsku, komentarze po polsku, adresy stron bez zmian
 - [Refaktor nazw](reference_refaktor_nazw.md) — jak go zweryfikowano i sześć pułapek, które wyszły
 - [Hosting po przeprowadzce](reference_hosting.md) — Pages + GitHub Actions, dlaczego `www`, pułapki z certyfikatami
 - [Mapka dojazdu](reference_mapka.md) — statyczny obrazek z kafelków OSM, adres Szymanowskiego 16B, sprawa wizytówki Google
-- [Znaki i SVG](reference_znaki_svg.md) — przycinanie viewBox, klasa `.znak` przy akapicie
+- [Znaki i SVG](reference_znaki_svg.md) — przycinanie viewBox, klasa `.mark` przy akapicie
 - [Formatowanie treści z FB](project_formatowanie_fb.md) — kiedy pobiera posty, wypunktowania, polskie cudzysłowy
 
 ## Jak pracujemy

@@ -2,8 +2,10 @@
 
 Powód: Netlify liczy **15 kredytów za deploy** przy 300 na miesiąc, czyli **20 deployów**,
 z twardym limitem — po przekroczeniu strona zostaje wstrzymana. Cloudflare daje **3000 minut
-budowania miesięcznie** i nielimitowany transfer. Nasz build trwa około dwóch minut, więc
-odświeżanie co trzy godziny (244 buildy) zajmuje jakieś 500 minut z 3000.
+budowania miesięcznie** i nielimitowany transfer. Ostatecznie Cloudflare nic u nas nie buduje
+— patrz punkt 2.
+
+**Stan: przeprowadzka zakończona 2026-09-05.** Dokument zostaje jako zapis decyzji i pułapek.
 
 Wszystkie pliki konfiguracyjne są już w repozytorium. Poniżej tylko to, co trzeba wyklikać.
 
@@ -24,22 +26,27 @@ Dlatego budujemy u GitHuba — patrz niżej.
 
 ## 2. Budowanie i wdrażanie
 
-Wszystko robi `.github/workflows/wdroz.yml`: przy zmianie w `main`, co trzy godziny po nowe
-posty z Facebooka i ręcznie przyciskiem **Run workflow**. Deploy hook nie jest potrzebny,
-bo harmonogram i budowanie są w jednym miejscu.
+Wszystko robi `.github/workflows/wdroz.yml`: przy zmianie w `main`, z harmonogramu po nowe
+posty z Facebooka (co godzinę w dzień, dwa razy w nocy) i ręcznie przyciskiem **Run workflow**.
+Deploy hook nie jest potrzebny, bo harmonogram i budowanie są w jednym miejscu.
 
-W **Settings → Secrets and variables → Actions** repozytorium muszą być dwa sekrety:
+W **Settings → Secrets and variables → Actions** repozytorium muszą być trzy sekrety:
 
 | Sekret | Skąd |
 |---|---|
 | `FB_TOKEN` | token strony na Facebooku, ten sam co w lokalnym `.env` |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare → My Profile → API Tokens → Create Token, uprawnienie **Cloudflare Pages: Edit** |
+| `NOTIFY_SECRET` | ten sam co w lokalnym `.notify-secret` — rozgłaszanie powiadomień push |
 
 Identyfikator konta jest wpisany wprost w pliku — nie jest sekretem.
 
-Osiem uruchomień na dobę to 244 miesięcznie. Minuty GitHub Actions w repozytorium publicznym
-są darmowe, a limit budowania po stronie Cloudflare przy wdrażaniu gotowych plików nas nie
-dotyczy — Cloudflare tu nic nie buduje, tylko przyjmuje wynik.
+Harmonogram to 19 uruchomień na dobę, ale wdrożenie idzie tylko wtedy, gdy aktualności się
+zmieniły (albo przy pushu i ręcznym uruchomieniu). Minuty GitHub Actions w repozytorium
+publicznym są darmowe, a limit budowania po stronie Cloudflare nas nie dotyczy — Cloudflare
+tu nic nie buduje, tylko przyjmuje wynik.
+
+**Limit, który nas dotyczy: 25 MiB na pojedynczy plik.** Większy plik w `dist` (np. wideo
+prosto z aparatu) wywala wdrożenie.
 
 **Dlaczego `build:czysty`, a nie `npm run build`:** cache warstwy treści Astro potrafi
 przetrwać między buildami i generować podstrony dla wpisów, które już usunięto. Skrypt
@@ -57,6 +64,8 @@ pliki i nie odpytuje Facebooka.
 stąd biorą się adresy kanoniczne i cała mapa witryny.
 
 ## 5. Domena — UWAGA, nie da się tak, jak zakładaliśmy
+
+**Wybrane wyjście B** (strona pod `www`, goły adres przekierowuje Apache na VPS-ie OVH).
 
 Sprawdzone 2026-09-05. `capoeira.koszalin.pl` **nie jest zwykłą poddomeną, którą wystarczy
 wskazać CNAME-em.** To osobna, delegowana strefa DNS: `koszalin.pl` należy do MAN Koszalin
@@ -116,13 +125,8 @@ adresu `pages.dev`), żeby ta sama treść nie wisiała pod dwoma adresami.
 
 ## 6. Sprzątanie po przeprowadzce
 
-Zostało do zrobienia:
-
-1. **Netlify** — wyłączyć budowanie po commicie albo usunąć projekt. Inaczej przy każdym
-   wypchnięciu zmian buduje tę samą stronę i zjada kredyty bez powodu. Potem można skasować
-   `netlify.toml`.
-2. **Worker `capoeira-koszalin`** — porzucony, nie przyjmie domeny. Kasuje się poleceniem
-   `npx wrangler delete --name capoeira-koszalin`. Uwaga: nazywa się tak samo jak projekt
-   Pages, więc łatwo pomylić je w panelu.
-3. **WordPress na VPS-ie** — katalog `/var/www/html/capoeira/data/wordpress` nie jest już
-   przez nic używany. Serwis Apache'a obsługuje wyłącznie przekierowanie gołego adresu.
+1. ~~**Netlify**~~ — ZROBIONE: budowanie wyłączone, `netlify.toml` usunięty.
+2. ~~**Worker `capoeira-koszalin`**~~ — ZROBIONE: skasowany razem z jego tokenem.
+3. **WordPress na VPS-ie** — zostało. Katalog `/var/www/html/capoeira/data/wordpress` nie jest
+   już przez nic używany. Serwis Apache'a obsługuje wyłącznie przekierowanie gołego adresu,
+   więc samego serwera nie wyłączaj bez planu na adres bez `www`.
