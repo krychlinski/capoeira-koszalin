@@ -3,7 +3,10 @@ import { getEntry, getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import VideoPlayer from '../components/VideoPlayer.astro';
 import { resolveImage } from '../lib/media';
+import academy from '../assets/video/academy-2021.mp4';
+import academyPoster from '../assets/video/academy-2021-poster.jpg';
 
 const page = await getEntry('pages', 'o-nas');
 const Content = page ? (await render(page)).Content : null;
@@ -31,6 +34,20 @@ const instructors = await Promise.all(
       ) : (
         <p class="empty">Treść tej strony uzupełnisz w panelu, w sekcji „Strony”.</p>
       )}
+    </div>
+  </section>
+
+  <section class="section section--tight memory">
+    <div class="container memory__grid">
+      <div>
+        <p class="eyebrow">Wspomnienie</p>
+        <h2>Nasza pierwsza Akademia</h2>
+        <p class="memory__text">
+          Tak trenowaliśmy w pierwszej Akademii Capoeira Koszalin, otwartej w 2019 roku.
+          Film nagraliśmy w 2021.
+        </p>
+      </div>
+      <VideoPlayer src={academy} poster={academyPoster} title="Pierwsza Akademia Capoeira Koszalin, 2021" duration="0:46" />
     </div>
   </section>
 
@@ -72,6 +89,16 @@ const instructors = await Promise.all(
     filter: grayscale(0.35);
   }
   .empty { color: var(--text-3); }
+
+  .memory { border-top: 1px solid var(--line); }
+  .memory__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) { .memory__grid { grid-template-columns: 1fr; } }
+  .memory__text { color: var(--text-2); max-width: 40ch; margin: 0; }
 
   .staff { background: var(--bg-2); border-top: 1px solid var(--line); }
   .list { display: grid; gap: 3rem; margin-top: 2.5rem; }

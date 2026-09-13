@@ -36,6 +36,11 @@ WordPressa pod `capoeira.koszalin.pl`.
   Nie przenoś mediów do `public/`, bo strona zacznie serwować oryginały z aparatu.
   Jedyny wyjątek: zdjęcia z postów na Facebooku pobiera przy budowaniu
   `integrations/facebook-images.mjs` do `public/media/fb/` (w `.gitignore`).
+- **Filmy leżą w `src/assets/video/`** i są importowane w komponentach
+  (`import promo from '../assets/video/promo-2014.mp4'`) — dostają hash w nazwie i długi cache.
+  Kodujemy je ffmpegiem z oryginałów w `MATERIAŁY/Filmy promo/` (H.264, `-movflags +faststart`),
+  każdy plik poniżej 25 MiB. Odtwarzacz z planszą i kadrami rozdziałów: `VideoPlayer.astro`,
+  pętla w tle: `Hero.astro`. Poza panelem CMS — wymiana filmu to zmiana w kodzie.
 - Puste katalogi kolekcji trzymają `.gitkeep`. Bez nich git je gubi i CMS nie ma gdzie pisać.
 - Wersję Node ustala `.nvmrc` (czyta go workflow) i `engines` w `package.json` — Astro 7
   nie zbuduje się na starszym niż 22.

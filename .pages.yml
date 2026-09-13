@@ -276,11 +276,14 @@ content:
         type: text
         description: Do 160 znaków — to widać w wynikach wyszukiwania.
       - { name: heroTagline, label: Hasło na stronie głównej, type: text }
-      - { name: heroImage, label: Zdjęcie tła (strona główna), type: image }
+      - name: heroImage
+        label: Kadr tła (strona główna)
+        type: image
+        description: Widać go, zanim ruszy film w tle, i zamiast filmu u osób oszczędzających dane. Puste = klatka z filmu.
       - name: heroYoutubeVideo
         label: Wideo YouTube (strona główna)
         type: string
-        description: Samo ID filmu, np. dQw4w9WgXcQ. Ma pierwszeństwo przed zdjęciem.
+        description: Samo ID filmu, np. dQw4w9WgXcQ. Zastępuje nasz film w tle. Uwaga — YouTube dostaje wtedy adresy IP odwiedzających, trzeba poprawić stronę Prywatność.
       - name: notice
         label: Komunikat na stronie
         type: object

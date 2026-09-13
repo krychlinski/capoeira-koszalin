@@ -1,10 +1,14 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import settings from '../data/settings.json';
 import { resolveImage } from '../lib/media';
+import loop from '../assets/video/promo-2014-loop.mp4';
+import loopFrame from '../assets/video/promo-2014-loop-poster.jpg';
 
-const background = resolveImage(settings.heroImage);
 const video = settings.heroYoutubeVideo?.trim();
+// Kadr widoczny, zanim film w tle ruszy — i zamiast niego, gdy nie ruszy wcale.
+// Zdjęcie z panelu ma pierwszeństwo; bez niego to pierwsza klatka pętli, więc start jest płynny.
+const poster = await getImage({ src: resolveImage(settings.heroImage) ?? loopFrame, width: 1920, format: 'webp' });
 ---
 
 <section class="hero">
@@ -18,9 +22,9 @@ const video = settings.heroYoutubeVideo?.trim();
         loading="lazy"
         tabindex="-1"
       />
-    ) : background ? (
-      <Image src={background} alt="" widths={[900, 1400, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
-    ) : null}
+    ) : (
+      <video class="hero__loop" src={loop} poster={poster.src} muted loop playsinline preload="none" aria-hidden="true" data-hero-loop></video>
+    )}
   </div>
 
   <div class="hero__scrim"></div>
@@ -46,6 +50,23 @@ const video = settings.heroYoutubeVideo?.trim();
 </section>
 <span id="dalej"></span>
 
+<script>
+  // Pętla w tle to ozdoba, więc nie startuje u osób, które ograniczyły ruch
+  // albo oszczędzają dane — zostaje im sam kadr. Bez JavaScriptu też.
+  const loop = document.querySelector<HTMLVideoElement>('[data-hero-loop]');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+
+  if (loop && !calm && !saveData) {
+    // Poza ekranem nie ma po co dekodować obrazu. Odmowę autoodtwarzania
+    // (np. tryb niskiego zużycia energii w iPhonie) po prostu przyjmujemy.
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) loop.play().catch(() => {});
+      else loop.pause();
+    }).observe(loop);
+  }
+</script>
+
 <style>
   .hero {
     position: relative;
@@ -64,7 +85,9 @@ const video = settings.heroYoutubeVideo?.trim();
     z-index: -2;
     background: linear-gradient(160deg, #1a1512, #0b0b0c 60%);
   }
-  .hero__background :global(img) {
+  .hero__loop {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;

@@ -1,0 +1,221 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+
+interface Chapter {
+  label: string;
+  /** Sekunda filmu, od której zaczyna się fragment. */
+  time: number;
+  image: ImageMetadata;
+}
+
+interface Props {
+  src: string;
+  poster: ImageMetadata;
+  title: string;
+  /** Długość do podpisu przycisku, np. „1:00”. */
+  duration: string;
+  chapters?: Chapter[];
+}
+
+const { src, poster, title, duration, chapters = [] } = Astro.props;
+const posterImage = await getImage({ src: poster, width: 1280, format: 'webp' });
+
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+---
+
+<figure class="player" data-player>
+  <div class="player__frame">
+    <!-- Bez JavaScriptu zostaje zwykły odtwarzacz z kontrolkami przeglądarki.
+         preload="none": film waży kilkanaście MB i nie pobiera się, dopóki ktoś nie kliknie. -->
+    <video class="player__video" src={src} poster={posterImage.src} preload="none" playsinline controls>
+      <a href={src}>Pobierz film: {title}</a>
+    </video>
+    <button type="button" class="player__start" hidden>
+      <span class="player__icon" aria-hidden="true"></span>
+      <span class="player__label">Obejrzyj film <span>{duration}</span></span>
+      <span class="visually-hidden">: {title}</span>
+    </button>
+  </div>
+
+  {chapters.length > 0 && (
+    <ol class="player__chapters" hidden>
+      {chapters.map((c) => (
+        <li>
+          <button type="button" class="chapter" data-time={c.time}>
+            <Image src={c.image} alt="" widths={[240, 480]} sizes="200px" loading="lazy" class="chapter__image" />
+            <span class="chapter__label">{c.label}</span>
+            <span class="chapter__time">{clock(c.time)}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
+  )}
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-player]').forEach((player) => {
+    const video = player.querySelector('video')!;
+    const start = player.querySelector<HTMLButtonElement>('.player__start')!;
+    const list = player.querySelector<HTMLElement>('.player__chapters');
+    const chapters = [...player.querySelectorAll<HTMLButtonElement>('.chapter')];
+
+    // Z JavaScriptem zamieniamy drobny przycisk przeglądarki na własną planszę,
+    // a kontrolki wracają dopiero po starcie.
+    video.controls = false;
+    start.hidden = false;
+    if (list) list.hidden = false;
+
+    const play = (time?: number) => {
+      start.hidden = true;
+      video.controls = true;
+      if (time !== undefined) {
+        // Przy preload="none" film nie zna jeszcze swojej długości i przewinięcie
+        // przed wczytaniem metadanych bywa ignorowane — czekamy na nie.
+        const seek = () => (video.currentTime = time);
+        if (video.readyState >= 1) seek();
+        else video.addEventListener('loadedmetadata', seek, { once: true });
+      }
+      video.play();
+    };
+
+    start.addEventListener('click', () => play());
+    chapters.forEach((c) => c.addEventListener('click', () => play(Number(c.dataset.time))));
+
+    // Podświetla fragment, który właśnie leci.
+    video.addEventListener('timeupdate', () => {
+      const current = chapters.findLast((c) => Number(c.dataset.time) <= video.currentTime);
+      chapters.forEach((c) => c.toggleAttribute('aria-current', c === current));
+    });
+  });
+</script>
+
+<style>
+  .player { margin: 0; }
+
+  /* Tytuł filmu dla czytników ekranu — na planszy wystarcza „Obejrzyj film”. */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .player__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .player__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .player__start {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1.1rem;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--text);
+    background: radial-gradient(60% 60% at 50% 50%, rgba(11, 11, 12, 0.25), rgba(11, 11, 12, 0.7));
+  }
+  /* display: grid wygrywa z atrybutem hidden — bez tej reguły plansza i lista
+     kadrów zostają widoczne mimo ukrycia w skrypcie. */
+  .player__start[hidden],
+  .player__chapters[hidden] { display: none; }
+
+  .player__icon {
+    position: relative;
+    width: clamp(4rem, 9vw, 5.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.45);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .player__icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 32%;
+    height: 36%;
+    translate: 8% 0;
+    background: #06130a;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+  .player__start:hover .player__icon,
+  .player__start:focus-visible .player__icon {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 0.9rem rgba(var(--accent-rgb), 0.18);
+  }
+  .player__label {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .player__label span { color: var(--text-2); margin-left: 0.5em; }
+
+  .player__chapters {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(9.5rem, 1fr);
+    gap: 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .player__chapters::-webkit-scrollbar { display: none; }
+
+  .chapter {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.45rem 0.5rem;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-2);
+    text-align: left;
+    cursor: pointer;
+  }
+  .chapter :global(.chapter__image) {
+    grid-column: 1 / -1;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    filter: grayscale(0.6) brightness(0.8);
+    transition: filter 0.25s ease, border-color 0.25s ease;
+  }
+  .chapter__label {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .chapter__time { font-size: 0.8125rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+  .chapter:hover :global(.chapter__image),
+  .chapter:focus-visible :global(.chapter__image),
+  .chapter[aria-current] :global(.chapter__image) {
+    filter: none;
+    border-color: var(--accent);
+  }
+  .chapter:hover .chapter__label,
+  .chapter[aria-current] .chapter__label { color: var(--accent); }
+</style>

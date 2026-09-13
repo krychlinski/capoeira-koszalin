@@ -7,7 +7,15 @@ import Schedule from '../components/Schedule.astro';
 import Notice from '../components/Notice.astro';
 import Venue from '../components/Venue.astro';
 import PostCard from '../components/PostCard.astro';
+import VideoPlayer from '../components/VideoPlayer.astro';
 import settings from '../data/settings.json';
+import promo from '../assets/video/promo-2014.mp4';
+import promoPoster from '../assets/video/promo-2014-poster.jpg';
+import chapterWarmup from '../assets/video/promo-2014-chapter-warmup.jpg';
+import chapterMusic from '../assets/video/promo-2014-chapter-music.jpg';
+import chapterRoda from '../assets/video/promo-2014-chapter-roda.jpg';
+import chapterKids from '../assets/video/promo-2014-chapter-kids.jpg';
+import chapterAcrobatics from '../assets/video/promo-2014-chapter-acrobatics.jpg';
 import { resolveImage } from '../lib/media';
 import { formatDate, formatDateRange } from '../lib/format';
 import { allNews } from '../lib/news';
@@ -22,6 +30,15 @@ const nextEvent = upcoming[0];
 const eventPhoto = resolveImage(nextEvent?.data.image);
 
 const aktualnosci = (await allNews()).slice(0, 3);
+
+// Sekundy wybrane z klatek filmu; pierwsze dziesięć to plansza z napisami, więc zaczynamy od treningu.
+const chapters = [
+  { label: 'Rozgrzewka', time: 10, image: chapterWarmup },
+  { label: 'Muzyka', time: 16, image: chapterMusic },
+  { label: 'Roda', time: 20, image: chapterRoda },
+  { label: 'Dzieci', time: 34, image: chapterKids },
+  { label: 'Akrobatyka', time: 42, image: chapterAcrobatics },
+];
 
 const albums = (await getCollection('gallery')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
@@ -48,6 +65,21 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
         </p>
         <a href="/o-nas/" class="button button--outline">Poznaj naszą grupę</a>
       </div>
+    </div>
+  </section>
+
+  <section class="section section--tight film" id="film">
+    <div class="container">
+      <div class="film__header">
+        <div>
+          <p class="eyebrow">Zobacz na własne oczy</p>
+          <h2>Capoeira w minutę</h2>
+        </div>
+        <p class="film__note">
+          Rozgrzewka, muzyka, roda i akrobatyka. Kliknij kadr pod filmem, żeby od razu przejść do fragmentu.
+        </p>
+      </div>
+      <VideoPlayer src={promo} poster={promoPoster} title="Capoeira Koszalin w minutę" duration="1:00" chapters={chapters} />
     </div>
   </section>
 
@@ -175,6 +207,18 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
   @media (max-width: 860px) { .intro__grid { grid-template-columns: 1fr; } }
   .intro__text { color: var(--text-2); font-size: 1.0625rem; }
   .intro__text .button { margin-top: 0.75rem; }
+
+  .film { scroll-margin-top: 5rem; }
+  .film__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 3rem;
+    margin-bottom: 2.25rem;
+  }
+  .film__header h2 { margin: 0; }
+  .film__note { margin: 0; max-width: 40ch; color: var(--text-2); }
 
   /* Sekcje na przemian ciemne i jasne. Numeruje je przeglądarka, a nie ja, więc
      ukrycie wydarzenia albo galerii nie rozbija rytmu — kolejne przejmują numery.
