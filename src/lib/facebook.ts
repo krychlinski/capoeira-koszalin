@@ -6,6 +6,15 @@ export interface FacebookPost {
   permalink: string;
   /** Ile zdjęć pobrała integracja facebook-images do public/media/fb/. */
   imageCount: number;
+  /** Link udostępniony w poście — pokazujemy go jako kartkę, bez obrazka. */
+  link?: FacebookLink;
+}
+
+export interface FacebookLink {
+  url: string;
+  domain: string;
+  title?: string;
+  description?: string;
 }
 
 const API_VERSION = import.meta.env.FB_API_VERSION ?? 'v26.0';
@@ -33,16 +42,56 @@ export function selectPosts<T extends { date: Date }>(posts: T[]): T[] {
 
 export const FIELDS =
   'id,message,created_time,permalink_url,full_picture,' +
-  'attachments{type,media,subattachments{media}}';
+  'attachments{type,media,title,description,unshimmed_url,subattachments{type,media}}';
 
-/** Wyciąga adresy wszystkich zdjęć z posta — pojedynczych i całych albumów. */
+/**
+ * Link z podglądem udostępniony w poście (załącznik `share`).
+ *
+ * Bierzemy `unshimmed_url`, czyli adres docelowy — `url` prowadzi przez
+ * przekierowanie l.facebook.com. Obrazek podglądu pomijamy, bo Facebook go przycina
+ * (patrz imageUrls). Adres spoza http(s) odrzucamy, żeby do strony nie trafił
+ * odnośnik `javascript:`.
+ */
+export function linkPreview(post: any): FacebookLink | undefined {
+  const attachment = post?.attachments?.data?.[0];
+  if (attachment?.type !== 'share' || typeof attachment.unshimmed_url !== 'string') return undefined;
+  try {
+    const url = new URL(attachment.unshimmed_url);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return undefined;
+    return {
+      url: url.href,
+      domain: url.hostname.replace(/^www\./, ''),
+      title: attachment.title?.trim() || undefined,
+      description: attachment.description?.trim() || undefined,
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Wyciąga adresy zdjęć dodanych do posta — pojedynczego albo całego albumu.
+ *
+ * Obrazek mają też inne załączniki: podgląd linku (`share`), udostępniony post
+ * (`native_templates`), wydarzenie, film. Ale to kadr wycięty przez Facebooka,
+ * nie zdjęcie od klubu — podgląd strony klubu wychodził jako ucięte „APOE”.
+ * Dlatego bierzemy wyłącznie typy `photo` i `album`.
+ *
+ * UWAGA: tę samą regułę powtarza integracja integrations/facebook-images.mjs.
+ */
 export function imageUrls(post: any): string[] {
   const attachment = post?.attachments?.data?.[0];
-  const sub = attachment?.subattachments?.data ?? [];
-  const fromAlbum = sub.map((s: any) => s?.media?.image?.src).filter(Boolean);
-  if (fromAlbum.length) return fromAlbum;
-  const single = attachment?.media?.image?.src ?? post?.full_picture;
-  return single ? [single] : [];
+  if (attachment?.type === 'album') {
+    return (attachment.subattachments?.data ?? [])
+      .filter((s: any) => s?.type === 'photo')
+      .map((s: any) => s?.media?.image?.src)
+      .filter(Boolean);
+  }
+  if (attachment?.type === 'photo') {
+    const single = attachment.media?.image?.src ?? post?.full_picture;
+    return single ? [single] : [];
+  }
+  return [];
 }
 
 /**
@@ -107,6 +156,7 @@ async function load(): Promise<FacebookPost[]> {
         date: new Date(p.created_time),
         permalink: permalinkFor(String(p.id), p.permalink_url),
         imageCount: imageUrls(p).length,
+        link: linkPreview(p),
       }));
 
     return selectPosts(all);

@@ -14,6 +14,10 @@ const { post } = Astro.props;
 const images = Array.from({ length: post.imageCount }, (_, i) => `/media/fb/${post.id}-${i}.jpg`).filter(
   (path) => existsSync(`public${path}`)
 );
+// Pierwsze zdjęcie otwiera wpis nad tekstem. Siatka pod tekstem pokazuje wszystkie
+// zdjęcia, pierwsze też — ale tylko gdy jest ich więcej niż jedno.
+const [lead] = images;
+const many = images.length > 1;
 const lines = post.body.split('\n').map((l) => l.trim()).filter(Boolean);
 const title = stripMarkers(lines[0] ?? '');
 const blocks = toBlocks(lines.slice(1).join('\n'));
@@ -28,6 +32,14 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
         <h1>{title}</h1>
       </div>
     </header>
+
+    {lead && (
+      <div class="container">
+        <button class="lead" data-index="0" aria-label={many ? `Powiększ zdjęcie 1 z ${images.length}` : 'Powiększ zdjęcie'}>
+          <img src={lead} alt="" decoding="async" fetchpriority="high" />
+        </button>
+      </div>
+    )}
 
     <div class="container content">
       <div class="prose">
@@ -56,7 +68,15 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
         )}
       </div>
 
-      {images.length > 0 && (
+      {post.link && (
+        <a class="link" href={post.link.url} target="_blank" rel="noopener noreferrer">
+          <span class="link__domain">{post.link.domain} ↗</span>
+          {post.link.title && <span class="link__title">{post.link.title}</span>}
+          {post.link.description && <span class="link__description">{post.link.description}</span>}
+        </a>
+      )}
+
+      {many && (
         <div class="gallery">
           {images.map((src, i) => (
             <button class="tile" data-index={i} aria-label={`Powiększ zdjęcie ${i + 1} z ${images.length}`}>
@@ -76,10 +96,10 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
   {images.length > 0 && (
     <dialog class="lightbox" data-lightbox tabindex="-1">
       <button class="lightbox__close" data-close aria-label="Zamknij">×</button>
-      <button class="lightbox__nav lightbox__nav--prev" data-prev aria-label="Poprzednie">‹</button>
+      {many && <button class="lightbox__nav lightbox__nav--prev" data-prev aria-label="Poprzednie">‹</button>}
       <img class="lightbox__photo" data-photo alt="" />
-      <span class="lightbox__counter" data-counter></span>
-      <button class="lightbox__nav lightbox__nav--next" data-next aria-label="Następne">›</button>
+      {many && <span class="lightbox__counter" data-counter></span>}
+      {many && <button class="lightbox__nav lightbox__nav--next" data-next aria-label="Następne">›</button>}
     </dialog>
     <script type="application/json" id="post-images" set:html={JSON.stringify(images)} />
   )}
@@ -115,20 +135,58 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
 
   .content { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 10vw, 7rem); }
 
-  /* Linie rysują obramowania kafli, nie tło kontenera prześwitujące przez odstępy —
-     inaczej puste komórki ostatniego rzędu zostawiają szary prostokąt. */
+  /* Zdjęcie pokazujemy w całości, bez przycinania — na Facebooku to często plakat
+     z tekstem, a pionowy kadr ucięty do pasa gubiłby datę i godzinę. */
+  .lead {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--line);
+    background: var(--bg-3);
+    cursor: zoom-in;
+    overflow: hidden;
+  }
+  .lead img {
+    width: auto;
+    max-width: 100%;
+    max-height: min(80vh, 44rem);
+    object-fit: contain;
+  }
+
+  .link {
+    display: grid;
+    gap: 0.35rem;
+    max-width: 44rem;
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    text-decoration: none;
+    transition: border-color 0.25s ease;
+  }
+  .link:hover { border-color: var(--accent); }
+  .link__domain {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .link:hover .link__domain { color: var(--accent); }
+  .link__title { font-family: var(--font-display); font-size: 1.2rem; color: var(--text); }
+  .link__description { color: var(--text-2); font-size: 0.9375rem; }
+
   .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    border-top: 1px solid var(--line);
-    border-left: 1px solid var(--line);
+    gap: clamp(0.5rem, 1.5vw, 0.9rem);
     margin-top: 2.5rem;
   }
   .tile {
     padding: 0;
-    border: 0;
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border: 1px solid var(--line);
     background: var(--bg-3);
     cursor: zoom-in;
     aspect-ratio: 1;
@@ -200,7 +258,7 @@ const blocks = toBlocks(lines.slice(1).join('\n'));
     if (counter) counter.textContent = `${current + 1} / ${images.length}`;
   };
 
-  document.querySelectorAll<HTMLButtonElement>('.tile').forEach((tile) => {
+  document.querySelectorAll<HTMLButtonElement>('.lead, .tile').forEach((tile) => {
     tile.addEventListener('click', () => {
       show(Number(tile.dataset.index));
       lightbox?.showModal();

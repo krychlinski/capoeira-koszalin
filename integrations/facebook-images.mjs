@@ -62,7 +62,7 @@ async function download() {
   try {
     const response = await fetch(
       `https://graph.facebook.com/${apiVersion}/${pageId}/posts` +
-        `?fields=id,message,created_time,full_picture,attachments{type,media,subattachments{media}}` +
+        `?fields=id,message,created_time,full_picture,attachments{type,media,subattachments{type,media}}` +
         `&limit=50&access_token=${pageToken}`
     );
     if (!response.ok) {
@@ -71,14 +71,22 @@ async function download() {
     }
     const data = await response.json();
 
-    // Album zwraca zdjęcia w subattachments, pojedyncze zdjęcie w media.
+    // Ta sama reguła co imageUrls w src/lib/facebook.ts: album zwraca zdjęcia
+    // w subattachments, pojedyncze zdjęcie w media. Podglądy linków, udostępnione
+    // posty, wydarzenia i filmy pomijamy — ich obrazek to kadr wycięty przez Facebooka.
     const urls = (post) => {
       const attachment = post?.attachments?.data?.[0];
-      const sub = attachment?.subattachments?.data ?? [];
-      const fromAlbum = sub.map((s) => s?.media?.image?.src).filter(Boolean);
-      if (fromAlbum.length) return fromAlbum;
-      const single = attachment?.media?.image?.src ?? post?.full_picture;
-      return single ? [single] : [];
+      if (attachment?.type === 'album') {
+        return (attachment.subattachments?.data ?? [])
+          .filter((s) => s?.type === 'photo')
+          .map((s) => s?.media?.image?.src)
+          .filter(Boolean);
+      }
+      if (attachment?.type === 'photo') {
+        const single = attachment.media?.image?.src ?? post?.full_picture;
+        return single ? [single] : [];
+      }
+      return [];
     };
 
     // Ta sama reguła co w src/lib/facebook.ts (funkcja selectPosts): wszystko
