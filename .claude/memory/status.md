@@ -71,6 +71,19 @@ tam do 2026-09-05. Po przeniesieniu go nad grafik dół strony zrobił się pła
 stopce własny, słabszy poblask (krycie 0,1 zamiast 0,16, źródło w lewym dolnym rogu — żeby nie
 konkurował z blokiem wyżej i nie wyglądał jak jego powtórzenie).
 
+## Konta do wpłat — 2026-09-23
+
+Michał „Malandro" podał dane do płatności. Są **dwa różne konta** i łatwo je pomylić:
+
+- **Capoeira** → Koszalińskie Towarzystwo Krzewienia Kultury Fizycznej, BLIK 733 164 711,
+  dopuszczalna też gotówka u instruktora.
+- **Zajęcia dodatkowe** (akrobatyka, Floreios, Mobility) → Akademia Capoeira Koszalin (ING),
+  BLIK 502 494 144 (to ten sam numer, co telefon kontaktowy), **wyłącznie bezgotówkowo**.
+
+Dane siedzą w `settings.json` → `payments` (lista, pole `label` mówi, za co się płaci), panel ma
+je pod „Ustawienia → Konta do wpłat". Wychodzą na dole `/cennik/` w sekcji „Jak zapłacić" oraz
+skrótowo w FAQ (`faq/platnosci.md`, bez numerów — żeby numer konta był tylko w jednym miejscu).
+
 ## Do posprzątania po przeprowadzce
 
 Zrobione: Netlify wyłączone i `netlify.toml` usunięty, Worker skasowany, jego token

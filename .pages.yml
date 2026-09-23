@@ -304,6 +304,18 @@ content:
         label: Odnośnik do map
         type: string
         description: Adres z Map Google — otwiera się po kliknięciu w mapkę. Sama mapka jest obrazkiem w repozytorium, po zmianie adresu trzeba ją wyrenderować od nowa.
+      - name: payments
+        label: Konta do wpłat
+        type: object
+        list: true
+        description: Pokazują się na dole Cennika, w sekcji „Jak zapłacić”.
+        fields:
+          - { name: label, label: Za co, type: string, required: true, description: 'Np. „Zajęcia capoeira”.' }
+          - { name: recipient, label: Odbiorca, type: string, required: true, description: Nazwa, na którą idzie przelew. }
+          - { name: account, label: Numer konta, type: string }
+          - { name: bank, label: Bank, type: string, description: 'Nieobowiązkowy, np. „ING”. Pokazuje się w nawiasie przy numerze konta.' }
+          - { name: blik, label: BLIK, type: string, description: Numer telefonu do przelewu na telefon. }
+          - { name: note, label: Uwaga, type: text, description: 'Np. „Ewentualnie gotówką u instruktora”.' }
       - { name: facebook, label: Facebook, type: string, description: Pełny adres URL. }
       - { name: instagram, label: Instagram, type: string }
       - { name: youtube, label: YouTube, type: string }

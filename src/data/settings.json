@@ -9,6 +9,24 @@
   "email": "",
   "address": "Karola Szymanowskiego 16B\n75-564 Koszalin",
   "mapUrl": "https://maps.app.goo.gl/B4RiFbJRqV344VCk9",
+  "payments": [
+    {
+      "label": "Zajęcia capoeira",
+      "recipient": "Koszalińskie Towarzystwo Krzewienia Kultury Fizycznej",
+      "account": "05 1020 2791 0000 7802 0064 0508",
+      "bank": "",
+      "blik": "733 164 711",
+      "note": "Ewentualnie gotówką u instruktora."
+    },
+    {
+      "label": "Zajęcia dodatkowe: akrobatyka, Floreios, Mobility",
+      "recipient": "Akademia Capoeira Koszalin",
+      "account": "92 1050 1559 1000 0090 8730 8863",
+      "bank": "ING",
+      "blik": "502 494 144",
+      "note": "Wpłaty wyłącznie bezgotówkowe."
+    }
+  ],
   "facebook": "https://www.facebook.com/CapoeiraUnicarKoszalin/",
   "instagram": "https://www.instagram.com/akademiacapoeirakoszalin/",
   "youtube": "",
