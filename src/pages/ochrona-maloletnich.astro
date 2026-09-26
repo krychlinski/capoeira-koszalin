@@ -67,12 +67,15 @@ const effectiveFrom = '3 sierpnia 2026';
   <section class="section section--tight kids">
     <div class="container">
       <p class="eyebrow">Wersja dla dzieci</p>
-      <h2 class="kids__title">Zasady, dzięki którym na Akademii ma być bezpiecznie</h2>
+      <div class="kids__head">
+        <h2 class="kids__title">Zasady, dzięki którym na Akademii ma być bezpiecznie</h2>
+        <a href="#pelna-tresc" class="button button--outline kids__jump">Pełna treść</a>
+      </div>
       {KidsContent ? <div class="prose prose--kids"><KidsContent /></div> : <p class="empty">Brak treści.</p>}
     </div>
   </section>
 
-  <section class="section section--tight">
+  <section class="section section--tight" id="pelna-tresc">
     <div class="container">
       <p class="eyebrow">Pełna treść</p>
       <h2 class="full__title">Standardy Ochrony Małoletnich</h2>
@@ -124,6 +127,19 @@ const effectiveFrom = '3 sierpnia 2026';
     max-width: 22ch;
     margin: 0 0 2rem;
   }
+  /* Nagłówek wersji dla dzieci trzyma obok siebie skok do pełnej treści —
+     paragrafy zaczynają się dopiero kilka ekranów niżej. */
+  .kids__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+  .kids__head .kids__title { margin-bottom: 0; }
+  .kids__jump { flex: none; }
+  .kids__head { margin-bottom: 2rem; }
+
   .prose--kids { font-size: 1.0625rem; }
   .prose--kids :global(h3) {
     font-size: 1.0625rem;

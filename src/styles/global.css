@@ -28,6 +28,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Nagłówek wisi na górze na stałe (76px). Bez tego skok do kotwicy
+     podjeżdża cel pod niego i chowa pierwsze wiersze. */
+  scroll-padding-top: 6rem;
   -webkit-text-size-adjust: 100%;
 }
 
