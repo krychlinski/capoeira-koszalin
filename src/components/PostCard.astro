@@ -123,7 +123,18 @@ const photo = resolveImage(image);
     color: var(--accent);
     margin: 0 0 0.6rem;
   }
-  .card__title { font-size: 1.3rem; margin: 0 0 0.7rem; }
+  /* Post z Facebooka bywa jednym długim zdaniem, którego nie da się sensownie
+     rozciąć na tytuł i treść. Kafel przycina go do trzech wierszy — pełny
+     tekst i tak czeka we wpisie. */
+  .card__title {
+    font-size: 1.3rem;
+    margin: 0 0 0.7rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
   .card__excerpt { color: var(--text-2); font-size: 0.9375rem; margin: 0 0 1.25rem; }
   .card__points {
     list-style: none;

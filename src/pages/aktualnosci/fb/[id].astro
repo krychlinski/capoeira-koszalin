@@ -1,7 +1,7 @@
 ---
 import { existsSync } from 'node:fs';
 import Base from '../../../layouts/Base.astro';
-import { fetchPosts } from '../../../lib/facebook';
+import { fetchPosts, splitTitle, truncate } from '../../../lib/facebook';
 import { videoFor } from '../../../lib/news';
 import { toBlocks, stripMarkers } from '../../../lib/blocks';
 import { formatDate, isoDate } from '../../../lib/format';
@@ -20,12 +20,17 @@ const images = Array.from({ length: post.imageCount }, (_, i) => `/media/fb/${po
 const [lead] = images;
 const many = images.length > 1;
 const video = videoFor(post.id, post.hasVideo);
-const lines = post.body.split('\n').map((l) => l.trim()).filter(Boolean);
-const title = stripMarkers(lines[0] ?? '');
-const blocks = toBlocks(lines.slice(1).join('\n'));
+// Ten sam podział co na kaflu — inaczej nagłówek wpisu mówiłby co innego niż
+// zajawka, z której ktoś tu kliknął.
+const { title: rawTitle, rest } = splitTitle(post.body);
+const title = stripMarkers(rawTitle);
+const blocks = toBlocks(rest);
+// Zakładka przeglądarki i wynik w Google: ucinamy do pełnego słowa, nie w pół.
+const tabTitle = truncate(title, 60);
+const summary = stripMarkers(rest).slice(0, 160) || title;
 ---
 
-<Base title={title.slice(0, 60)} description={stripMarkers(lines.slice(1).join('\n')).slice(0, 160) || title}>
+<Base title={tabTitle.text + (tabTitle.truncated ? '…' : '')} description={summary}>
   <article>
     <header class="header">
       <div class="container">

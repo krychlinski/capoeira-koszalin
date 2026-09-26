@@ -25,6 +25,8 @@ const PAGE = import.meta.env.FB_STRONA ?? 'me';
 const DAYS = Number(import.meta.env.FB_DNI ?? 31);
 const MINIMUM = Number(import.meta.env.FB_MINIMUM ?? 12);
 const FETCH_LIMIT = 50;
+/** Powyżej tylu znaków pierwsza linia przestaje być tytułem, a zaczyna być treścią. */
+const TITLE_LIMIT = 90;
 
 /**
  * Które posty pokazujemy: wszystkie z ostatnich DAYS dni, a gdyby było ich mniej
@@ -193,7 +195,15 @@ export function truncate(source: string, limit = 320): { text: string; truncated
 }
 
 /**
- * Rozbija post na tytuł kafla i resztę treści.
+ * Rozbija post na tytuł i resztę treści.
+ *
+ * Zwykle wystarczy pierwsza linia: klub pisze posty z nagłówkiem u góry.
+ * Ale na Facebooku równie często leci wszystko jednym ciągiem, bez entera —
+ * wtedy cała wiadomość lądowała w nagłówku i wpis był ścianą wersalików.
+ * Dlatego długą pierwszą linię tniemy po pierwszym zdaniu.
+ *
+ * NIC nie ucinamy — funkcja tylko dzieli. Skracanie tytułu to sprawa kafla
+ * i jego stylu, nie danych; wpis ma pokazać wszystko, co napisał klub.
  *
  * Reszta zostaje surowa, ze znacznikami wypunktowania — rozpoznaje je dopiero
  * toBlocks w lib/blocks, a bez nich lista byłaby nie do odróżnienia od akapitów.
@@ -222,8 +232,22 @@ function permalinkFor(postId: string, fromGraph?: string): string {
 export function splitTitle(source: string): { title: string; rest: string } {
   const lines = source.split('\n').map((l) => l.trim()).filter(Boolean);
   const first = (lines[0] ?? '').replace(/^[*•\-–]\s*/, '');
-  return {
-    title: first.length > 90 ? truncate(first, 90).text + '…' : first,
-    rest: lines.slice(1).join('\n'),
-  };
+  const rest = lines.slice(1).join('\n');
+
+  if (first.length <= TITLE_LIMIT) return { title: first, rest };
+
+  // Długa pierwsza linia: tytułem zostaje pierwsze zdanie, reszta schodzi do treści.
+  // Kropka musi być na granicy zdania — po niej odstęp i wielka litera — żeby nie
+  // rozcinać godziny („10.00”), skrótu czy daty w nawiasie („(26.09)”).
+  const boundary = first.search(/(?<=[.!?…])\s+(?=\p{Lu})/u);
+  if (boundary > 0) {
+    return {
+      title: first.slice(0, boundary).trim(),
+      rest: [first.slice(boundary).trim(), rest].filter(Boolean).join('\n'),
+    };
+  }
+
+  // Jedno długie zdanie bez miejsca na cięcie zostaje w całości — lepszy długi
+  // tytuł niż urwany w pół myśli. Kafel przytnie go stylem, wpis pokaże cały.
+  return { title: first, rest };
 }
