@@ -263,6 +263,28 @@ content:
       - { name: image, label: Zdjęcie, type: image }
       - { name: body, label: Treść, type: rich-text }
 
+  - name: strona-ochrona-maloletnich
+    label: Strona „Ochrona małoletnich” — pełna treść
+    type: file
+    path: src/content/pages/ochrona-maloletnich.md
+    format: yaml-frontmatter
+    fields:
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: heading, label: Nagłówek, type: text }
+      - { name: image, label: Zdjęcie, type: image }
+      - { name: body, label: Treść, type: rich-text }
+
+  - name: strona-ochrona-maloletnich-dzieci
+    label: Strona „Ochrona małoletnich” — wersja dla dzieci
+    type: file
+    path: src/content/pages/ochrona-maloletnich-dzieci.md
+    format: yaml-frontmatter
+    fields:
+      - { name: title, label: Tytuł, type: string, required: true }
+      - { name: heading, label: Nagłówek, type: text }
+      - { name: image, label: Zdjęcie, type: image }
+      - { name: body, label: Treść, type: rich-text }
+
   - name: settings
     label: Ustawienia
     type: file
