@@ -34,8 +34,9 @@ WordPressa pod `capoeira.koszalin.pl`.
 - **Zdjęcia leżą w `src/assets/media/`, nie w `public/`** — dzięki temu Astro je optymalizuje.
   CMS zapisuje ścieżkę jako `/media/plik.jpg`, a `src/lib/media.ts` mapuje ją po nazwie pliku.
   Nie przenoś mediów do `public/`, bo strona zacznie serwować oryginały z aparatu.
-  Jedyny wyjątek: zdjęcia z postów na Facebooku pobiera przy budowaniu
-  `integrations/facebook-images.mjs` do `public/media/fb/` (w `.gitignore`).
+  Jedyny wyjątek: zdjęcia i filmy z postów na Facebooku pobiera przy budowaniu
+  `integrations/facebook-media.mjs` do `public/media/fb/` (w `.gitignore`). Film ponad
+  20 MiB integracja pomija — nad limitem Cloudflare wdrożenie by padło.
 - **Filmy leżą w `src/assets/video/`** i są importowane w komponentach
   (`import promo from '../assets/video/promo-2014.mp4'`) — dostają hash w nazwie i długi cache.
   Kodujemy je ffmpegiem z oryginałów w `MATERIAŁY/Filmy promo/` (H.264, `-movflags +faststart`),

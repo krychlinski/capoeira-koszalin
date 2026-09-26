@@ -34,8 +34,9 @@ const entries = await allNews();
               excerpt={x.excerpt}
               points={x.points}
               image={x.image}
-              imageUrl={x.images[0]}
+              imageUrl={x.images[0] ?? x.video?.poster}
               imageCount={x.images.length}
+              video={Boolean(x.video)}
             />
           ))}
         </div>

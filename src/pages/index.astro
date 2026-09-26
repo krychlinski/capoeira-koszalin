@@ -161,8 +161,9 @@ const preview = albums.flatMap((a) => a.data.images).slice(0, 6);
               excerpt={x.excerpt}
               points={x.points}
               image={x.image}
-              imageUrl={x.images[0]}
+              imageUrl={x.images[0] ?? x.video?.poster}
               imageCount={x.images.length}
+              video={Boolean(x.video)}
             />
           ))}
         </div>

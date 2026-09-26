@@ -8,7 +8,7 @@ metadata:
 ## Facebook odpytywany jest RAZ, przy starcie
 
 `fetchPosts()` w `lib/facebook.ts` zapamiętuje wynik w pamięci procesu, a integracja
-`integrations/facebook-images.mjs` chodzi na `astro:build:start` i `astro:server:start`. Nowy post **nie pojawi
+`integrations/facebook-media.mjs` chodzi na `astro:build:start` i `astro:server:start`. Nowy post **nie pojawi
 się** ani na działającym serwerze deweloperskim, ani na produkcji, dopóki nie nastąpi kolejne
 budowanie. To nie usterka — pytanie „czemu nie widać nowego wpisu" ma zwykle tę odpowiedź.
 

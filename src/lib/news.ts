@@ -14,9 +14,26 @@ export interface NewsEntry {
   image?: string;
   /** Odnośnik do oryginału na Facebooku — tylko dla postów stamtąd. */
   facebookUrl?: string;
+  /**
+   * Film z posta. Jest obecny, gdy post go ma, ale `src` dopiero wtedy, gdy plik
+   * naprawdę leży w public/media/fb — nagranie ponad limit Cloudflare integracja
+   * pomija i zostaje sama plansza z odesłaniem na Facebooka.
+   */
+  video?: { src?: string; poster?: string };
   /** Pierwsze pozycje wypunktowania, gdy wpis zaczyna się listą. */
   points?: string[];
   fullBody?: string;
+}
+
+/** Film wpisu wraz z kadrem — każde z osobna, bo pobranie mogło się nie udać. */
+export function videoFor(id: string, hasVideo: boolean): NewsEntry['video'] {
+  if (!hasVideo) return undefined;
+  const src = `/media/fb/${id}-video.mp4`;
+  const poster = `/media/fb/${id}-video.jpg`;
+  return {
+    src: existsSync(`public${src}`) ? src : undefined,
+    poster: existsSync(`public${poster}`) ? poster : undefined,
+  };
 }
 
 /**
@@ -64,6 +81,7 @@ export async function allNews(): Promise<NewsEntry[]> {
       images: Array.from({ length: post.imageCount }, (_, i) => `/media/fb/${post.id}-${i}.jpg`).filter(
         (path) => existsSync(`public${path}`)
       ),
+      video: videoFor(post.id, post.hasVideo),
       facebookUrl: post.permalink,
       fullBody: post.body,
     };

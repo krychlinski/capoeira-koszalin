@@ -35,7 +35,7 @@ Przy odtwarzaniu tokenu w przyszłości: to jest ten krok, na którym się potkn
   strumień; na liście renderuje je `PostCard.astro`, każdy post ma podstronę
   `src/pages/aktualnosci/fb/[id].astro`. Skróty na liście przez `truncate()` (domyślnie 320 znaków).
   Zastępuje usuniętą wtyczkę Mety — to jedyny mechanizm pokazywania postów na stronie.
-- `integrations/facebook-images.mjs` — pobiera zdjęcia z postów przy budowaniu do
+- `integrations/facebook-media.mjs` — pobiera zdjęcia i filmy z postów przy budowaniu do
   `public/media/fb/` (w `.gitignore`). Wyjątek od zasady „media w `src/assets`”.
 - `FACEBOOK.md` — instrukcja konfiguracji krok po kroku.
 - `.env` dopisane do `.gitignore`.

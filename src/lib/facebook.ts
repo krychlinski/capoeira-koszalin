@@ -4,8 +4,10 @@ export interface FacebookPost {
   body: string;
   date: Date;
   permalink: string;
-  /** Ile zdjęć pobrała integracja facebook-images do public/media/fb/. */
+  /** Ile zdjęć pobrała integracja facebook-media do public/media/fb/. */
   imageCount: number;
+  /** Czy do posta dołączono film — plik ściąga ta sama integracja. */
+  hasVideo: boolean;
   /** Link udostępniony w poście — pokazujemy go jako kartkę, bez obrazka. */
   link?: FacebookLink;
 }
@@ -30,8 +32,8 @@ const FETCH_LIMIT = 50;
  *
  * Bez tego cichy miesiąc na Facebooku zostawiałby pustą stronę aktualności.
  *
- * UWAGA: tę samą regułę stosuje integracja pobierająca zdjęcia
- * (integrations/facebook-images.mjs). Zmiana tutaj wymaga zmiany i tam, inaczej
+ * UWAGA: tę samą regułę stosuje integracja pobierająca zdjęcia i filmy
+ * (integrations/facebook-media.mjs). Zmiana tutaj wymaga zmiany i tam, inaczej
  * część postów zostanie bez obrazków.
  */
 export function selectPosts<T extends { date: Date }>(posts: T[]): T[] {
@@ -75,9 +77,10 @@ export function linkPreview(post: any): FacebookLink | undefined {
  * Obrazek mają też inne załączniki: podgląd linku (`share`), udostępniony post
  * (`native_templates`), wydarzenie, film. Ale to kadr wycięty przez Facebooka,
  * nie zdjęcie od klubu — podgląd strony klubu wychodził jako ucięte „APOE”.
- * Dlatego bierzemy wyłącznie typy `photo` i `album`.
+ * Dlatego bierzemy wyłącznie typy `photo` i `album`. Film ma własną funkcję
+ * (hasVideo) — tam kadr jest planszą nagrania, czyli dokładnie tym, czego chcemy.
  *
- * UWAGA: tę samą regułę powtarza integracja integrations/facebook-images.mjs.
+ * UWAGA: tę samą regułę powtarza integracja integrations/facebook-media.mjs.
  */
 export function imageUrls(post: any): string[] {
   const attachment = post?.attachments?.data?.[0];
@@ -92,6 +95,21 @@ export function imageUrls(post: any): string[] {
     return single ? [single] : [];
   }
   return [];
+}
+
+/**
+ * Czy post ma film.
+ *
+ * Samego adresu nie przekazujemy dalej: jest podpisany i wygasa po kilku dniach,
+ * więc strona odtwarza kopię pobraną przy budowaniu przez integrations/facebook-media.mjs.
+ * Facebook nazywa ten załącznik różnie (`video_inline` dla rolki, `video` dla zwykłego
+ * nagrania), dlatego łapiemy każdy typ zaczynający się od „video”.
+ *
+ * UWAGA: tę samą regułę powtarza wspomniana integracja.
+ */
+export function hasVideo(post: any): boolean {
+  const attachment = post?.attachments?.data?.[0];
+  return Boolean(attachment?.type?.startsWith('video') && typeof attachment.media?.source === 'string');
 }
 
 /**
@@ -156,6 +174,7 @@ async function load(): Promise<FacebookPost[]> {
         date: new Date(p.created_time),
         permalink: permalinkFor(String(p.id), p.permalink_url),
         imageCount: imageUrls(p).length,
+        hasVideo: hasVideo(p),
         link: linkPreview(p),
       }));
 
