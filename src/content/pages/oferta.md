@@ -10,7 +10,7 @@ Podstawa naszej działalności. Nauka technik, ataków, obrony, ruchów, przejś
 akrobatycznych, gry capoeira, gry na instrumentach, śpiewu i podstaw języka portugalskiego.
 Do tego rozciąganie, kondycja, siła i skoczność.
 
-- **3–6 lat** — dwa razy w tygodniu po 45 minut
+- **4–6 lat** — dwa razy w tygodniu po 45 minut
 - **7–12 lat** — dwa razy w tygodniu po 60 minut
 - **Grupa zaawansowana** — dwa razy w tygodniu po 90 minut
 - **Młodzież i dorośli** — dwa razy w tygodniu po 90 minut

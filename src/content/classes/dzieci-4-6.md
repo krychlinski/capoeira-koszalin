@@ -1,5 +1,5 @@
 ---
-group: "Dzieci 3–6 lat"
+group: "Dzieci 4–6 lat"
 subtitle: "45 minut"
 venue: ""
 address: ""
