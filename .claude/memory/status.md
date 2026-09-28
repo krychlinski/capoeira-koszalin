@@ -154,7 +154,7 @@ nie widziało budowanie: tekst wpisu w tytule zamiast w treści, kliknięcie nie
 
 Wykrywanie iPhone'a zadziałało poprawnie — w zwykłej karcie Safari blok pokazuje instrukcję
 zamiast przycisku prowadzącego donikąd. Instrukcję trzeba było rozpisać na kroki, bo pozycji
-„Do ekranu początkowego" bywa w menu udostępniania nie widać.
+„Do ekranu głównego" bywa w menu udostępniania nie widać.
 
 ## Sale treningowe — stan przejściowy
 

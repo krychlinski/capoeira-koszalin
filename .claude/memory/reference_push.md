@@ -224,6 +224,10 @@ w `localStorage`. Nie da się tego zrobić lepiej, dopóki Apple nie doda odpowi
   sygnatury** — na komputerze i na iPhonie różnicy nie widać, więc usterka wraca niezauważona.
   Przy okazji: przycisk udostępniania jest na iPadzie u góry, a na iPhonie na dolnym pasku,
   więc krok instrukcji jest zależny od urządzenia.
+- **Napisy w instrukcji muszą brzmieć dokładnie tak jak w polskim iOS.** Pozycja w menu
+  udostępniania to **„Do ekranu głównego"** — pierwsza wersja pisała „Do ekranu początkowego"
+  i Kacper wyłapał to na urządzeniu (2026-09-28). Kto szuka w menu innego napisu, niż tam jest,
+  uzna, że pozycji nie ma. Tego nie sprawdzi żaden test — trzeba spojrzeć na telefon.
 - **Android: `Urgency: high`, nie `normal`.** 2026-09-11 wpis rozesłano o 9:14, Google przyjął
   wszystkie trzy wiadomości (`{"ok":6}` razem z Apple), a kolega z Androidem dostał powiadomienie
   „dużo później". Android w uśpieniu odkłada zwykłe wiadomości do własnego okna wybudzenia; Apple
