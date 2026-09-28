@@ -74,7 +74,7 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
     font-size: 0.9375rem;
     color: var(--text-2);
   }
-  /* Kroki instrukcji dla iPhone'a — wstawiane przez skrypt, więc :global. */
+  /* Kroki instrukcji dla iPhone'a i iPada — wstawiane przez skrypt, więc :global. */
   .bell__lead :global(.bell__steps) {
     margin: 0.9rem 0 0;
     padding-left: 1.25rem;
@@ -166,10 +166,19 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
     const supported =
       'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 
-    // Na iPhonie web push działa WYŁĄCZNIE w stronie dodanej do ekranu głównego.
-    // W zwykłej karcie Safari PushManager często w ogóle nie istnieje, więc bez tego
-    // rozróżnienia blok po prostu znikał i nikt nie wiedział dlaczego.
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    // Na iPhonie i iPadzie web push działa WYŁĄCZNIE w stronie dodanej do ekranu
+    // głównego. W zwykłej karcie Safari PushManager często w ogóle nie istnieje,
+    // więc bez tego rozróżnienia blok po prostu znikał i nikt nie wiedział dlaczego.
+    //
+    // iPad NIE PRZYZNAJE SIĘ, że jest iPadem: od iPadOS 13 Safari domyślnie podaje
+    // sygnaturę Maca („Macintosh; Intel Mac OS X”), bez słowa „iPad”. Sam wzorzec
+    // z sygnatury dawał więc na iPadzie fałsz — blok wpadał w gałąź „nieobsługiwane”,
+    // pomijał instrukcję i cicho znikał. Rozpoznajemy go po dotyku: Mac zgłasza
+    // `maxTouchPoints === 0`, bo gładzik nie jest ekranem dotykowym.
+    const iPad =
+      /iPad/.test(navigator.userAgent) ||
+      (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+    const iOS = /iPhone|iPod/.test(navigator.userAgent) || iPad;
     const standalone =
       window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
@@ -194,33 +203,43 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
       },
     };
 
+    // Dwa wejścia prowadzą do tej samej instrukcji: brak obsługi push (zwykła karta
+    // Safari) i nieudany zapis po kliknięciu. `mimoSchowania` jest dla drugiego —
+    // kto właśnie kliknął, ma prawo wiedzieć, dlaczego nic z tego nie wyszło,
+    // nawet jeśli kiedyś schował ten blok.
+    const instrukcjaEkranuGlownego = (mimoSchowania) => {
+      if (!mimoSchowania && pamiec.czyta()) return false;
+      root.hidden = false;
+      // Nie zakładamy, że ikony jeszcze nie ma. Najpierw zdanie, które działa
+      // w obu wypadkach, a instrukcja instalacji jest zwinięta — kto ją już
+      // przeszedł, nie musi na nią patrzeć.
+      heading.textContent = 'Powiadomienia działają z ekranu głównego';
+      lead.innerHTML =
+        'Safari nie wysyła powiadomień ze zwykłej karty — nie da się ich włączyć nigdzie w ustawieniach. ' +
+        '<strong>Masz już ikonę Akademii na ekranie głównym? Otwórz stronę z niej i włącz dzwoneczek tam.</strong>' +
+        '<details class="bell__how">' +
+        '<summary>Nie mam jeszcze ikony — jak ją dodać</summary>' +
+        '<ol class="bell__steps">' +
+        '<li>Stuknij przycisk udostępniania (kwadrat ze strzałką w górę) — ' +
+        (iPad ? 'na iPadzie u góry, obok pola adresu' : 'na dolnym pasku') +
+        '.</li>' +
+        '<li>Wybierz z listy <strong>„Do ekranu początkowego”</strong>. Jeśli tej pozycji nie ma, zjedź na sam dół listy, stuknij <strong>„Edytuj czynności…”</strong> i dodaj ją zielonym plusem.</li>' +
+        '<li>Otwórz stronę z nowej ikony — nie z Safari.</li>' +
+        '<li>Wróć tutaj: przycisk będzie już działał.</li>' +
+        '</ol>' +
+        '</details>';
+      button.hidden = true;
+      note.innerHTML =
+        'Wymaga iOS albo iPadOS 16.4 lub nowszego. <button type="button" class="bell__dismiss" data-bell-dismiss>Nie pokazuj tego więcej</button>';
+      root.querySelector('[data-bell-dismiss]')?.addEventListener('click', () => {
+        pamiec.zapisz();
+        root.hidden = true;
+      });
+      return true;
+    };
+
     if (!supported) {
-      if (iOS && !standalone && !pamiec.czyta()) {
-        root.hidden = false;
-        // Nie zakładamy, że ikony jeszcze nie ma. Najpierw zdanie, które działa
-        // w obu wypadkach, a instrukcja instalacji jest zwinięta — kto ją już
-        // przeszedł, nie musi na nią patrzeć.
-        heading.textContent = 'Powiadomienia działają z ekranu głównego';
-        lead.innerHTML =
-          'Safari nie wysyła powiadomień ze zwykłej karty — nie da się ich włączyć nigdzie w ustawieniach. ' +
-          '<strong>Masz już ikonę Akademii na ekranie głównym? Otwórz stronę z niej i włącz dzwoneczek tam.</strong>' +
-          '<details class="bell__how">' +
-          '<summary>Nie mam jeszcze ikony — jak ją dodać</summary>' +
-          '<ol class="bell__steps">' +
-          '<li>Stuknij przycisk udostępniania (kwadrat ze strzałką w górę).</li>' +
-          '<li>Wybierz z listy <strong>„Do ekranu początkowego”</strong>. Jeśli tej pozycji nie ma, zjedź na sam dół listy, stuknij <strong>„Edytuj czynności…”</strong> i dodaj ją zielonym plusem.</li>' +
-          '<li>Otwórz stronę z nowej ikony — nie z Safari.</li>' +
-          '<li>Wróć tutaj: przycisk będzie już działał.</li>' +
-          '</ol>' +
-          '</details>';
-        button.hidden = true;
-        note.innerHTML =
-          'Wymaga iOS 16.4 lub nowszego. <button type="button" class="bell__dismiss" data-bell-dismiss>Nie pokazuj tego więcej</button>';
-        root.querySelector('[data-bell-dismiss]')?.addEventListener('click', () => {
-          pamiec.zapisz();
-          root.hidden = true;
-        });
-      }
+      if (iOS && !standalone) instrukcjaEkranuGlownego();
       return;
     }
 
@@ -300,10 +319,16 @@ const VAPID_PUBLIC = 'BEH4Ql3QsZkHA9EUNHnTJTIKxNWDpyIOG22ctTxO9vmKhvY6g9kGgN6TtY
         const on = button.getAttribute('aria-pressed') === 'true';
         await (on ? disable() : enable());
       } catch {
-        render(
-          button.getAttribute('aria-pressed') === 'true',
-          'Nie udało się. Spróbuj jeszcze raz za chwilę.'
-        );
+        // Gdyby Safari w karcie udawało obsługę push (PushManager jest, ale zapis
+        // odpada), „spróbuj jeszcze raz” wysyłałoby ludzi w kółko po nic.
+        if (iOS && !standalone) {
+          instrukcjaEkranuGlownego(true);
+        } else {
+          render(
+            button.getAttribute('aria-pressed') === 'true',
+            'Nie udało się. Spróbuj jeszcze raz za chwilę.'
+          );
+        }
       } finally {
         delete button.dataset.busy;
       }

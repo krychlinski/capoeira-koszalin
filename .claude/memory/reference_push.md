@@ -211,9 +211,19 @@ w `localStorage`. Nie da się tego zrobić lepiej, dopóki Apple nie doda odpowi
 
 ## Ograniczenia, które trzeba znać
 
-- **iPhone: tylko po dodaniu do ekranu głównego.** Safari nie dostarcza push w zwykłej karcie.
-  Stąd `public/site.webmanifest` i `display: standalone` — bez manifestu nie da się tego nawet
-  spróbować. Dzwoneczek wykrywa ten przypadek i zamiast znikać, tłumaczy, co zrobić.
+- **iPhone i iPad: tylko po dodaniu do ekranu głównego.** Safari nie dostarcza push w zwykłej
+  karcie. Stąd `public/site.webmanifest` i `display: standalone` — bez manifestu nie da się tego
+  nawet spróbować. Dzwoneczek wykrywa ten przypadek i zamiast znikać, tłumaczy, co zrobić.
+- **iPad nie przyznaje się, że jest iPadem.** Zgłoszone 2026-09-28: na iPadzie dzwoneczek nie
+  działał i nie dawał żadnej instrukcji, choć na iPhonie dawał. Od iPadOS 13 Safari domyślnie
+  podaje sygnaturę Maca (`Macintosh; Intel Mac OS X`) i słowa „iPad" w niej NIE MA. Wzorzec
+  `/iPad|iPhone|iPod/` dawał więc fałsz, gałąź „to iOS bez ekranu głównego" nie wchodziła
+  i blok cicho znikał — objaw nie do odróżnienia od przeglądarki, która push naprawdę nie umie.
+  Rozpoznajemy iPada po dotyku: `/Macintosh/` w sygnaturze **plus** `maxTouchPoints > 1`.
+  Mac ma tu zero, bo gładzik nie liczy się jako ekran dotykowy. **Nie wracać do samej
+  sygnatury** — na komputerze i na iPhonie różnicy nie widać, więc usterka wraca niezauważona.
+  Przy okazji: przycisk udostępniania jest na iPadzie u góry, a na iPhonie na dolnym pasku,
+  więc krok instrukcji jest zależny od urządzenia.
 - **Android: `Urgency: high`, nie `normal`.** 2026-09-11 wpis rozesłano o 9:14, Google przyjął
   wszystkie trzy wiadomości (`{"ok":6}` razem z Apple), a kolega z Androidem dostał powiadomienie
   „dużo później". Android w uśpieniu odkłada zwykłe wiadomości do własnego okna wybudzenia; Apple
