@@ -59,9 +59,13 @@ Powiązane: [[todo-facebook-api]]
 
 ## Udostępnienie cudzego postu przepada — i to nie jest nasza usterka
 
-Zbadane 2026-09-29. Strona klubu udostępniła post Malandra z jego PRYWATNEGO profilu:
+Zbadane 2026-09-29. Malandro napisał post w grupie Akademii, a strona klubu go udostępniła:
 dwie grafiki i długi tekst o nowych grupach. Na Facebooku wygląda normalnie, na stronie
 nie pojawił się w ogóle, więc nie poszło też powiadomienie.
+
+Reguła jest prostsza, niż się wydaje: **czytamy wyłącznie własne posty strony** (`/{page}/posts`).
+Cokolwiek powstało poza nią — w grupie, na prywatnym profilu — jest dla nas nieczytelne,
+nawet gdy strona to udostępni.
 
 Co Graph API oddaje dla takiego udostępnienia:
 
@@ -69,14 +73,16 @@ Co Graph API oddaje dla takiego udostępnienia:
 - załącznik typu `native_templates` z tytułem „Zawartość nie jest teraz dostępna";
 - `full_picture` — **jest**, jedna z grafik udostępnionego postu;
 - `parent_id` — jest, ale pobranie rodzica kończy się błędem uprawnień
-  **zarówno tokenem strony, jak i użytkownika**. Facebook nie udostępnia aplikacjom
-  postów z prywatnych profili i nie da się tego obejść żadnym uprawnieniem.
+  **zarówno tokenem strony, jak i użytkownika**. Tak samo odbija się pytanie o sam obiekt
+  nadrzędny, więc API nie mówi nawet, czy to grupa, czy profil. Dostępu do treści grup
+  Facebook aplikacjom praktycznie nie daje i nie da się tego obejść uprawnieniem.
 
 Czyli: **tekstu takiego postu nie da się odzyskać.** Maksimum, co możemy z niego wyciągnąć,
 to jeden obrazek bez ani jednego słowa.
 
-Wniosek praktyczny dla klubu: ogłoszenia mają być publikowane **jako strona**, nie
-udostępniane z prywatnego profilu. Wtedy wszystko działa jak zwykle.
+Wniosek praktyczny dla klubu: ogłoszenia mają być publikowane **jako strona**. Jeśli mają
+trafić i do grupy, kolejność jest odwrotna niż tym razem — najpierw post strony, potem
+udostępnienie go do grupy.
 
 Gdyby klub dopisał przy udostępnianiu choć jedno zdanie, post BY się pojawił (jest `message`),
 ale bez obrazka — `imageUrls()` bierze tylko typy `photo` i `album`, a tu jest
