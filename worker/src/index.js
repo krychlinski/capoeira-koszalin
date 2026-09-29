@@ -12,6 +12,9 @@
  *   POST /notify       — rozsyła, wołane przez GitHub Actions po zbudowaniu strony
  *   GET  /health       — czy żyje i ile jest subskrypcji
  *
+ * Do tego cron: co dwie godziny między 8:00 a 22:00 budzi budowanie strony,
+ * żeby zajrzało na Facebooka po nowe posty. Patrz `mozeObudzic`.
+ *
  * WYSYŁAMY POWIADOMIENIA BEZ TREŚCI. Prawdziwy ładunek trzeba szyfrować według
  * RFC 8291 (aes128gcm, wymiana kluczy z przeglądarką) i to najbardziej zawiła część
  * całego protokołu. Puste powiadomienie tego nie wymaga: service worker po odebraniu
@@ -225,6 +228,84 @@ async function health(request, env) {
   return json({ ok: true, subskrypcje: count, ostatniWpis }, 200, corsHeaders(request, env));
 }
 
+/**
+ * Godzina w Koszalinie, nie w UTC.
+ *
+ * Cron Cloudflare, jak każdy cron, chodzi w UTC — gdyby okno 8:00–22:00 wpisać
+ * wprost w harmonogram, zimą przesunęłoby się na 7:00–21:00 czasu polskiego.
+ * Pytamy więc co godzinę, a o porze decydujemy tutaj, po czasie w `Europe/Warsaw`.
+ * Zmiana czasu przestaje nas obchodzić.
+ *
+ * `hourCycle: 'h23'` jest istotny: bez niego północ potrafi wyjść jako 24.
+ */
+function godzinaWarszawska(teraz = new Date()) {
+  const części = new Intl.DateTimeFormat('pl-PL', {
+    timeZone: 'Europe/Warsaw',
+    hour: 'numeric',
+    hourCycle: 'h23',
+  }).formatToParts(teraz);
+  return Number(części.find((c) => c.type === 'hour')?.value);
+}
+
+/**
+ * Prosi GitHuba o zbudowanie i wdrożenie strony.
+ *
+ * Dlaczego stąd, a nie z harmonogramu GitHuba: ten gubi zaplanowane uruchomienia,
+ * gdy runnery są obciążone. Zmierzone na tym repozytorium przez 30 dni — odpaliło
+ * się 138 ze skonfigurowanych 570, czyli mniej więcej co czwarte, z przerwami
+ * po osiem godzin. Cron Cloudflare nie gubi.
+ *
+ * `powod: 'harmonogram'` jest tu kluczowy. Bez niego workflow potraktowałby to jak
+ * ręczne kliknięcie „Run workflow” i WDRAŻAŁ ZAWSZE, a nie tylko przy zmianie
+ * treści — 240 uruchomień miesięcznie zjadłoby limit 500 wdrożeń Cloudflare
+ * w połowie miesiąca. Z tym powodem workflow sprawdza odcisk tak samo jak
+ * przy własnym harmonogramie.
+ */
+async function budzBudowanie(env) {
+  if (!env.GH_TOKEN) {
+    console.error('[cron] brak GH_TOKEN — nie mam czym obudzić budowania');
+    return;
+  }
+
+  const res = await fetch(
+    `https://api.github.com/repos/${env.GH_REPO}/actions/workflows/${env.GH_WORKFLOW}/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.GH_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json',
+        // GitHub odrzuca żądania bez tego nagłówka.
+        'User-Agent': 'capoeira-push-cron',
+      },
+      body: JSON.stringify({ ref: 'main', inputs: { powod: 'harmonogram' } }),
+    }
+  );
+
+  if (res.status === 204) {
+    console.log('[cron] obudziłem budowanie');
+    return;
+  }
+  console.error(`[cron] GitHub odmówił (${res.status}): ${(await res.text()).slice(0, 200)}`);
+}
+
+/**
+ * Co dwie godziny między 8:00 a 22:00 czasu polskiego.
+ *
+ * Nocy odpuszczamy: klub nie publikuje o trzeciej, a post z 23:00 poczeka do rana.
+ * Cron chodzi co godzinę, więc połowę wywołań kończymy tutaj — to tańsze niż
+ * osiem osobnych wpisów w harmonogramie i odporne na zmianę czasu.
+ */
+async function mozeObudzic(env) {
+  const godzina = godzinaWarszawska();
+  if (godzina < 8 || godzina > 22 || godzina % 2 !== 0) {
+    console.log(`[cron] ${godzina}:00 w Koszalinie — nie ta pora, śpię dalej`);
+    return;
+  }
+  await budzBudowanie(env);
+}
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
@@ -238,5 +319,9 @@ export default {
     if (request.method === 'GET' && pathname === '/health') return health(request, env);
 
     return json({ error: 'nie ma takiej trasy' }, 404, corsHeaders(request, env));
+  },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(mozeObudzic(env));
   },
 };

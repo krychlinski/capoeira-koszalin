@@ -1,17 +1,25 @@
 name: Zbuduj i wdróż
 
 # Jedno miejsce, w którym powstaje strona. Uruchamia się przy zmianie w gałęzi
-# main, z harmonogramu po nowe posty z Facebooka (co godzinę w dzień, dwa razy
-# w nocy) oraz ręcznie przyciskiem.
+# main, z crona Cloudflare Workera po nowe posty z Facebooka (co dwie godziny
+# między 8:00 a 22:00 czasu polskiego), z rzadkiego harmonogramu zapasowego
+# oraz ręcznie przyciskiem.
+#
+# DLACZEGO PO NOWE POSTY BUDZI NAS WORKER, A NIE WŁASNY HARMONOGRAM: GitHub gubi
+# zaplanowane uruchomienia, gdy runnery są obciążone. Zmierzone tutaj przez
+# 30 dni — odpaliło się 138 ze skonfigurowanych 570, czyli mniej więcej co czwarte,
+# z przerwami po osiem godzin. Minuta 7 zamiast pełnej godziny pomogła za mało.
+# Cron Cloudflare nie gubi, więc to on dzwoni (`mozeObudzic` w worker/src/index.js),
+# a harmonogram poniżej został jako siatka bezpieczeństwa na wypadek awarii Workera.
 #
 # Dlaczego tutaj, a nie w Cloudflare: projekt Pages został założony z linii
 # poleceń, a takiego nie da się już połączyć z repozytorium — Cloudflare buduje
 # tylko projekty połączone z gitem od samego początku. Budowanie u GitHuba
 # załatwia przy okazji harmonogram, więc nie potrzebujemy deploy hooka.
 #
-# Godziny w UTC, GitHub nie obsługuje stref czasowych, więc ZIMĄ wszystko
-# przesuwa się o godzinę wcześniej czasu polskiego (5:07-21:07 zamiast 6:07-22:07).
-# Nie warto tego gonić dwoma zestawami crona przełączanymi dwa razy w roku.
+# Godziny zapasowego harmonogramu są w UTC — GitHub nie obsługuje stref czasowych,
+# więc zimą przesuwają się o godzinę. Przy siatce bezpieczeństwa to bez znaczenia.
+# Okno 8:00-22:00 pilnuje Worker i tam zmiana czasu jest uwzględniona.
 # GitHub wyłącza harmonogram w repozytoriach bez zmian przez 60 dni — wtedy
 # wystarczy jedno uruchomienie ręczne przyciskiem "Run workflow".
 #
@@ -24,12 +32,17 @@ on:
   push:
     branches: [main]
   schedule:
-    # Co godzinę w dzień, rzadziej w nocy — klub nie publikuje o trzeciej.
-    # Minuta 7, a nie 0, żeby ominąć zapchany szczyt godziny: zaplanowane
-    # workflow stoją u GitHuba w kolejce i o pełnej godzinie czekają najdłużej.
-    - cron: '7 4-20 * * *'
-    - cron: '7 23,2 * * *'
+    # Siatka bezpieczeństwa na wypadek, gdyby Worker przestał dzwonić — nie główny
+    # napęd. Trzy razy dziennie wystarczy, żeby strona nie została w tyle o dobę,
+    # a że GitHub część z tych uruchomień i tak zgubi, nie ma sensu prosić o więcej.
+    # Minuta 7, a nie 0, żeby ominąć zapchany szczyt godziny.
+    - cron: '7 6,12,18 * * *'
   workflow_dispatch:
+    inputs:
+      powod:
+        description: 'Zostaw puste. Worker wpisuje tu „harmonogram”, żeby wdrożyć tylko przy zmianie treści.'
+        required: false
+        default: ''
 
 # Dwa wdrożenia naraz mogłyby postawić na produkcji starszą wersję.
 concurrency:
@@ -58,14 +71,25 @@ jobs:
       # Odcisk obejmuje wyłącznie to, co renderujemy, więc nowy komentarz pod
       # postem go nie ruszy — komentarzy nawet nie pobieramy z Facebooka.
       #
-      # Sprawdzamy tylko przy uruchomieniu z harmonogramu. Wypchnięcie zmiany
-      # i przycisk "Run workflow" wdrażają zawsze: tam zmiana może siedzieć
-      # w szacie albo w treści z panelu, czyli poza odciskiem aktualności.
+      # Sprawdzamy przy uruchomieniu z harmonogramu ORAZ przy wołaniu z crona
+      # Workera, który przedstawia się wejściem powod=harmonogram. Bez tego drugiego
+      # warunku cron liczyłby się jako ręczne kliknięcie i wdrażał zawsze — 240
+      # uruchomień miesięcznie zjadłoby limit 500 wdrożeń Cloudflare w pół miesiąca.
+      #
+      # Wypchnięcie zmiany i ręczny przycisk "Run workflow" wdrażają zawsze: tam
+      # zmiana może siedzieć w szacie albo w treści z panelu, czyli poza odciskiem
+      # aktualności.
+      #
+      # Wartości ze zdarzenia idą przez `env`, a nie wprost w skrypt — podstawione
+      # w treść polecenia byłyby wstrzyknięciem.
       - name: Sprawdź, czy coś się zmieniło
         id: zmiana
+        env:
+          ZDARZENIE: ${{ github.event_name }}
+          POWOD: ${{ github.event.inputs.powod }}
         run: |
-          if [ "${{ github.event_name }}" != "schedule" ]; then
-            echo "powod=uruchomienie ${{ github.event_name }} — wdrażamy zawsze" >> "$GITHUB_OUTPUT"
+          if [ "$ZDARZENIE" != "schedule" ] && [ "$POWOD" != "harmonogram" ]; then
+            echo "powod=uruchomienie $ZDARZENIE — wdrażamy zawsze" >> "$GITHUB_OUTPUT"
             echo "wdrazac=tak" >> "$GITHUB_OUTPUT"
             exit 0
           fi
