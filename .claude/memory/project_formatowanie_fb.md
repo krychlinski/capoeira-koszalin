@@ -56,3 +56,33 @@ Ograniczenie: para prostych cudzysłowów musi zmieścić się w jednym kawałku
 znacznikami. Otwarcie przed pogrubieniem i zamknięcie po nim zostanie proste.
 
 Powiązane: [[todo-facebook-api]]
+
+## Udostępnienie cudzego postu przepada — i to nie jest nasza usterka
+
+Zbadane 2026-09-29. Strona klubu udostępniła post Malandra z jego PRYWATNEGO profilu:
+dwie grafiki i długi tekst o nowych grupach. Na Facebooku wygląda normalnie, na stronie
+nie pojawił się w ogóle, więc nie poszło też powiadomienie.
+
+Co Graph API oddaje dla takiego udostępnienia:
+
+- `message` — **nie ma tego pola w ogóle** (klub nie dopisał nic od siebie);
+- załącznik typu `native_templates` z tytułem „Zawartość nie jest teraz dostępna";
+- `full_picture` — **jest**, jedna z grafik udostępnionego postu;
+- `parent_id` — jest, ale pobranie rodzica kończy się błędem uprawnień
+  **zarówno tokenem strony, jak i użytkownika**. Facebook nie udostępnia aplikacjom
+  postów z prywatnych profili i nie da się tego obejść żadnym uprawnieniem.
+
+Czyli: **tekstu takiego postu nie da się odzyskać.** Maksimum, co możemy z niego wyciągnąć,
+to jeden obrazek bez ani jednego słowa.
+
+Wniosek praktyczny dla klubu: ogłoszenia mają być publikowane **jako strona**, nie
+udostępniane z prywatnego profilu. Wtedy wszystko działa jak zwykle.
+
+Gdyby klub dopisał przy udostępnianiu choć jedno zdanie, post BY się pojawił (jest `message`),
+ale bez obrazka — `imageUrls()` bierze tylko typy `photo` i `album`, a tu jest
+`native_templates`. Dodanie `full_picture` jako awaryjnego źródła dla tego typu to drobna
+zmiana, gdyby okazała się potrzebna.
+
+W 60 dniach takich postów bez własnej treści było 7 na 34.
+
+Powiązane: [[reference-push]], [[todo-facebook-api]]
