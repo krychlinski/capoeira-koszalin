@@ -92,6 +92,32 @@ w `public/_headers`. Buforowana kopia `latest.json` byłaby podwójnie zdradliwa
 pokazywałby poprzedni wpis, a workflow uznawałby prawdziwą zmianę za brak zmiany i **nigdy by
 nie wdrożył**.
 
+## Budowanie budzi cron Workera, bo GitHub gubi harmonogram
+
+Zmierzone 2026-09-29 na tym repozytorium: przez 30 dni odpaliło się **138 zaplanowanych
+uruchomień ze skonfigurowanych 570** — mniej więcej co czwarte, z przerwami po osiem godzin
+(28.09: 10:49, potem dopiero 18:34). GitHub odrzuca zaplanowane zdarzenia, gdy runnery są
+obciążone, i nic o tym nie mówi. Minuta 7 zamiast pełnej godziny pomogła za mało.
+
+Dzwoni więc cron Cloudflare Workera (`mozeObudzic` w `worker/src/index.js`): chodzi co godzinę,
+a o porze decyduje kod po czasie w `Europe/Warsaw` — co dwie godziny między 8:00 a 22:00.
+**Okno jest w kodzie, nie w harmonogramie**, i to celowo: cron chodzi w UTC, więc wpisane
+wprost przesuwałoby się zimą o godzinę. Sprawdzone dla lata i zimy — osiem pobudek w obu.
+`hourCycle: 'h23'` jest konieczny, bez niego północ potrafi wyjść jako 24.
+
+Harmonogram GitHuba został jako siatka bezpieczeństwa, trzy razy dziennie.
+
+**Worker MUSI wołać z `powod=harmonogram`.** Krok „Sprawdź, czy coś się zmieniło" traktuje
+wtedy wołanie jak własny harmonogram i sprawdza odcisk. Bez tego byłoby to zwykłe
+`workflow_dispatch`, czyli „wdrażaj zawsze" — 240 uruchomień miesięcznie zjadłoby limit
+500 wdrożeń Cloudflare w pół miesiąca. Z tym warunkiem wdrożeń jest tyle co dotąd (~41:
+17 postów z Facebooka plus 24 wypchnięcia), bo ich liczbę ustala klub, nie harmonogram.
+
+`GH_TOKEN` to sekret Workera (po stronie Cloudflare, nie GitHuba) — drobnoziarnisty token
+z uprawnieniem `Actions: read and write` na tym jednym repozytorium. **Wygaśnięcie tokenu
+cicho zatrzyma cron**; ratuje wtedy zapasowy harmonogram, ale strona zacznie chodzić trzy
+razy dziennie zamiast ośmiu.
+
 ## Kolejność w workflow ma znaczenie — i samo „po wdrożeniu" nie wystarcza
 
 Krok „Rozgłoś nowy wpis" idzie **po** wdrożeniu. Powiadomienie jest puste, więc service worker

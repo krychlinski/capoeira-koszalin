@@ -13,9 +13,15 @@ WordPressa pod `capoeira.koszalin.pl`.
   Zero serwera, zero bazy, zero łatania; to był główny powód odejścia od WordPressa.
   Nagłówki i przekierowania w `public/_headers` i `public/_redirects`.
 - **Buduje GitHub Actions, nie Cloudflare** — `.github/workflows/wdroz.yml`: przy pushu do `main`,
-  z harmonogramu (posty z Facebooka) i ręcznie. Projekt Pages założono z linii poleceń, więc
-  nie da się go podpiąć pod repo. Sekrety (`FB_TOKEN`, `CLOUDFLARE_API_TOKEN`, `NOTIFY_SECRET`)
-  siedzą w GitHubie, nie w panelu Cloudflare.
+  na zawołanie crona Workera (posty z Facebooka, co 2h między 8:00 a 22:00), z rzadkiego
+  harmonogramu zapasowego i ręcznie. Projekt Pages założono z linii poleceń, więc nie da się
+  go podpiąć pod repo. Sekrety (`FB_TOKEN`, `CLOUDFLARE_API_TOKEN`, `NOTIFY_SECRET`) siedzą
+  w GitHubie — jedyny wyjątek to `GH_TOKEN`, sekret Workera po stronie Cloudflare, którym
+  cron woła `workflow_dispatch`.
+- **Po nowe posty budzi Worker, nie harmonogram GitHuba** — GitHub gubi zaplanowane
+  uruchomienia (zmierzone: 138 z 570 przez 30 dni). Cron Cloudflare nie gubi i zna
+  `Europe/Warsaw`, więc okno nie ucieka przy zmianie czasu. Worker musi wołać
+  z `powod=harmonogram`, inaczej workflow wdroży bez sprawdzania odcisku i limit padnie.
 - **Limit Cloudflare Pages: 25 MiB na plik.** Większy plik w `dist` wywala wdrożenie — dotyczy
   zwłaszcza wideo.
 - Netlify to przeszłość (do 2026-09-05): projekt wyłączony, `netlify.toml` usunięty.
